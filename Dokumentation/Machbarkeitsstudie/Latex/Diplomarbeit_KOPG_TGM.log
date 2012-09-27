@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (Web2C 2011) (format=pdflatex 2012.9.13)  22 SEP 2012 12:48
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (Web2C 2011) (format=pdflatex 2012.9.13)  27 SEP 2012 11:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**C:/Users/Gabriel/Dropbox/Jahresprojekt/Dokumentation/Machbarkeitsstudie/Latex
-/Diplomarbeit_KOPG_TGM.tex
+**C:/Users/Josefs/Documents/Schule/PPM/aquila/Dokumentation/Machbarkeitsstudie/
+Latex/Diplomarbeit_KOPG_TGM.tex
 
-(c:/Users/Gabriel/Dropbox/Jahresprojekt/Dokumentation/Machbarkeitsstudie/Latex/
-Diplomarbeit_KOPG_TGM.tex
+(c:/Users/Josefs/Documents/Schule/PPM/aquila/Dokumentation/Machbarkeitsstudie/L
+atex/Diplomarbeit_KOPG_TGM.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
@@ -409,6 +409,9 @@ Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
 \rot@mess@toks=\toks34
 )
 (./tex/acronyms.tex)
+(c:/texlive/2011/texmf-dist/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen135
+)
 (c:/texlive/2011/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2011/04/17 v6.82g Hypertext links for LaTeX
 
@@ -459,7 +462,7 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 (c:/texlive/2011/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
 )
-\@linkdim=\dimen135
+\@linkdim=\dimen136
 \Hy@linkcounter=\count127
 \Hy@pagecounter=\count128
 
@@ -494,8 +497,8 @@ Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4617.
 \Fld@menulength=\count131
-\Field@Width=\dimen136
-\Fld@charsize=\dimen137
+\Field@Width=\dimen137
+\Fld@charsize=\dimen138
 Package hyperref Info: Hyper figures OFF on input line 5701.
 Package hyperref Info: Link nesting OFF on input line 5706.
 Package hyperref Info: Hyper index ON on input line 5709.
@@ -554,12 +557,12 @@ Writing nomenclature file Diplomarbeit_KOPG_TGM.nlo
 \openout6 = `Diplomarbeit_KOPG_TGM.glo'.
 
 Package glossaries Info: Writing glossary file Diplomarbeit_KOPG_TGM.glo on inp
-ut line 193.
+ut line 194.
 \glo@acronym@file=\write7
 \openout7 = `Diplomarbeit_KOPG_TGM.acn'.
 
 Package glossaries Info: Writing glossary file Diplomarbeit_KOPG_TGM.acn on inp
-ut line 193.
+ut line 194.
 (./Diplomarbeit_KOPG_TGM.aux (./tex/title.aux) (./tex/prefacea.aux)
 (./tex/abstracta.aux) (./tex/kurzzfsg.aux) (./tex/nomenclature.aux)
 (./tex/chapter1.aux) (./tex/chapter2.aux) (./tex/chapter3.aux)
@@ -567,31 +570,31 @@ ut line 193.
 (./tex/appendix.aux) (./tex/eid.aux))
 \openout1 = `Diplomarbeit_KOPG_TGM.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 199.
-LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 200.
+LaTeX Font Info:    ... okay on input line 200.
 
 (c:/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count158
-\scratchdimen=\dimen138
+\scratchdimen=\dimen139
 \scratchbox=\box36
 \nofMPsegments=\count159
 \nofMParguments=\count160
 \everyMPshowfont=\toks35
 \MPscratchCnt=\count161
-\MPscratchDim=\dimen139
+\MPscratchDim=\dimen140
 \MPnumerator=\count162
 \makeMPintoPDFobject=\count163
 \everyMPtoPDFconversion=\toks36
@@ -615,7 +618,7 @@ Dictionary: glossaries-dictionary, Language: English
 )
 \c@lstlisting=\count164
 \AtBeginShipoutBox=\box37
-Package hyperref Info: Link coloring ON on input line 199.
+Package hyperref Info: Link coloring ON on input line 200.
  (c:/texlive/2011/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 
@@ -624,9 +627,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count165
 )
-LaTeX Info: Redefining \ref on input line 199.
-LaTeX Info: Redefining \pageref on input line 199.
-LaTeX Info: Redefining \nameref on input line 199.
+LaTeX Info: Redefining \ref on input line 200.
+LaTeX Info: Redefining \pageref on input line 200.
+LaTeX Info: Redefining \nameref on input line 200.
 
 (./Diplomarbeit_KOPG_TGM.out) (./Diplomarbeit_KOPG_TGM.out)
 \@outlinefile=\write8
@@ -640,7 +643,7 @@ LaTeX Font Info:    Try loading font information for T1+cmss on input line 46.
 (c:/texlive/2011/texmf-dist/tex/latex/base/t1cmss.fd
 File: t1cmss.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-<graphics/title/tgmlogo2.png, id=75, 376.5267pt x 121.29315pt>
+<graphics/title/tgmlogo2.png, id=79, 376.5267pt x 121.29315pt>
 File: graphics/title/tgmlogo2.png Graphic file (type png)
 
 <use graphics/title/tgmlogo2.png>
@@ -665,7 +668,7 @@ l.88 \end{titlepage}
 ifier (name{page.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.204 \frontmatter
+l.205 \frontmatter
                   %   %% front matter will be numbered in small Roman letters
 [2
 
@@ -745,7 +748,7 @@ Kapitel 1.
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.253 \include{tex/chapter1}
+l.254 \include{tex/chapter1}
                             % [1
 
 
@@ -763,31 +766,12 @@ l.3 \chapter
 
 ]
 Kapitel 2.
-! Undefined control sequence.
-l.19 ...dung des Datenproviders kann über \acronym
-                                                  {dde} erfolgen.\\
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
 
 Underfull \hbox (badness 10000) in paragraph at lines 14--29
 
  []
 
 [3]
-! Undefined control sequence.
-l.36 ...t-Portfolio gestattet wird und sogar \glsp
-                                                  {ide}, die eine Broker-Sch...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 32--37
 
  []
@@ -806,296 +790,85 @@ Overfull \hbox (1044.30296pt too wide) in alignment at lines 5--15
 Underfull \vbox (badness 10000) detected at line 15
  []
 
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.22  
-             Beschreibung    & Charts zur Darstellung der Algorithmen werden...
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.22         Beschreibung    &
-                               Charts zur Darstellung der Algorithmen werden...
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.22         Beschreibung    & C
-                                harts zur Darstellung der Algorithmen werden...
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-[]\T1/cmr/m/n/12 Charts zur Dar-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 stel-lung der Al-
- []
-
-
-Underfull \hbox (badness 5970) in paragraph at lines 22--22
-\T1/cmr/m/n/12 go-rith-men wer-den
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 auf der Web-si-te
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 an-ge-zeigt. Da-bei
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 muss be-son-ders
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 auf die Schnitt-
- []
-
-
-Underfull \hbox (badness 6016) in paragraph at lines 22--22
-\T1/cmr/m/n/12 stel-le zur be-reits
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 be-ste-hen-den Soft-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 wa-re ge-ach-tet
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 wer-den. Die-se
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 über Webser-vices
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 22--22
-\T1/cmr/m/n/12 oder Da-ten-ban-
- []
-
-
-Underfull \hbox (badness 4569) in paragraph at lines 22--22
-\T1/cmr/m/n/12 ken im-ple-men-tiert
- []
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.23  
-             Aufwand         & ~ \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.23         Aufwand         &
-                               ~ \\ \hline
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.23         Aufwand         & ~
-                                 \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.24  
-             Nutzen          & ~ \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.24         Nutzen          &
-                               ~ \\ \hline
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.24         Nutzen          & ~
-                                 \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.25  
-             Ziel            & ~ \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.25         Ziel            &
-                               ~ \\ \hline
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.25         Ziel            & ~
-                                 \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.26  
-             Vorbedingung    & ~ \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.26         Vorbedingung    &
-                               ~ \\ \hline
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.26         Vorbedingung    & ~
-                                 \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.27  
-             Nachbedingungen & ~ \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.27         Nachbedingungen &
-                               ~ \\ \hline
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.27         Nachbedingungen & ~
-                                 \\ \hline
-Dimensions can be in units of em, ex, in, pt, pc,
-cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
-I'll assume that you meant to say pt, for printer's points.
-To recover gracefully from this error, it's best to
-delete the erroneous units; e.g., type `2' to delete
-two letters. (See Chapter 27 of The TeXbook.)
-
 ) [5
 
 
 
-] [6]
+]
 \openout2 = `tex/chapter4.aux'.
 
  (./tex/chapter4.tex
-Kapitel 4.
-) [7
+Underfull \hbox (badness 10000) in paragraph at lines 12--12
+[]\T1/cmr/m/n/12 Gewicht-
+ []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 12--12
+[]\T1/cmr/bx/n/12 C++
+ []
 
-]
+
+Underfull \hbox (badness 10000) in paragraph at lines 12--12
+[]\T1/cmr/bx/n/12 Java
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 12--12
+[]\T1/cmr/bx/n/12 C/F
+ []
+
+
+Underfull \hbox (badness 2573) in paragraph at lines 13--13
+[]\T1/cmr/m/n/12 Aufwand Co-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 14--14
+[]\T1/cmr/m/n/12 Bedienung/
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
+[]\T1/cmr/m/n/12 Übertragungs-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--20
+[]\T1/cmr/m/n/12 Absturz-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 21--21
+[]\T1/cmr/m/n/12 Ressourcen-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 26--26
+[]\T1/cmr/m/n/12 Betriebs-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+[]\T1/cmr/m/n/12 Dokumen-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+[]\T1/cmr/m/n/12 Voll-
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6
+
+
+])
+[7] [8]
 \openout2 = `tex/chapter5.aux'.
 
- (./tex/chapter5.tex [8
-
-
-
-]
-Kapitel 5.
+ (./tex/chapter5.tex
+Kapitel 4.
 
 Underfull \hbox (badness 10000) in paragraph at lines 14--16
 
@@ -1107,7 +880,11 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 20.
- [9]
+ [9
+
+
+
+]
 Underfull \hbox (badness 10000) in paragraph at lines 37--39
 
  []
@@ -1121,7 +898,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--47
 \openout2 = `tex/chapter6.aux'.
 
  (./tex/chapter6.tex
-Kapitel 6.
+Kapitel 5.
 ) [11
 
 
@@ -1176,33 +953,33 @@ Underfull \hbox (badness 10000) in paragraph at lines 54--61
 \openout2 = `tex/eid.aux'.
 
  (./tex/eid.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 12--296
+Underfull \hbox (badness 10000) in paragraph at lines 12--297
 
  []
 
 [16
 
 ] [17]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 300.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 300.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 301.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 301.
  (./Diplomarbeit_KOPG_TGM.aux (./tex/title.aux) (./tex/prefacea.aux)
 (./tex/abstracta.aux) (./tex/kurzzfsg.aux) (./tex/nomenclature.aux)
 (./tex/chapter1.aux) (./tex/chapter2.aux) (./tex/chapter3.aux)
 (./tex/chapter4.aux) (./tex/chapter5.aux) (./tex/chapter6.aux)
 (./tex/appendix.aux) (./tex/eid.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 300.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 300.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 301.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 301.
 Package rerunfilecheck Info: File `Diplomarbeit_KOPG_TGM.out' has not changed.
-(rerunfilecheck)             Checksum: 814A26B84018F4DD44B504A7A041A07E;1004.
+(rerunfilecheck)             Checksum: 1597155DE5ED7A8E713BC09478B7B2C0;1089.
  ) 
 Here is how much of TeX's memory you used:
- 11904 strings out of 493633
- 166794 string characters out of 3146745
- 307095 words of memory out of 3000000
- 14785 multiletter control sequences out of 15000+200000
+ 11920 strings out of 493633
+ 167145 string characters out of 3146745
+ 351304 words of memory out of 3000000
+ 14796 multiletter control sequences out of 15000+200000
  24588 words of font info for 59 fonts, out of 3000000 for 9000
  845 hyphenation exceptions out of 8191
- 31i,10n,43p,1411b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,9n,43p,1416b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
 {c:/texlive/2011/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}<c:/texl
 ive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2011/
 texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2011/texmf-dist
@@ -1218,10 +995,10 @@ fonts/type1/public/cm-super/sfss1440.pfb><c:/texlive/2011/texmf-dist/fonts/type
 m-super/sfss2074.pfb><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sf
 ss2488.pfb><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sfsx2074.pfb
 ><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on Diplomarbeit_KOPG_TGM.pdf (33 pages, 585587 bytes).
+Output written on Diplomarbeit_KOPG_TGM.pdf (33 pages, 593227 bytes).
 PDF statistics:
- 342 PDF objects out of 1000 (max. 8388607)
- 287 compressed objects within 3 object streams
- 62 named destinations out of 1000 (max. 500000)
- 150 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 347 PDF objects out of 1000 (max. 8388607)
+ 292 compressed objects within 3 object streams
+ 63 named destinations out of 1000 (max. 500000)
+ 158 words of extra memory for PDF output out of 10000 (max. 10000000)
 
