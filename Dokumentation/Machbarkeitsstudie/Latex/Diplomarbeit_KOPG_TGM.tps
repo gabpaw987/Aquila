@@ -177,8 +177,8 @@ cxCur=1345
 cxMin=10
 
 [Frame5_View0,0]
-Cursor.row=31
-Cursor.column=21
+Cursor.row=0
+Cursor.column=0
 TopSubLine=9
 
 [Frame6]
@@ -237,7 +237,7 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=35
 Cursor.column=226
-TopSubLine=36
+TopSubLine=30
 
 [Frame8]
 Columns=1
