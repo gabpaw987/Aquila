@@ -5,13 +5,13 @@ Version=2
 [SessionInfo]
 ActiveTab=2
 FrameCount=11
-ActiveFrame=0
+ActiveFrame=1
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -24,23 +24,23 @@ Class=CLatexEdit
 Document=tex\chapter3.tex
 
 [Frame0_Row0]
-cyCur=641
+cyCur=239
 cyMin=10
 
 [Frame0_Col0]
-cxCur=1670
+cxCur=289
 cxMin=10
 
 [Frame0_View0,0]
 Cursor.row=340
 Cursor.column=64
-TopSubLine=307
+TopSubLine=611
 
 [Frame1]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -53,15 +53,15 @@ Class=CLatexEdit
 Document=tex\chapter5.tex
 
 [Frame1_Row0]
-cyCur=219
+cyCur=641
 cyMin=10
 
 [Frame1_Col0]
-cxCur=293
+cxCur=1670
 cxMin=10
 
 [Frame1_View0,0]
-Cursor.row=0
+Cursor.row=11
 Cursor.column=0
 TopSubLine=0
 
@@ -179,7 +179,11 @@ cxMin=10
 [Frame5_View0,0]
 Cursor.row=0
 Cursor.column=0
+<<<<<<< HEAD
+TopSubLine=9
+=======
 TopSubLine=0
+>>>>>>> origin/master
 
 [Frame6]
 Columns=1
@@ -237,7 +241,11 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=35
 Cursor.column=226
-TopSubLine=40
+<<<<<<< HEAD
+TopSubLine=30
+=======
+TopSubLine=47
+>>>>>>> origin/master
 
 [Frame8]
 Columns=1
@@ -266,7 +274,7 @@ cxMin=10
 [Frame8_View0,0]
 Cursor.row=1
 Cursor.column=1
-TopSubLine=1
+TopSubLine=0
 
 [Frame9]
 Columns=1
