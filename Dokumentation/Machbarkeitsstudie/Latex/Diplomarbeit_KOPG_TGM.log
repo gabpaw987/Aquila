@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (Web2C 2011) (format=pdflatex 2012.9.13)  27 SEP 2012 11:31
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (Web2C 2011) (format=pdflatex 2012.9.13)  28 SEP 2012 02:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**C:/Users/Josefs/Documents/Schule/PPM/aquila/Dokumentation/Machbarkeitsstudie/
-Latex/Diplomarbeit_KOPG_TGM.tex
+**C:/Users/Gabriel/Documents/Schule/PPM/Aquila/Dokumentation/Machbarkeitsstudie
+/Latex/Diplomarbeit_KOPG_TGM.tex
 
-(c:/Users/Josefs/Documents/Schule/PPM/aquila/Dokumentation/Machbarkeitsstudie/L
-atex/Diplomarbeit_KOPG_TGM.tex
+(c:/Users/Gabriel/Documents/Schule/PPM/Aquila/Dokumentation/Machbarkeitsstudie/
+Latex/Diplomarbeit_KOPG_TGM.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
@@ -781,23 +781,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 32--37
 
  (./tex/chapter3.tex
 Kapitel 3.
-
-Overfull \hbox (1044.30296pt too wide) in alignment at lines 5--15
- [] [] 
- []
+[5
 
 
-Underfull \vbox (badness 10000) detected at line 15
- []
 
-) [5
+] [6] [7] [8] [9] [10]) [11]
+\openout2 = `tex/chapter4.aux'.
+
+ (./tex/chapter4.tex [12
 
 
 
 ]
-\openout2 = `tex/chapter4.aux'.
+Kapitel 4.
 
- (./tex/chapter4.tex
 Underfull \hbox (badness 10000) in paragraph at lines 12--12
 []\T1/cmr/m/n/12 Gewicht-
  []
@@ -858,66 +855,74 @@ Underfull \hbox (badness 10000) in paragraph at lines 30--30
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 4543) has occurred while \output is active []
 
- [6
-
-
-])
-[7] [8]
+ [13])
+[14] [15]
 \openout2 = `tex/chapter5.aux'.
 
- (./tex/chapter5.tex
-Kapitel 4.
-
-Underfull \hbox (badness 10000) in paragraph at lines 14--16
-
- []
-
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 20.
-(c:/texlive/2011/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 20.
- [9
+ (./tex/chapter5.tex [16
 
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 37--39
+Kapitel 5.
+<graphics/chapter5/FunctionPointsAnalysis.JPG, id=255, 383.031pt x 421.575pt>
+File: graphics/chapter5/FunctionPointsAnalysis.JPG Graphic file (type jpg)
+
+<use graphics/chapter5/FunctionPointsAnalysis.JPG>
+Package pdftex.def Info: graphics/chapter5/FunctionPointsAnalysis.JPG used on i
+nput line 9.
+(pdftex.def)             Requested size: 383.03006pt x 421.57396pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--22
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 44--47
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 26.
+(c:/texlive/2011/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 26.
+ [17]
+Underfull \hbox (badness 10000) in paragraph at lines 43--45
 
  []
 
-) [10]
+[18 <./graphics/chapter5/FunctionPointsAnalysis.JPG>]
+Underfull \hbox (badness 10000) in paragraph at lines 50--53
+
+ []
+
+) [19]
 \openout2 = `tex/chapter6.aux'.
 
- (./tex/chapter6.tex
-Kapitel 5.
-) [11
+ (./tex/chapter6.tex [20
 
 
 
-] (c:/texlive/2011/texmf-dist/tex/generic/babel/babel.sty)
+]
+Kapitel 6.
+) [21] (c:/texlive/2011/texmf-dist/tex/generic/babel/babel.sty)
 No file Diplomarbeit_KOPG_TGM.acr.
 (c:/texlive/2011/texmf-dist/tex/generic/babel/babel.sty)
 No file Diplomarbeit_KOPG_TGM.acr.
-[12
+[22
 
 ]
 \openout2 = `tex/appendix.aux'.
 
  (./tex/appendix.tex
 Anhang A.
-) [13
+) [23
 
 
-] [14
+] [24
 
 
 ] (./Diplomarbeit_KOPG_TGM.bbl
@@ -947,7 +952,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 54--61
 702-[]0885532-[]1303250 ?
  []
 
-) [15
+) [25
 
 ]
 \openout2 = `tex/eid.aux'.
@@ -957,9 +962,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 12--297
 
  []
 
-[16
+[26
 
-] [17]
+] [27]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 301.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 301.
  (./Diplomarbeit_KOPG_TGM.aux (./tex/title.aux) (./tex/prefacea.aux)
@@ -970,16 +975,16 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 301.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 301.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 301.
 Package rerunfilecheck Info: File `Diplomarbeit_KOPG_TGM.out' has not changed.
-(rerunfilecheck)             Checksum: 1597155DE5ED7A8E713BC09478B7B2C0;1089.
+(rerunfilecheck)             Checksum: 6F3FF67A80A9CA17C555641A4B456BB8;1082.
  ) 
 Here is how much of TeX's memory you used:
- 11920 strings out of 493633
- 167145 string characters out of 3146745
- 351304 words of memory out of 3000000
- 14796 multiletter control sequences out of 15000+200000
+ 11936 strings out of 493633
+ 167468 string characters out of 3146745
+ 351317 words of memory out of 3000000
+ 14800 multiletter control sequences out of 15000+200000
  24588 words of font info for 59 fonts, out of 3000000 for 9000
  845 hyphenation exceptions out of 8191
- 31i,9n,43p,1416b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,9n,43p,1417b,403s stack positions out of 5000i,500n,10000p,200000b,50000s
 {c:/texlive/2011/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}<c:/texl
 ive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2011/
 texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/texlive/2011/texmf-dist
@@ -995,10 +1000,10 @@ fonts/type1/public/cm-super/sfss1440.pfb><c:/texlive/2011/texmf-dist/fonts/type
 m-super/sfss2074.pfb><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sf
 ss2488.pfb><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sfsx2074.pfb
 ><c:/texlive/2011/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on Diplomarbeit_KOPG_TGM.pdf (33 pages, 593227 bytes).
+Output written on Diplomarbeit_KOPG_TGM.pdf (43 pages, 734360 bytes).
 PDF statistics:
- 347 PDF objects out of 1000 (max. 8388607)
- 292 compressed objects within 3 object streams
- 63 named destinations out of 1000 (max. 500000)
- 158 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 393 PDF objects out of 1000 (max. 8388607)
+ 326 compressed objects within 4 object streams
+ 72 named destinations out of 1000 (max. 500000)
+ 163 words of extra memory for PDF output out of 10000 (max. 10000000)
 

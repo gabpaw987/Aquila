@@ -1,17 +1,405 @@
 % Chapter3
 
-\chapter{Produkfunktionen} \label{chapter:architecture}
+\chapter{Produktfunktionen} \label{chapter:produktfunktionen}
 
-\begin{longtable}{|l|l|}
+/LF10/\\
+\textit{Charts darstellen}
 
-				\hline
-        Beschreibung    & Charts zur Darstellung der Algorithmen werden auf der Website angezeigt. Dabei muss besonders auf die Schnittstelle zur bereits 																	bestehenden Software geachtet werden. Diese kann zum Beispiel über Webservices oder Datenbanken implementiert werden.\\  \hline
-        Aufwand         & ~ \\ \hline
-        Nutzen          & ~ \\ \hline
-        Ziel            & ~ \\ \hline
-        Vorbedingung    & ~ \\ \hline
-        Nachbedingungen & ~ \\ \hline
+\begin{center}
 
-\end{longtable}
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Charts zur Darstellung der Algorithmen werden auf der Website angezeigt. Dabei muss
+besonders auf die Schnittstelle zur bereits bestehenden Software geachtet werden. Diese kann
+zum Beispiel über Webservices oder Datenbanken implementiert werden.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Darstellung von Charts mit den Algorithmusnberechnungen auf der Website. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren \\ \hline
+Nachbedingungen & - \\ \hline
 
-\section{Introduction}
+\end{tabular}
+
+\end{center}
+
+/LF20/\\
+\textit{Account-Management bereitstellen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Über zumindest einen primären Account kann sich ein Benutzer anmelden, um alle sämtliche
+Controlling-Funktionen der Webseite durchführen zu können.\\  \hline
+Aufwand & Mittel \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Benutzer sollen Accounts erstellen können. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF30/\\
+\textit{News anzeigen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Wenn möglich können Nachrichten-Headlines, die gehandelte Aktien beeinflussen auf der
+Webseite angezeigt werden. Ein Beispiel wäre der Bloomberg-Newsfeed, der auch vom
+Programm benutzt werden könnte.\\  \hline
+Aufwand & Mittel \\ \hline
+Nutzen & Mittel \\ \hline
+Ziel & Anzeigen von einschlägigen News auf der Website. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF40/\\
+\textit{Website-Software-Schnittstelle implementieren}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Um die Software von der Website aus kontrollieren zu können wird eine Schnittstelle
+benötigt, diese kann zum Beispiel über Datenbanken, Streams oder Webservices realisiert
+werden.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Software und Website sollen kommunizieren können. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF41/\\
+\textit{Investitionskapital einstellen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Die Höhe des Kapitals, das zur Investition freigegeben ist, kann je nach Aktie von der Website in der Software eingestellt
+werden.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Mittel \\ \hline
+Ziel & Einstellung des Investitionskapitals der Software. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF42/\\
+\textit{Handeln starten}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das Handeln des Programms soll mittels einer Usereingabe auf der Website gestartet werden können.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Starten des Handelns von der Website in der Software. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF43/\\
+\textit{Handeln stoppen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das Handeln der Software soll mittels einer Usereingabe auf der Website gestoppt werden können.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Stoppen des Handelns von der Website in der Software. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF44/\\
+\textit{Entscheidungsmodus ändern}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Der User muss von der Website zwischen einem automatischen und einem manuellen Modus wählen
+können; bei dem automatischen Modus soll die Software automatisiert entscheiden und
+handeln; bei dem manuellen Modus wird der User mittels einer Benachrichtigung (siehe
+/LF160/) zum Entscheiden aufgefordert.\\  \hline
+Aufwand & Mittel \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Man soll von der Website aus in der Software zwischen einem manuellen und einem automatischen Handelsmodus wählen können. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF45/\\
+\textit{Benachrichtigungen verschicken}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Dem User wird zum Beispiel mittels SMS, E-Mail oder Push-Benachrichtigung der
+Handlungsvorschlag zugesandt.\\  \hline
+Aufwand & Mittel \\ \hline
+Nutzen & Mittel \\ \hline
+Ziel & Der User wird über Handelsvorschläge informiert. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF46/\\
+\textit{Aktie auswählen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Der User kann auf der Website aus einer prädefinierten Liste die gewünschten Aktien zum Handeln mit der Software
+selektieren.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Mittel \\ \hline
+Ziel & Möglichkeit von der Website, die Aktien mit denen die Software handelt auszuwählen. \\ \hline
+Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF110/\\
+\textit{Input speichern}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Die vom Datenprovider ausgesendeten Daten (als Bars) sollen gespeichert werden, um später
+weiter verarbeitet werden zu können.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Speichern der historischen und aktuellen Aktiendaten vom Datenprovider. \\ \hline
+Vorbedingungen & /LF180/ Kursdaten beziehen \\ \hline
+Nachbedingungen & /LF120/ Bars weiterleiten \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF120/\\
+\textit{Bars weiterleiten}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Der bisherige Kurs in Form von Bars wird an den Rechenkern übergeben.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Transfer der Daten aus "`/LF110/ Input speichern"' in den Rechenkern \\ \hline
+Vorbedingungen & /LF110/ Input speichern \\ \hline
+Nachbedingungen & /LF130/ Entscheidung berechnen \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF130/\\
+\textit{Entscheidung berechnen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Der Rechenkern soll aufgrund des Entscheidungsalgorithmus berechnen, wie das Wertpapier
+am besten zu behandeln ist (buy, sell, hold).\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Kaufs- oder Verkaufsentscheidung berechnen. \\ \hline
+Vorbedingungen & /LF120/ Bars weiterleiten \\ \hline
+Nachbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF140/\\
+\textit{Entscheidung ausgeben}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Die berechnete Entscheidung wird aus dem Rechenkern in den Verarbeitungskern geleitet,
+wo sie einerseits in der ausgegeben und andererseits ausgeführt werden.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Anzeige und Durchführung der Entscheidung. \\ \hline
+Vorbedingungen & /LF130/ Entscheidung berechnen \\ \hline
+Nachbedingungen & /LF150/ Wertpapier kaufen oder /LF160/ Wertpapier verkaufen \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF150/\\
+\textit{Wertpapier kaufen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das System kauft über den Online-Broker-Account eine bestimmte Anzahl an Wertpapieren.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Kaufen eine Wertpapiers. \\ \hline
+Vorbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF160/\\
+\textit{Wertpapier verkaufen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das System verkauft über den Online-Broker-Account eine bestimmte
+Anzahl an Wertpapieren.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Verkauf eines Wertpapiers. \\ \hline
+Vorbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF170/\\
+\textit{Log erstellen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das System legt beim Programmstart lokal ein Log-File an, indem alle Entscheidungen
+versehen mit Datum und Uhrzeit während dem Programmlauf eingetragen werden.\\  \hline
+Aufwand & Gering \\ \hline
+Nutzen & Mittel \\ \hline
+Ziel & Erstellung eines Log-Files. \\ \hline
+Vorbedingungen & /LF150/ Wertpapier kaufen oder /LF160/ Wertpapier verkaufen \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF180/\\
+\textit{Kursdaten beziehen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Die Software muss eine Schnittstelle zum Beziehen von sowohl aktuellen als auch historischen
+Bars besitzen. Diese kann zum Beispiel über e-Signal oder Interactive Brokers realisiert
+werden.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Beziehen der Daten von einem der genannten Datenprovider. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & /LF110/ Input speichern \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF190/\\
+\textit{Datenbankverbindung bereitstellen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Das Programm muss eine Datenbankschnittstelle erhalten und die berechneten Daten für die
+Website erreichbar machen.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Datenbankschnittstelle zur Sicherung von Daten implementieren. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF200/\\
+\textit{Laufzeitparameter ändern}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Um die Controlling-Funktionen zu ermöglichen muss das Programm genauer
+parametrisierbar sein. Es sollen zum Beispiel die Einstellungen auch während der Laufzeit
+verändert werden können.\\  \hline
+Aufwand & Hoch \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Ermöglichung der Änderung von Software-Parametern zur Laufzeit. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
+
+/LF210/\\
+\textit{Multi-Threading ermöglichen}
+
+\begin{center}
+
+\begin{tabular}{ | l | p{10cm} |}
+\hline 
+Beschreibung & Die Software muss Multi-Threading unterstützen, um die Entscheidung über automatisches
+Kaufen und Verkaufen von verschiedenen Aktien gleichzeitig zu treffen.\\  \hline
+Aufwand & Mittel \\ \hline
+Nutzen & Hoch \\ \hline
+Ziel & Mehrere Aktien sollen gleichzeitig beachtet werden. \\ \hline
+Vorbedingungen & - \\ \hline
+Nachbedingungen & - \\ \hline
+
+\end{tabular}
+
+\end{center}
