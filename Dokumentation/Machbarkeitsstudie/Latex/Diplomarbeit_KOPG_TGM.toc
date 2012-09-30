@@ -7,17 +7,21 @@
 \contentsline {chapter}{\numberline {2}Voruntersuchung}{3}{chapter.2}
 \contentsline {section}{\numberline {2.1}IST-Erhebung}{3}{section.2.1}
 \contentsline {section}{\numberline {2.2}IST-Zustand}{4}{section.2.2}
-\contentsline {section}{\numberline {2.3}SOLL-Zustand}{4}{section.2.3}
-\contentsline {chapter}{\numberline {3}Produktfunktionen}{5}{chapter.3}
-\contentsline {chapter}{\numberline {4}Technische Machbarkeit}{13}{chapter.4}
-\contentsline {section}{\numberline {4.1}Variantenbildung}{13}{section.4.1}
-\contentsline {chapter}{\numberline {5}Wirtschaftliche Machbarkeit}{17}{chapter.5}
-\contentsline {section}{\numberline {5.1}Aufwandsabsch\"atzung}{17}{section.5.1}
-\contentsline {section}{\numberline {5.2}Risikoanalyse}{17}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}Personenausfall}{17}{subsection.5.2.1}
-\contentsline {subsection}{\numberline {5.2.2}Zetiliche Risiken}{18}{subsection.5.2.2}
-\contentsline {subsection}{\numberline {5.2.3}Technische Risiken}{19}{subsection.5.2.3}
-\contentsline {chapter}{\numberline {6}Conclusion and Outlook}{21}{chapter.6}
-\contentsline {chapter}{Glossary}{22}{chapter.6}
-\contentsline {chapter}{\numberline {A}Appendix}{23}{appendix.A}
-\contentsline {chapter}{Literaturverzeichnis}{25}{section*.7}
+\contentsline {subsection}{\numberline {2.2.1}Metatrader}{4}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}GodmodeTrader}{5}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Managed Account}{5}{subsection.2.2.3}
+\contentsline {section}{\numberline {2.3}SOLL-Zustand}{6}{section.2.3}
+\contentsline {chapter}{\numberline {3}Produktfunktionen}{7}{chapter.3}
+\contentsline {chapter}{\numberline {4}Technische Machbarkeit}{15}{chapter.4}
+\contentsline {section}{\numberline {4.1}Variantenbildung}{15}{section.4.1}
+\contentsline {chapter}{\numberline {5}Wirtschaftliche Machbarkeit}{19}{chapter.5}
+\contentsline {section}{\numberline {5.1}Aufwandsabsch\"atzung}{19}{section.5.1}
+\contentsline {section}{\numberline {5.2}Risikoanalyse}{19}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Personenausfall}{19}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Zetiliche Risiken}{20}{subsection.5.2.2}
+\contentsline {subsection}{\numberline {5.2.3}Technische Risiken}{21}{subsection.5.2.3}
+\contentsline {section}{\numberline {5.3}Kosten / Nutzenpotential}{21}{section.5.3}
+\contentsline {chapter}{\numberline {6}Conclusion and Outlook}{23}{chapter.6}
+\contentsline {chapter}{Glossary}{24}{chapter.6}
+\contentsline {chapter}{\numberline {A}Appendix}{25}{appendix.A}
+\contentsline {chapter}{Literaturverzeichnis}{27}{section*.7}
