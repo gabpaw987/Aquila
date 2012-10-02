@@ -31,6 +31,20 @@
 \input{tex/acronyms}
 \usepackage{multirow}
 \usepackage{eurosym}
+\usepackage{array}
+
+%%-----------------------------------------------------------------------
+% Makro for thick table lines
+%%-----------------------------------------------------------------------
+
+\makeatletter
+\newcommand{\thickhline}{%
+    \noalign {\ifnum 0=`}\fi \hrule height 1.5pt
+    \futurelet \reserved@a \@xhline
+}
+\newcolumntype{"}{@{\hskip\tabcolsep\vrule width 1.5pt\hskip\tabcolsep}}
+\makeatother
+
 %%-----------------------------------------------------------------------
 % Using the Hyperref-Package for PDF-Online Version
 %%-----------------------------------------------------------------------
