@@ -3,8 +3,8 @@ Type=TeXnicCenterProjectSessionInformation
 Version=2
 
 [SessionInfo]
-ActiveTab=2
-FrameCount=11
+ActiveTab=0
+FrameCount=10
 ActiveFrame=1
 
 [Frame0]
@@ -61,8 +61,8 @@ cxCur=1670
 cxMin=10
 
 [Frame1_View0,0]
-Cursor.row=11
-Cursor.column=0
+Cursor.row=12
+Cursor.column=35
 TopSubLine=0
 
 [Frame2]
@@ -119,9 +119,9 @@ cxCur=967
 cxMin=10
 
 [Frame3_View0,0]
-Cursor.row=0
-Cursor.column=0
-TopSubLine=0
+Cursor.row=20
+Cursor.column=32
+TopSubLine=14
 
 [Frame4]
 Columns=1
@@ -161,12 +161,12 @@ MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
 MaxPos.y=-34
-NormalPos.left=140
-NormalPos.top=140
-NormalPos.right=1522
-NormalPos.bottom=618
+NormalPos.left=168
+NormalPos.top=168
+NormalPos.right=1550
+NormalPos.bottom=646
 Class=CLatexEdit
-Document=Diplomarbeit_KOPG_TGM.tex
+Document=tex\chapter1.tex
 
 [Frame5_Row0]
 cyCur=410
@@ -179,42 +179,9 @@ cxMin=10
 [Frame5_View0,0]
 Cursor.row=0
 Cursor.column=0
-<<<<<<< HEAD
-TopSubLine=9
-=======
 TopSubLine=0
->>>>>>> origin/master
 
 [Frame6]
-Columns=1
-Rows=1
-Flags=0
-ShowCmd=1
-MinPos.x=-1
-MinPos.y=-1
-MaxPos.x=-9
-MaxPos.y=-34
-NormalPos.left=168
-NormalPos.top=168
-NormalPos.right=1550
-NormalPos.bottom=646
-Class=CLatexEdit
-Document=tex\chapter1.tex
-
-[Frame6_Row0]
-cyCur=410
-cyMin=10
-
-[Frame6_Col0]
-cxCur=1339
-cxMin=10
-
-[Frame6_View0,0]
-Cursor.row=0
-Cursor.column=0
-TopSubLine=0
-
-[Frame7]
 Columns=1
 Rows=1
 Flags=0
@@ -230,24 +197,20 @@ NormalPos.bottom=674
 Class=CLatexEdit
 Document=tex\chapter2.tex
 
-[Frame7_Row0]
+[Frame6_Row0]
 cyCur=410
 cyMin=10
 
-[Frame7_Col0]
+[Frame6_Col0]
 cxCur=1339
 cxMin=10
 
-[Frame7_View0,0]
+[Frame6_View0,0]
 Cursor.row=35
 Cursor.column=226
-<<<<<<< HEAD
-TopSubLine=30
-=======
-TopSubLine=47
->>>>>>> origin/master
+TopSubLine=50
 
-[Frame8]
+[Frame7]
 Columns=1
 Rows=1
 Flags=0
@@ -263,20 +226,20 @@ NormalPos.bottom=702
 Class=CLatexEdit
 Document=tex\chapter4.tex
 
-[Frame8_Row0]
+[Frame7_Row0]
 cyCur=410
 cyMin=10
 
-[Frame8_Col0]
+[Frame7_Col0]
 cxCur=1339
 cxMin=10
 
-[Frame8_View0,0]
+[Frame7_View0,0]
 Cursor.row=1
 Cursor.column=1
 TopSubLine=0
 
-[Frame9]
+[Frame8]
 Columns=1
 Rows=1
 Flags=0
@@ -292,20 +255,20 @@ NormalPos.bottom=498
 Class=CLatexEdit
 Document=tex\title.tex
 
-[Frame9_Row0]
+[Frame8_Row0]
 cyCur=402
 cyMin=10
 
-[Frame9_Col0]
+[Frame8_Col0]
 cxCur=1339
 cxMin=10
 
-[Frame9_View0,0]
+[Frame8_View0,0]
 Cursor.row=11
 Cursor.column=0
 TopSubLine=0
 
-[Frame10]
+[Frame9]
 Columns=1
 Rows=1
 Flags=0
@@ -321,15 +284,15 @@ NormalPos.bottom=526
 Class=CLatexEdit
 Document=tex\chapter6.tex
 
-[Frame10_Row0]
+[Frame9_Row0]
 cyCur=402
 cyMin=10
 
-[Frame10_Col0]
+[Frame9_Col0]
 cxCur=1339
 cxMin=10
 
-[Frame10_View0,0]
+[Frame9_View0,0]
 Cursor.row=0
 Cursor.column=0
 TopSubLine=0
