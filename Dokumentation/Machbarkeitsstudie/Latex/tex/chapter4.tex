@@ -1,5 +1,7 @@
-\chapter{Technische Machbarkeit}\label{chapter:Technische Machbarkeit}
-\section{Variantenbildung}
+\chapter{Technische Machbarkeit}\label{chapter:technische_machbarkeit}
+
+\section{Programmiersprachen}
+
 Die Tradingsoftware kann man in jeder erdenklichen Programmiersprache schreiben, allerdings ist es wichtig daran zu denken, dass das Programm einerseits effizient arbeiten soll und deswegen hardwarenahe rechnet, und andererseits hat das Projektteam mit manchen Programmiersprachen keinerlei Erfahrung.\\
 Die allgemeine Funktionalität muss das Einlesen von Echtzeitdaten der Börse und das Berechnen der Kaufentscheidung sein. Für das Team kommen daher 3 Möglichkeiten in Frage: Eine Lösung in reinem C++, welches sehr hardwarenahe arbeitet, eine Mischung aus F\# und C\#, mit der eine parallelisierte Berechnung möglich wäre, und eine reine F\#-Lösung. \\
 Bei der Kombination agiert C\# als Handlungs- und Steuerkern, als auch zur Kommunikation mit der Website und dem News-Feed und F\# als funktionale Programmiersprache, als Rechenkern und \"Mastermind\" der Applikation, welche die Entscheidungen trifft. Hierbei wird einerseits eine enorm hohe Arbeitsgeschwindigkeit ermöglicht, da die beiden Sprachen relativ hardwarenah agieren und andererseits besteht der nicht zu unterschätzende Vorteil bzw. die Möglichkeit, den Rechenkern auf ein externes System outzusourcen, welches zum Beispiel enorme Rechenkapazitäten aufweisen könnte und somit viel komplexere und effizientere Algorithmen in annehmbarer Zeit durchrechnen und abhängig davon mehr gewinnbringende Entscheidungen treffen könnte. Dabei sollte es auch bei späteren Erweiterungen des Programms zu keinem signifikanten Geschwindigkeitsabfall kommen. Ein weiterer Vorteil einer F\# Lösung beziehungsweise einer Kombination wäre eine leicht auswechselbare Datei, die das Einfügen der eigenen Algorithmen erleichtert und ermöglicht.
@@ -54,3 +56,38 @@ Endreihung &3&2&1\\ \hline
 \end{center}
 
 Aus der Nutzwertanalyse kann man entnehmen, dass die C\#/F\# Kombination als die favorisierte Möglichkeit ausgeht, weitere Vorteile die sich aus der Wahl dieser Mischung ergeben sind: gute Kenntnisse der Programmiersprachen, tolle Community und die Einfachheit, sowie die Erweiterbarkeit. Bei dieser Lösung wird die Steuereinheit vom C\# Teil des Programms übernommen und die Rechenaufgaben werden von dem F\# Teil bearbeitet. Außerdem ist das .net-Framework sehr beliebt, deswegen kann man damit rechnen das bei einem Problem genügend Helfer gefunden werden können.
+
+\section{Websprachen}
+
+Bei der Wahl der Technologie zur Umsetzung der Web-Controlling-Oberfläche müssen auf einige Kriterien geachtet werden, um zu einer Entscheidung zu kommen.
+Die Sprache muss es ermöglichen, eventuell durch API-Zugriff, hinreichend komplexe Charts zu generieren, um alle gewünschten Indikatoren und Preisentwicklungen nahe der gewünschten Form darzustellen.
+Außerdem muss ein Zugriff auf eine mit der Software gemeinen Datenbank möglich sein, um Kurswerte und eventuell andere berechneten Daten zur Darstellung abzufragen.\\
+	Zur Durchführung der Webfunktionalität kommen folgende Sprachen in die engere Auswahl.
+
+\begin{itemize}
+	\item PHP
+	\item ASP.NET
+	\item Java Servlet mit JSP
+\end{itemize}
+
+Der augenscheinliche Vorteil von PHP ist die bereits gesammelte Erfahrung des Projektteams mit der Sprache. Ansonsten sind die Chartingfunktionen beispielsweise durch die pChart Bibliothek bereitgestellt. \footnote{url{http://www.pchart.net/}} pChart bietet verschiedene Varianten zur Darstellung an. Unter anderem Line-Charts, Candle-Charts und Indikatoren.\\
+\\
+ASP.NET bietet den Vorteil einer komplett homogenen Integration der Website mit der Software, da sowohl ASP.NET, als auch C\# die Windows .NET-Library benutzt. Zur Kommunikation kann \gls{wcf} WCF (Windows Communication Foundation), eine Sammlung von Kommunikationswerzeugen zwischen verteilten Systemen innerhalb von .NET. Außerdem ist, angenommen man bleibt in der Windows-Welt, sowohl die Implementierung, als auch die Separation of Concerns (SoC) einfacher umzusetzen. Mit Hilfe von \gls{wcf} kann der Aufruf von entfernten Methoden sogar über JavaScript geregelt werden, um eine noch stärkere logische Trennung zwischen Software- und Websitefunktionalität zu schaffen.\\
+	Die Chartingfunktionen können seit .NET-Version 3.5 direkt mit dem inkludierten Framework "Chart Controls for .NET" und dem ASP-Chart-Tag umgesetzt werden. Das Framework unterstützt unter anderem auch "Advanced Financial Charts". \footnote{url{http://www.microsoft.com/en-us/download/details.aspx?id=11001\#overview}}\\
+\\
+Die Variante mit Java Servlets und JSP ergab sich in der Nachforschung als ungünstig, da zur homogenen Umsetzung die Software mit Java implementiert werden müsste, was u.a. aus Performancegründen ausgeschlossen wurde. Ohne die Logikklassen in Java zu programmieren ergibt sich aus diesem Ansatz kein Vorteil.\\
+\\
+Das wahrscheinlich wichtigste Kriterium zur Wahl der Sprache ist die Kommunikation zwischen der C\# Software und der Website. Für eine genauere Beschreibung der Datenschnittstellen siehe \ref{section:datenschnittstellen}.
+
+\section{Datenschnittstellen} \label{section:datenschnittstellen}
+
+Software <-> Website (Controlling)
+Software -> Datenbank <- Website (Kursdaten)
+
+* CGI (Ausführung über CommandLine)
+* Streams/Sockets
+* Datenbank (Problem: Pull-Ansatz)
+* WebServices
+* WCF
+
+* Entgültige Wahl der Websprache (ASP.NET)
