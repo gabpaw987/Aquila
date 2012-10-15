@@ -81,13 +81,24 @@ Das wahrscheinlich wichtigste Kriterium zur Wahl der Sprache ist die Kommunikati
 
 \section{Datenschnittstellen} \label{section:datenschnittstellen}
 
-Software <-> Website (Controlling)
-Software -> Datenbank <- Website (Kursdaten)
+Grundsätzlich soll es zwei große Datenschnittstellen geben. Die eine befindet sich zwischen der Software und der Website und ist hauptsächlich für die Bereitstellung der Controlling-Funktionen notwendig. Die andere besteht eigentlich wieder aus zwei einzelnen Schnittstellen, zur Kommunikation jeweils der Website und der Software mit der Datenbank.
 
-* CGI (Ausführung über CommandLine)
-* Streams/Sockets
-* Datenbank (Problem: Pull-Ansatz)
-* WebServices
-* WCF
+\subsection{Schnittstellen zwischen Software und Website}
 
-* Entgültige Wahl der Websprache (ASP.NET)
+Diese ist die kompliziertere Schnittstelle, da an sie hohe Anforderungen gestellt werden. Sie soll hoch leistungsfähig und gleichzeitig einfach zu implementieren sein. Für diese Art von Schnittstellen kommen grundsätzlich einige Varianten in Frage. Ich werden nun versuchen jede dieser Varianten inklusive ihrer Vor- und Nachteile zu erläutern und anschließend ein Conclusio zu treffen, welches die Sprache ergeben soll, die sich am Besten eignet.\\
+\\
+Die erste Möglichkeit wäre CGI. Damit können von der Website aus, lokale Zugriffe, über das Ausführen von Commandline-Befehlen, abgesetzt werden. Dies wäre Grundsätzlich kein schlechter Ansatz, das größte Problem hierbei ist leider nur, dass man die Website und die Software auf dem gleichen physikalischen Server laufen lassen muss. Außerdem kann es dabei zu Problemen mit den Zugriffsrechten kommen. Dazu entstehen Unsicherheiten, da ein Hacker beispielsweise nur die Website knacken muss und damit auf den gesamten Server zugreifen kann.\\
+\\
+Die zweite Realisierungsmöglichkeit wäre über Streams, die an Sockets angehängt werden. Dabei müssen sich allerdings ebenfalls der Webserver und der Server mit der Software im selben Netzwerk befinden. Dies kann zwar über neue Mechanismen umgangen werden, wird aber noch nicht als schöner Stil angesehen und ist damit für unseren Verwendungszweck eher ungeeignet.\\
+\\
+Eine weitere Möglichkeit wäre es, diese Schnittstelle ebenfalls über eine Datenbank zu realisieren. Dabei müsste die Website die Controlling-Parameter auf der Website abspeichert und die Software fragt z.B. einmal in der Sekunde nach, ob schon neue Controlling-Parameter vorliegen. Dies wäre an sich keine so schlechte Möglichkeit, da für die Übermittlung der Kursdaten ja bereits sowieso eine Datenbank vorliegt und man diese einfach erweitern könnte. Allerdings entspricht die Performance dieser Lösung nicht ganz unseren Vorstellungen, da die Software wie gesagt immer nachfragen müsste, ob Änderungen vorliegen. Dadurch wird einerseits die Dauer verlängert, bis die Controlling-Operation durchgeführt wird und andererseits entsteht ein nicht zu vernachlässigender Aufwand durch die regelmäßigen Anfragen an die Datenbank.\\
+\\
+Außerdem möglich wäre eine Realisierung dieser Schnittstelle über einfache Web\-services. Dies würde, genauso wie die Realisierung über eine Datenbank, eine Kommunikation über das Internet ermöglichen. Allerdings sind einfache Web\-services aufwändig zu implementieren. Für die Windows-Umgebung auf die das Projektteam abzielt gibt es allerdings eine einfach Möglichkeit zur Implementierung von solchen Websites.\\
+\\
+Diese heißt \gls{wcf}. Es handelt sich dabei um ein sehr mächtiges Framework von Microsoft, dass z.B. Webservices angenehm implementieren lässt. Es hat eine Unzahl an Funktionen, ermöglicht eine Kommunikation über das Internet und ist zudem extrem Leistungsfähig und vergleichsweise simpel in der Implementierung. Außerdem ist es von Microsoft und kann somit perfekt sowohl in unsere C\#/F\#-Umgebung, als auch in unsere ASP.NET-Webumgebung integriert werden. Aufgrund all dieser Vorteile ergibt sich also die Realisierung der direkten Schnittstelle zwischen Website und Software mittels \gls{wcf} als die favorisierte Möglichkeit.
+
+\subsection{Schnittstelle der Software und der Website zur Datenbank}
+
+Das diese Schnittstelle in einer einfachen Form realisiert werden kann ist eigentlich klar, da es auch wenig sinnvolle Alternativen dafür gibt. Worin man allerdings unterscheiden kann ist im gewählten \gls{dbms}. Es liegt hierbei eigentlich nur die Wahl zwischen MySQL und PostgreSQL, da das Projektteam nur in diesen beiden Erfahrung hat und es auch keine anderen preislich und leistungsmäßig ansprechenden Alternativen gibt.
+
+Zwischen MySQL und PostgreSQL entscheiden eigentlich hauptsächlich die Lizenzen. MySQL kostet bei kommerzieller Nutzung Geld. Wohingegen PostgreSQL Open-source ist und auch bei kommerzieller Nutzung kostenfrei bleibt. Aufgrund des stark beschränkten Kapitals entscheidet das Projektteam also hier klar für PostgreSQL. Außerdem besitzt das Projektteam, wie bereits erwähnt, schon Erfahrung im Umgang mit PostgreSQL und somit wird ein erlernen eines neuen SQL-Dialekts auch nicht benötigt.
