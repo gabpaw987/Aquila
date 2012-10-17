@@ -1,6 +1,7 @@
 /*.bat
 /*.xdy
 /*.toc
+<<<<<<< HEAD
 /*.acn
 /*.aux
 /*.glo
@@ -10,3 +11,13 @@
 /*.nlo
 /*.out
 /*.pdf
+/Aquila_Pflichtenheft.acn
+/Aquila_Pflichtenheft.aux
+/Aquila_Pflichtenheft.glo
+/Aquila_Pflichtenheft.lof
+/Aquila_Pflichtenheft.log
+/Aquila_Pflichtenheft.lol
+/Aquila_Pflichtenheft.nlo
+/Aquila_Pflichtenheft.out
+/Aquila_Pflichtenheft.pdf
+>>>>>>> origin/master
