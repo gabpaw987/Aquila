@@ -3,15 +3,15 @@ Type=TeXnicCenterProjectSessionInformation
 Version=2
 
 [SessionInfo]
-ActiveTab=0
-FrameCount=10
-ActiveFrame=0
+ActiveTab=2
+FrameCount=13
+ActiveFrame=11
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -24,17 +24,17 @@ Class=CLatexEdit
 Document=tex\chapter3.tex
 
 [Frame0_Row0]
-cyCur=641
+cyCur=239
 cyMin=10
 
 [Frame0_Col0]
-cxCur=1670
+cxCur=289
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=154
-Cursor.column=0
-TopSubLine=139
+Cursor.row=44
+Cursor.column=10
+TopSubLine=72
 
 [Frame1]
 Columns=1
@@ -63,7 +63,7 @@ cxMin=10
 [Frame1_View0,0]
 Cursor.row=28
 Cursor.column=81
-TopSubLine=61
+TopSubLine=72
 
 [Frame2]
 Columns=1
@@ -121,7 +121,7 @@ cxMin=10
 [Frame3_View0,0]
 Cursor.row=23
 Cursor.column=50
-TopSubLine=13
+TopSubLine=15
 
 [Frame4]
 Columns=1
@@ -237,7 +237,7 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=97
 Cursor.column=108
-TopSubLine=136
+TopSubLine=127
 
 [Frame8]
 Columns=1
@@ -293,7 +293,94 @@ cxCur=1339
 cxMin=10
 
 [Frame9_View0,0]
+Cursor.row=10
+Cursor.column=0
+TopSubLine=0
+
+[Frame10]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=56
+NormalPos.top=56
+NormalPos.right=1555
+NormalPos.bottom=526
+Class=CLatexEdit
+Document=tex\chapter7.tex
+
+[Frame10_Row0]
+cyCur=402
+cyMin=10
+
+[Frame10_Col0]
+cxCur=1456
+cxMin=10
+
+[Frame10_View0,0]
 Cursor.row=0
 Cursor.column=0
 TopSubLine=0
+
+[Frame11]
+Columns=1
+Rows=1
+Flags=2
+ShowCmd=3
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=112
+NormalPos.top=112
+NormalPos.right=1611
+NormalPos.bottom=582
+Class=CLatexEdit
+Document=tex\Projektplanung.tex
+
+[Frame11_Row0]
+cyCur=641
+cyMin=10
+
+[Frame11_Col0]
+cxCur=1670
+cxMin=10
+
+[Frame11_View0,0]
+Cursor.row=2
+Cursor.column=29
+TopSubLine=0
+
+[Frame12]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=140
+NormalPos.top=140
+NormalPos.right=1639
+NormalPos.bottom=610
+Class=CLatexEdit
+Document=Aquila_Machbarkeitsstudie.tex
+
+[Frame12_Row0]
+cyCur=402
+cyMin=10
+
+[Frame12_Col0]
+cxCur=1456
+cxMin=10
+
+[Frame12_View0,0]
+Cursor.row=274
+Cursor.column=27
+TopSubLine=253
 
