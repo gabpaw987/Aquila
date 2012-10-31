@@ -5,13 +5,13 @@ Version=2
 [SessionInfo]
 ActiveTab=0
 FrameCount=10
-ActiveFrame=7
+ActiveFrame=0
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -24,17 +24,17 @@ Class=CLatexEdit
 Document=tex\chapter3.tex
 
 [Frame0_Row0]
-cyCur=248
+cyCur=641
 cyMin=10
 
 [Frame0_Col0]
-cxCur=295
+cxCur=1670
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=340
-Cursor.column=64
-TopSubLine=0
+Cursor.row=154
+Cursor.column=0
+TopSubLine=139
 
 [Frame1]
 Columns=1
@@ -53,11 +53,11 @@ Class=CLatexEdit
 Document=tex\chapter5.tex
 
 [Frame1_Row0]
-cyCur=228
+cyCur=219
 cyMin=10
 
 [Frame1_Col0]
-cxCur=299
+cxCur=293
 cxMin=10
 
 [Frame1_View0,0]
@@ -82,11 +82,11 @@ Class=CLatexEdit
 Document=tex\abstracta.tex
 
 [Frame2_Row0]
-cyCur=243
+cyCur=234
 cyMin=10
 
 [Frame2_Col0]
-cxCur=973
+cxCur=967
 cxMin=10
 
 [Frame2_View0,0]
@@ -111,11 +111,11 @@ Class=CLatexEdit
 Document=tex\acronyms.tex
 
 [Frame3_Row0]
-cyCur=243
+cyCur=234
 cyMin=10
 
 [Frame3_Col0]
-cxCur=973
+cxCur=967
 cxMin=10
 
 [Frame3_View0,0]
@@ -140,11 +140,11 @@ Class=CLatexEdit
 Document=tex\appendix.tex
 
 [Frame4_Row0]
-cyCur=243
+cyCur=234
 cyMin=10
 
 [Frame4_Col0]
-cxCur=973
+cxCur=967
 cxMin=10
 
 [Frame4_View0,0]
@@ -169,11 +169,11 @@ Class=CLatexEdit
 Document=tex\chapter1.tex
 
 [Frame5_Row0]
-cyCur=419
+cyCur=410
 cyMin=10
 
 [Frame5_Col0]
-cxCur=1345
+cxCur=1339
 cxMin=10
 
 [Frame5_View0,0]
@@ -198,11 +198,11 @@ Class=CLatexEdit
 Document=tex\chapter2.tex
 
 [Frame6_Row0]
-cyCur=419
+cyCur=410
 cyMin=10
 
 [Frame6_Col0]
-cxCur=1345
+cxCur=1339
 cxMin=10
 
 [Frame6_View0,0]
@@ -213,12 +213,12 @@ TopSubLine=38
 [Frame7]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
-MaxPos.x=-8
-MaxPos.y=-30
+MaxPos.x=-9
+MaxPos.y=-34
 NormalPos.left=224
 NormalPos.top=224
 NormalPos.right=1606
@@ -227,17 +227,17 @@ Class=CLatexEdit
 Document=tex\chapter4.tex
 
 [Frame7_Row0]
-cyCur=361
+cyCur=410
 cyMin=10
 
 [Frame7_Col0]
-cxCur=1091
+cxCur=1339
 cxMin=10
 
 [Frame7_View0,0]
 Cursor.row=97
 Cursor.column=108
-TopSubLine=127
+TopSubLine=136
 
 [Frame8]
 Columns=1
@@ -246,8 +246,8 @@ Flags=0
 ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
-MaxPos.x=-8
-MaxPos.y=-30
+MaxPos.x=-9
+MaxPos.y=-34
 NormalPos.left=28
 NormalPos.top=28
 NormalPos.right=1410
@@ -256,11 +256,11 @@ Class=CLatexEdit
 Document=tex\title.tex
 
 [Frame8_Row0]
-cyCur=411
+cyCur=402
 cyMin=10
 
 [Frame8_Col0]
-cxCur=1345
+cxCur=1339
 cxMin=10
 
 [Frame8_View0,0]
@@ -275,8 +275,8 @@ Flags=0
 ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
-MaxPos.x=-8
-MaxPos.y=-30
+MaxPos.x=-9
+MaxPos.y=-34
 NormalPos.left=56
 NormalPos.top=56
 NormalPos.right=1438
@@ -285,11 +285,11 @@ Class=CLatexEdit
 Document=tex\chapter6.tex
 
 [Frame9_Row0]
-cyCur=411
+cyCur=402
 cyMin=10
 
 [Frame9_Col0]
-cxCur=1345
+cxCur=1339
 cxMin=10
 
 [Frame9_View0,0]
