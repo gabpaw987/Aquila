@@ -4,7 +4,7 @@ Version=2
 
 [SessionInfo]
 ActiveTab=0
-FrameCount=4
+FrameCount=6
 ActiveFrame=2
 
 [Frame0]
@@ -61,7 +61,7 @@ cxCur=1456
 cxMin=10
 
 [Frame1_View0,0]
-Cursor.row=4
+Cursor.row=0
 Cursor.column=0
 TopSubLine=0
 
@@ -90,8 +90,8 @@ cxCur=1670
 cxMin=10
 
 [Frame2_View0,0]
-Cursor.row=15
-Cursor.column=97
+Cursor.row=13
+Cursor.column=1
 TopSubLine=0
 
 [Frame3]
@@ -119,6 +119,64 @@ cxCur=1456
 cxMin=10
 
 [Frame3_View0,0]
+Cursor.row=0
+Cursor.column=0
+TopSubLine=0
+
+[Frame4]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=112
+NormalPos.top=112
+NormalPos.right=1611
+NormalPos.bottom=582
+Class=CLatexEdit
+Document=tex\chapter12.tex
+
+[Frame4_Row0]
+cyCur=402
+cyMin=10
+
+[Frame4_Col0]
+cxCur=1456
+cxMin=10
+
+[Frame4_View0,0]
+Cursor.row=0
+Cursor.column=0
+TopSubLine=0
+
+[Frame5]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=140
+NormalPos.top=140
+NormalPos.right=1639
+NormalPos.bottom=610
+Class=CLatexEdit
+Document=tex\acronyms.tex
+
+[Frame5_Row0]
+cyCur=402
+cyMin=10
+
+[Frame5_Col0]
+cxCur=1456
+cxMin=10
+
+[Frame5_View0,0]
 Cursor.row=0
 Cursor.column=0
 TopSubLine=0

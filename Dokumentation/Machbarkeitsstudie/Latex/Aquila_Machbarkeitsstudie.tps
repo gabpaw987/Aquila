@@ -3,15 +3,15 @@ Type=TeXnicCenterProjectSessionInformation
 Version=2
 
 [SessionInfo]
-ActiveTab=2
+ActiveTab=0
 FrameCount=13
-ActiveFrame=11
+ActiveFrame=0
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -24,17 +24,17 @@ Class=CLatexEdit
 Document=tex\chapter3.tex
 
 [Frame0_Row0]
-cyCur=239
+cyCur=641
 cyMin=10
 
 [Frame0_Col0]
-cxCur=289
+cxCur=1670
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=44
-Cursor.column=10
-TopSubLine=72
+Cursor.row=326
+Cursor.column=12
+TopSubLine=186
 
 [Frame1]
 Columns=1
@@ -121,7 +121,7 @@ cxMin=10
 [Frame3_View0,0]
 Cursor.row=23
 Cursor.column=50
-TopSubLine=15
+TopSubLine=17
 
 [Frame4]
 Columns=1
@@ -237,7 +237,7 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=97
 Cursor.column=108
-TopSubLine=127
+TopSubLine=137
 
 [Frame8]
 Columns=1
@@ -329,8 +329,8 @@ TopSubLine=0
 [Frame11]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -343,16 +343,16 @@ Class=CLatexEdit
 Document=tex\Projektplanung.tex
 
 [Frame11_Row0]
-cyCur=641
+cyCur=402
 cyMin=10
 
 [Frame11_Col0]
-cxCur=1670
+cxCur=1456
 cxMin=10
 
 [Frame11_View0,0]
-Cursor.row=2
-Cursor.column=29
+Cursor.row=0
+Cursor.column=0
 TopSubLine=0
 
 [Frame12]

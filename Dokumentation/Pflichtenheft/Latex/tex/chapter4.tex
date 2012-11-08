@@ -2,7 +2,7 @@
 
 \section{Funktionen der Website}
 
-/LF10/\\
+/F010/\\
 \textit{Charts darstellen}
 
 \begin{center}
@@ -10,19 +10,19 @@
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Charts zur Darstellung der Algorithmen werden auf der Website angezeigt. Dabei muss
-besonders auf die Schnittstelle zur bereits bestehenden Software geachtet werden. Diese kann
-zum Beispiel über Webservices oder Datenbanken implementiert werden.\\  \hline
+besonders auf die Schnittstelle zur bereits bestehenden Software geachtet werden. Dies wird über
+eine Sicherung der darzustellenden Daten in einer Datenbank realisiert.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Darstellung von Charts mit den Algorithmusnberechnungen auf der Website. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF20/\\
+/F020/\\
 \textit{Account-Management bereitstellen}
 
 \begin{center}
@@ -30,7 +30,9 @@ Nachbedingungen & - \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Über zumindest einen primären Account kann sich ein Benutzer anmelden, um alle sämtliche
-Controlling-Funktionen der Webseite durchführen zu können.\\  \hline
+Controlling-Funktionen der Webseite durchführen zu können. Außerdem kann der Benutzer über diesen Account
+ein Portfolio aus Aktien auswählen, die er beobachtet. Zu diesem Portfolio kann sich der Benutzer
+dann alle Charts und Entscheidungen, die Aquila erzeugt, anzeigen lassen.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Benutzer sollen Accounts erstellen können. \\ \hline
@@ -41,16 +43,15 @@ Nachbedingungen & - \\ \hline
 
 \end{center}
 
-/LF30/\\
+/F030/\\
 \textit{News anzeigen}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Wenn möglich können Nachrichten-Headlines, die gehandelte Aktien beeinflussen auf der
-Webseite angezeigt werden. Ein Beispiel wäre der Bloomberg-Newsfeed, der auch vom
-Programm benutzt werden könnte.\\  \hline
+Beschreibung & Es werden Nachrichten-Headlines, die gehandelte Aktien beeinflussen auf der
+Webseite angezeigt werden. Dafür wird ein frei zugänglicher RSS-Feed verwendet.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Anzeigen von einschlägigen News auf der Website. \\ \hline
@@ -63,16 +64,16 @@ Nachbedingungen & - \\ \hline
 
 \subsection{Controlling-Funktionen der Website}
 
-/LF40/\\
+/F040/\\
 \textit{Website-Software-Schnittstelle implementieren}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Um die Software von der Website aus kontrollieren zu können wird eine Schnittstelle
-benötigt, diese kann zum Beispiel über Datenbanken, Streams oder Webservices realisiert
-werden.\\  \hline
+Beschreibung & Um die Software von der Website aus kontrollieren zu können, wird eine Schnittstelle
+benötigt. Diese wird über \gls{wcf} realisiert und soll einfach alle Einstellungen, die auf der Website
+getätigt werden, in die Software integrieren. \\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software, Website \\ \hline
 Ziel & Software und Website sollen kommunizieren können. \\ \hline
@@ -83,7 +84,7 @@ Nachbedingungen & - \\ \hline
 
 \end{center}
 
-/LF41/\\
+/F041/\\
 \textit{Investitionskapital einstellen}
 
 \begin{center}
@@ -95,14 +96,14 @@ werden.\\  \hline
 Akteure & Benutzer \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Einstellung des Investitionskapitals der Software. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren, /F200/ Laufzeitparameter ändern \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF42/\\
+/F042/\\
 \textit{Handeln starten}
 
 \begin{center}
@@ -113,14 +114,14 @@ Beschreibung & Das Handeln des Programms soll mittels einer Usereingabe auf der 
 Akteure & Benutzer \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Starten des Handelns von der Website in der Software. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren, /F200/ Laufzeitparameter ändern \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF43/\\
+/F043/\\
 \textit{Handeln stoppen}
 
 \begin{center}
@@ -131,14 +132,14 @@ Beschreibung & Das Handeln der Software soll mittels einer Usereingabe auf der W
 Akteure & Benutzer \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Stoppen des Handelns von der Website in der Software. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren, /F200/ Laufzeitparameter ändern \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF44/\\
+/F044/\\
 \textit{Entscheidungsmodus ändern}
 
 \begin{center}
@@ -146,51 +147,53 @@ Nachbedingungen & - \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Der User muss von der Website zwischen einem automatischen und einem manuellen Modus wählen
-können; bei dem automatischen Modus soll die Software automatisiert entscheiden und
-handeln; bei dem manuellen Modus wird der User mittels einer Benachrichtigung (siehe
-/LF160/) zum Entscheiden aufgefordert.\\  \hline
+können. Beim automatischen Modus soll die Software automatisiert entscheiden und
+handeln. Beim manuellen Modus wird der User mittels einer Benachrichtigung (siehe
+/F160/) zum Entscheiden aufgefordert.\\  \hline
 Akteure & Benutzer \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Man soll von der Website aus in der Software zwischen einem manuellen und einem automatischen Handelsmodus wählen können. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren, /F200/ Laufzeitparameter ändern \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF45/\\
+/F045/\\
 \textit{Benachrichtigungen verschicken}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Dem User wird zum Beispiel mittels SMS, E-Mail oder Push-Benachrichtigung der
-Handlungsvorschlag zugesandt.\\  \hline
+Beschreibung & Dem User wird zum Beispiel mittels SMS jeder
+Handlungsvorschlag zugesandt. Er muss dafür einen eigenen SMS-Server oder -Gateway auf der Website
+spezifizieren über den die SMS versendet werden und somit auch alle Kosten, die durch
+den Versand der SMS anfallen, selbst übernehmen.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Der User wird über Handelsvorschläge informiert. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF46/\\
+/F046/\\
 \textit{Aktie auswählen}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Der User kann auf der Website aus einer prädefinierten Liste die gewünschten Aktien zum Handeln mit der Software
+Beschreibung & Der User kann auf der Website aus einer zuvor definierten Liste die gewünschten Aktien zum Handeln mit der Software
 selektieren.\\  \hline
 Akteure & Benutzer \\ \hline
 Teilsystem & Website \\ \hline
 Ziel & Möglichkeit von der Website, die Aktien mit denen die Software handelt auszuwählen. \\ \hline
-Vorbedingungen & /LF40/ Website-Software-Schnittstelle implementieren, /LF200/ Laufzeitparameter ändern \\ \hline
+Vorbedingungen & /F040/ Website-Software-Schnittstelle implementieren, /F200/ Laufzeitparameter ändern \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
@@ -241,44 +244,45 @@ Anzeigen von Charts und Entscheidungen (Erfolg)
 
 \section{Funktionen der Website}
 
-/LF110/\\
+/F110/\\
 \textit{Input speichern}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Die vom Datenprovider ausgesendeten Daten (als Bars) sollen gespeichert werden, um später
+Beschreibung & Die vom Datenprovider empfangenen Bars sollen entsprechend gespeichert werden, um später
 weiter verarbeitet werden zu können.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Speichern der historischen und aktuellen Aktiendaten vom Datenprovider. \\ \hline
-Vorbedingungen & /LF180/ Kursdaten beziehen \\ \hline
-Nachbedingungen & /LF120/ Bars weiterleiten \\ \hline
+Vorbedingungen & /F180/ Kursdaten beziehen \\ \hline
+Nachbedingungen & /F120/ Bars weiterleiten \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF120/\\
+/F120/\\
 \textit{Bars weiterleiten}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Der bisherige Kurs in Form von Bars wird an den Rechenkern übergeben.\\  \hline
+Beschreibung & Der bisherige Kurs in Form von Bars wird an den Rechenkern übergeben, damit
+dieser mit Hilfe des Algorithmus Entscheidungen treffen und Signale generieren kann.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
-Ziel & Transfer der Daten aus "`/LF110/ Input speichern"' in den Rechenkern \\ \hline
-Vorbedingungen & /LF110/ Input speichern \\ \hline
-Nachbedingungen & /LF130/ Entscheidung berechnen \\ \hline
+Ziel & Transfer der Daten aus "`/F110/ Input speichern"' in den Rechenkern \\ \hline
+Vorbedingungen & /F110/ Input speichern \\ \hline
+Nachbedingungen & /F130/ Entscheidung berechnen \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF130/\\
+/F130/\\
 \textit{Entscheidung berechnen}
 
 \begin{center}
@@ -286,18 +290,19 @@ Nachbedingungen & /LF130/ Entscheidung berechnen \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Der Rechenkern soll aufgrund des Entscheidungsalgorithmus berechnen, wie das Wertpapier
-am besten zu behandeln ist (buy, sell, hold).\\  \hline
+am besten zu behandeln ist (buy, sell, hold). Dafür wird ein bereits bestehender Algorithmus verwendet,
+bei dem sicher gestellt werden kann, dass er einwandfrei und korrekt funktioniert.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Kaufs- oder Verkaufsentscheidung berechnen. \\ \hline
-Vorbedingungen & /LF120/ Bars weiterleiten \\ \hline
-Nachbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+Vorbedingungen & /F120/ Bars weiterleiten \\ \hline
+Nachbedingungen & /F140/ Entscheidung ausgeben \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF140/\\
+/F140/\\
 \textit{Entscheidung ausgeben}
 
 \begin{center}
@@ -305,18 +310,18 @@ Nachbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Die berechnete Entscheidung wird aus dem Rechenkern in den Verarbeitungskern geleitet,
-wo sie einerseits in der ausgegeben und andererseits ausgeführt werden.\\  \hline
+wo sie einerseits in ausgegeben und andererseits ausgeführt werden.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Anzeige und Durchführung der Entscheidung. \\ \hline
-Vorbedingungen & /LF130/ Entscheidung berechnen \\ \hline
-Nachbedingungen & /LF150/ Wertpapier kaufen oder /LF160/ Wertpapier verkaufen \\ \hline
+Vorbedingungen & /F130/ Entscheidung berechnen \\ \hline
+Nachbedingungen & /F150/ Wertpapier kaufen oder /F160/ Wertpapier verkaufen \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF150/\\
+/F150/\\
 \textit{Wertpapier kaufen}
 
 \begin{center}
@@ -327,14 +332,14 @@ Beschreibung & Das System kauft über den Online-Broker-Account eine bestimmte An
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Kaufen eine Wertpapiers. \\ \hline
-Vorbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+Vorbedingungen & /F140/ Entscheidung ausgeben \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF160/\\
+/F160/\\
 \textit{Wertpapier verkaufen}
 
 \begin{center}
@@ -346,14 +351,14 @@ Anzahl an Wertpapieren.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Verkauf eines Wertpapiers. \\ \hline
-Vorbedingungen & /LF140/ Entscheidung ausgeben \\ \hline
+Vorbedingungen & /F140/ Entscheidung ausgeben \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF170/\\
+/F170/\\
 \textit{Log erstellen}
 
 \begin{center}
@@ -361,18 +366,19 @@ Nachbedingungen & - \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Das System legt beim Programmstart lokal ein Log-File an, indem alle Entscheidungen
-versehen mit Datum und Uhrzeit während dem Programmlauf eingetragen werden.\\  \hline
+versehen mit Datum und Uhrzeit während dem Programmlauf eingetragen werden. Besondere Fehler oder
+Probleme, die während des Programmlaufs auftreten werden ebenfalls im Log-File vermerkt. \\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Erstellung eines Log-Files. \\ \hline
-Vorbedingungen & /LF150/ Wertpapier kaufen oder /LF160/ Wertpapier verkaufen \\ \hline
+Vorbedingungen & /F150/ Wertpapier kaufen oder /F160/ Wertpapier verkaufen \\ \hline
 Nachbedingungen & - \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF180/\\
+/F180/\\
 \textit{Kursdaten beziehen}
 
 \begin{center}
@@ -380,19 +386,18 @@ Nachbedingungen & - \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Die Software muss eine Schnittstelle zum Beziehen von sowohl aktuellen als auch historischen
-Bars besitzen. Diese kann zum Beispiel über e-Signal oder Interactive Brokers realisiert
-werden.\\  \hline
+Bars besitzen. Diese wird zum Beziehen eines großen Spektrums an Daten über eSignal realisiert.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Beziehen der Daten von einem der genannten Datenprovider. \\ \hline
 Vorbedingungen & - \\ \hline
-Nachbedingungen & /LF110/ Input speichern \\ \hline
+Nachbedingungen & /F110/ Input speichern \\ \hline
 
 \end{tabular}
 
 \end{center}
 
-/LF190/\\
+/F190/\\
 \textit{Datenbankverbindung bereitstellen}
 
 \begin{center}
@@ -400,7 +405,8 @@ Nachbedingungen & /LF110/ Input speichern \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Das Programm muss eine Datenbankschnittstelle erhalten und die berechneten Daten für die
-Website erreichbar machen.\\  \hline
+Website erreichbar machen. Es müssen damit alle Entscheidungen, Signale und Diagrammrelevante Daten
+für die Website zugänglich gemacht werden, um es ihr zu ermöglichen alle Signale und Diagramme optimal darzustellen. \\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Datenbankschnittstelle zur Sicherung von Daten implementieren. \\ \hline
@@ -411,15 +417,15 @@ Nachbedingungen & - \\ \hline
 
 \end{center}
 
-/LF200/\\
+/F200/\\
 \textit{Laufzeitparameter ändern}
 
 \begin{center}
 
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
-Beschreibung & Um die Controlling-Funktionen zu ermöglichen muss das Programm genauer
-parametrisierbar sein. Es sollen zum Beispiel die Einstellungen auch während der Laufzeit
+Beschreibung & Um die Controlling-Funktionen zu ermöglichen, muss das Programm genauer
+parametrisierbar sein. Das heißt es sollen alle Controlling-Einstellungen (/F041/ - /F046/) auch während der Laufzeit
 verändert werden können.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
@@ -431,7 +437,7 @@ Nachbedingungen & - \\ \hline
 
 \end{center}
 
-/LF210/\\
+/F210/\\
 \textit{Multi-Threading ermöglichen}
 
 \begin{center}
@@ -439,7 +445,7 @@ Nachbedingungen & - \\ \hline
 \begin{tabular}{ | l | p{10cm} |}
 \hline 
 Beschreibung & Die Software muss Multi-Threading unterstützen, um die Entscheidung über automatisches
-Kaufen und Verkaufen von verschiedenen Aktien gleichzeitig zu treffen.\\  \hline
+Kaufen und Verkaufen von mehreren verschiedenen Aktien gleichzeitig treffen zu können.\\  \hline
 Akteure & System \\ \hline
 Teilsystem & Software \\ \hline
 Ziel & Mehrere Aktien sollen gleichzeitig beachtet werden. \\ \hline
