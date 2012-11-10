@@ -2,13 +2,6 @@
 
 \chapter{Voruntersuchung} \label{chapter:voruntersuchung}
 
-\begin{quotation}
-``The improvement of \textbf{understanding} is for two ends: first, our own increase of knowledge; secondly, \textit{to enable us to deliver} that knowledge to others.``
-\begin{flushright}
-(John Locke)
-\end{flushright}
-\end{quotation}
-
 \section{IST-Erhebung}
 
 Der Wertpapierhandel erfährt eine zunehmende Professionalisierung, was dazu führt dass sowohl professionelle Trader in großen Unternehmen, als auch semiprofessionelle mit immer größeren Datenmengen, mehr Informationen und durch schnellere Märkte gleichzeitig kürzeren Entscheidungdauern konfrontiert werden.\\
@@ -20,8 +13,7 @@ Die Anbindung des Datenproviders kann über \gls{dde} erfolgen.\\
 \\
 Um eine individuelle Trading-Strategie zu verwirklichen werden oft Online-Broker verwendet,
 über die resultierende Orders direkt mit vergleichsweise niedrigen Spesen abgewickelt werden können
-und algorithmisches Trading überhaupt erst praktisch möglich wird. \gls{ib}
-\footnote{http://www.interactivebrokers.com/ibg/main.php} ist ein erwähnenswertes Beispiel eines solchen.
+und algorithmisches Trading überhaupt erst praktisch möglich wird. \gls{ib}\footnote{http://www.interactivebrokers.com/ibg/main.php} ist ein erwähnenswertes Beispiel eines solchen.
 Für \gls{ib} ist bereits ein Test-Account vorhanden, über den Transaktionen virtuell durchgeführt werden können.
 \\
 Im Bereich des algorithmischen Tradings sind bei high-performance Anwendungen C, C++ und deren Derivate sehr beliebt, bei Anwendungen, die nicht innerhalb von Sekundenbruchteilen operieren wird die .NET Umgebung unter Windows häufig verwendet.\\
@@ -40,24 +32,22 @@ Neben der proprietären Software gibt es auch einige wenige Anbiter, die teilweis
 Aktuelle bietet Metatrader mit der Trading-Plattform Metatrader5 eine Komplettlösung, die primär auf den Handel auf dem \gls{forex} ausgelegt ist, aber auch Futures, Options und Aktien handeln kann. Die Funktionen sind dabei recht umfangreich, es werden alle üblichen Order-Typen unterstützt, Technische Hilfsmittel, wie Indikatoren werden außerdem zur Verfügung gestellt.\\
 Das Interface bietet eine simple Möglichkeit zwischen mehreren Accounts zu wechseln und auf diesem mit unterschiedlichen Handelsstragien zu verfahren. Umgekehrt ist es auch sehr einfach mit einem einzigen Account auf verschiedenen Märkten gleichzeitig zu traden.\\
 \\
-Neben manuellem Handel aufgrund von Chartsanalyse und technischen Indikatoren gibt es auch eine Möglichkeit diesen zu automatisieren und mithilfe von sogenannten \emph{Expert Advisors} Kaufentscheidungen zu generieren. Zusätzlich stellt Metatrader die proprietäre Programmiersprache \emph{MQL5} zur Verfügung mit der bestehende Bestandteile verändert werden können und neue Expert Advisors programmiert werden können.
-\footnote{http://www.metaquotes.net/en/metatrader5}\\
-In einem Test von Forextraders schneidet die neue Plattform durchgehend gut ab, wobei besonders die ergänzten Indikatoren gelobt werden.
-\cite{forextraders_mt5_rev}
+Neben manuellem Handel aufgrund von Chartsanalyse und technischen Indikatoren gibt es auch eine Möglichkeit diesen zu automatisieren und mithilfe von sogenannten \emph{Expert Advisors} Kaufentscheidungen zu generieren. Zusätzlich stellt Metatrader die proprietäre Programmiersprache \emph{MQL5} zur Verfügung mit der bestehende Bestandteile verändert werden können und neue Expert Advisors programmiert werden können.\footnote{http://www.metaquotes.net/en/metatrader5}\\
+In einem Test von Forextraders schneidet die neue Plattform durchgehend gut ab, wobei besonders die ergänzten Indikatoren gelobt werden. \cite{forextraders-mt5}
 
 \subsection{GodmodeTrader}
 
 Ein Anbieter, der Chart-Analysen und aktuelle spezifische Investmenttipps anbietet ist GodmodeTrader. Es werden sowohl gratis Artikel zur Verfügung gestellt, als auch eine Mitgliedschaft (GoldMember für \euro{9.90} monatlich) angeboten, die Zugriff auf kostenpflichtige Trading-Services und Expertentipps erlaubt.\\
 Die GoldMember-Mitgliedschaft beeinhaltet elaborierte Chartanalysen und Empfehlungen zu Risikomanagement. Mit \emph{Pattern Scout} wird ebenfalls eine automatische Überwachung von verschiedenen Kursformationen und -entwicklungen angeboten.\\
 \\
-Im Vergleich zu Metatrader bieten GodmodeTrader theoretisches Wissen und Empfehlungen, Entscheidungen können in einem Muster-Depot durchgespielt werden. Bei Metatrader liegt der Fokus stärker auf dem praktischen Abwickeln von Transaktionen, auch algorithmisch.\\
+Im Vergleich zu Metatrader bieten GodmodeTrader theoretisches Wissen und Empfehlungen. Entscheidungen können in einem Muster-Depot durchgespielt \linebreak werden. Bei Metatrader liegt der Fokus stärker auf dem praktischen Abwickeln von Transaktionen, auch algorithmisch.\\
 
 \subsection{Managed Account}
 
 Ohne auf einen speziellen Managed-Account Anbieter genauer einzugehen soll die Funktionsweise kurz erklärt werden. Der Kunde hat dabei ein Konto bei einer Bank für das er einem Trader eine Handelserlaubnis erteilt. Dieser kann das Geld weder abheben, noch überweisen, sondern nur Trades durchführen. Dabei sollte das zusätzliche Risiko nicht außer Acht gelassen werden.\\
 Die festgelegt Mindesteinlage auf dem Konto variiert zwischen verschiedenen Anbietern, kann aber von einigen zehntausenden bis in die hunderttausende Euro oder mehr reichen.\\
 Die Honorierung des Account-Managers ist dabei fast ausschließlich gewinnbeteiligt und kann in einem höheren zweistelligen Prozentbereich liegen.
-(vlg. \cite{charttec_managed_account}
+(vlg. \cite{charttec-managed-accounts}
 
 \section{SOLL-Zustand}
 
