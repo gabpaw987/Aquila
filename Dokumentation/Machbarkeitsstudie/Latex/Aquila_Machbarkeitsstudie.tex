@@ -32,6 +32,8 @@
 \usepackage{multirow}
 \usepackage{eurosym}
 \usepackage{array}
+\usepackage{capt-of}
+
 
 %%-----------------------------------------------------------------------
 % Makro for thick table lines
@@ -219,6 +221,8 @@
 \include{tex/title}
 \frontmatter%   %% front matter will be numbered in small Roman letters
 
+\input{tex/versionierung}
+
 %%-----------------------------------------------------------------------
 
 
@@ -244,7 +248,7 @@
 \clearpage
 \listoffigures
 \clearpage
-\lstlistoflistings %\listoftables
+%\lstlistoflistings %\listoftables
 \clearpage 
 \markboth{Contents}{Contents}
 
@@ -253,7 +257,7 @@
 %\listoffigures
 %\listoftables%
 %\addcontentsline{toc}{chapter}{\numberline{}\listtablename}%
-\clearpage%
+%\clearpage%
 
 
 \include{tex/nomenclature}
@@ -266,14 +270,14 @@
 
 
 % include chapters
-\include{tex/chapter1}%
-\include{tex/chapter2}%
-\include{tex/chapter3}%
-\include{tex/chapter4}%
-\include{tex/chapter5}%
-\include{tex/chapter6}%
-\include{tex/projektplanung}%
-\include{tex/chapter7}%
+\input{tex/chapter1}%
+\input{tex/chapter2}%
+\input{tex/chapter3}%
+\input{tex/chapter4}%
+\input{tex/chapter5}%
+\input{tex/chapter6}%
+\input{tex/projektplanung}%
+\input{tex/chapter7}%
 
 
 \addcontentsline{toc}{chapter}{Glossary} 
@@ -285,7 +289,7 @@
 
 %% include appendix
 \begin{appendix}
-\include{tex/appendix}%
+%\include{tex/appendix}%
 \end{appendix}
 
 % Use of the sorted IEEE style, with changes:
@@ -311,7 +315,7 @@
 %\addcontentsline{toc}{chapter}{\numberline{}\indexname}%
 
 %% include affidavit
-\include{tex/eid}%
+%\include{tex/eid}%
 
 
 
