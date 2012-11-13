@@ -4,8 +4,8 @@ Version=2
 
 [SessionInfo]
 ActiveTab=0
-FrameCount=6
-ActiveFrame=2
+FrameCount=7
+ActiveFrame=6
 
 [Frame0]
 Columns=1
@@ -68,8 +68,8 @@ TopSubLine=0
 [Frame2]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -82,16 +82,16 @@ Class=CLatexEdit
 Document=tex\chapter5.tex
 
 [Frame2_Row0]
-cyCur=641
+cyCur=402
 cyMin=10
 
 [Frame2_Col0]
-cxCur=1670
+cxCur=1456
 cxMin=10
 
 [Frame2_View0,0]
-Cursor.row=13
-Cursor.column=1
+Cursor.row=0
+Cursor.column=0
 TopSubLine=0
 
 [Frame3]
@@ -179,5 +179,34 @@ cxMin=10
 [Frame5_View0,0]
 Cursor.row=0
 Cursor.column=0
+TopSubLine=0
+
+[Frame6]
+Columns=1
+Rows=1
+Flags=2
+ShowCmd=3
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=168
+NormalPos.top=168
+NormalPos.right=1580
+NormalPos.bottom=638
+Class=CLatexEdit
+Document=tex\chapter11.tex
+
+[Frame6_Row0]
+cyCur=641
+cyMin=10
+
+[Frame6_Col0]
+cxCur=1583
+cxMin=10
+
+[Frame6_View0,0]
+Cursor.row=11
+Cursor.column=48
 TopSubLine=0
 
