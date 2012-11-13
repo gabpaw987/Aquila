@@ -10,7 +10,6 @@ Das Produkt ermöglicht das automatisierte Handeln von Aktien über einen bestehen
 \begin{itemize}
 	\item{Regelung der Höhe des Investitionskapitals}
 	\item{Festsetzung der Höhe der Cut-Losses-Schwelle}
-	\item{Parametrisierung des Algorithmus betreffend Risiko \footnote{Sofern dies vom Algorithmus unterstützt ist}}
 \end{itemize}
 
 Der Zugang zur Website ist gesichert und durch eine Benutzerverwaltung, die gegebenenfalls mehrere Accounts zulässt, geregelt.
@@ -30,6 +29,9 @@ Die Webschnittstelle stellt neben den reinen Kursdaten zusätzlich noch relevante
 \section{Abgrenzungskriterien}
 
 Die bezogenen Kursdaten müssen, bedingt durch hohe Kosten, während der Entwicklungszeit nicht in Echtzeit bezogen werden. Allerdings muss darauf geachtet werden, dass die Umstellung für den tatsächlichen Einsatz problemlos vorgenommen werden kann.\\
-	Der Algorithmus zum Entscheiden des richtigen Kauf- und Verkaufszeitpunkt wird in das fertige Produkt integriert. Dieser Algorithmus wird nicht in diesem Projekt entwickelt und ist nicht Vertragsgegenstand. Es wird hingegen eine Schnittstelle entwickelt und implementiert, um bestehende Algorithmen modular einzubinden.\\
-	Die Zielgruppe des Produktes handelt mit relativ kleinen Positionen, weshalb Kaufentscheidungen weder in mehrere Orders geteilt (Oder-Splitting), noch auf Slippage (Änderungen im Aktienpreis durch eigene Order) Rücksicht genommen wird.\\
-	Standardmäßig wird aufgrund der Datenkosten nur ein eingeschränkter Teil von Aktien unterstützt. Zusätzliche Aktien können gegen Entgelt nachträglich hinzugefügt werden.
+\\
+Die Zielgruppe des Produktes handelt mit relativ kleinen Positionen, weshalb Kaufentscheidungen weder in mehrere Orders geteilt (Oder-Splitting), noch auf Slippage (Änderungen im Aktienpreis durch eigene Order) Rücksicht genommen wird.\\
+\\
+Standardmäßig wird aufgrund der Datenkosten nur ein eingeschränkter Teil von Aktien unterstützt. Zusätzliche Aktien können gegen Entgelt nachträglich hinzugefügt werden.\\
+\\
+Falls für das Versenden von Benachrichtigungen ein Server oder ein Gateway notwendig ist, ist dieses vom Kunden der Software bereitzustellen. Dieses Service ist nicht Teil des Produktes.

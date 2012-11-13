@@ -3,34 +3,43 @@
 % Chapter7
 \chapter{Benutzerschnittstelle} \label{chapter:benutzerschnittstelle}
 
-Die Benutzeroberfläche von Aquila besteht aus Website zur Steuerung und Information des Benutzers, die im Folgenden spezifiziert wird.\footnote{Die Bezeichnungen, sowie die genaue Gliederung der beschriebenen Bereiche ist vorläufiger Natur und könnte sich im Verlauf des Projektes g.g.f. noch ändern.}\\
-	Die Website hat ganz grob betrachtet 2 Bereiche. Einen für Einstellungen und Konfiguration, sprich sämtliche Controlling-Aktionen, sowie einen für Darstellung und Information. Der Einstellungsbereich (\emph{Settings}) gliedert sich wiederum in allgemeine Einstellungen (\emph{General}), der z.B. Voreinstellungen verschiedener Tradingparameter ermöglicht, Auswahl und Konfiguration der zu Handelnden Aktien (\emph{Stocks}), sowie Account-Einstellungen zur Anmeldung bei der Website (\emph{Account}).
+Die Benutzeroberfläche von Aquila besteht aus Website zur Steuerung und Information des Benutzers, die im Folgenden spezifiziert wird.\footnote{Die Bezeichnungen, sowie das aktuelle Design der beschriebenen Bereiche sind vorläufiger Natur und könnte sich im Verlauf des Projektes noch ändern.}\\
+	Die Website informiert über aktuelle Kennzahlen und Daten zu verwalteten Aktien, zeigt Performanceinformationen des verwalteten Portfolios an und stellt Charts dar, mit deren Hilfe historische Entwicklungen interpretiert werden können und der Algorithmus aus menschlicher Sicht verständlicher und übersichtlicher wird. Außerdem besitzt die Website eine zentrale Steuerfunktion, d.h. Einstellungen, Veränderungen und Parameter können über diese an die Software weitergegeben werden.\\
+	Bestandteile der Website sind eine Seite zur Übersicht über verwaltete Aktien, wo diese sowohl bearbeitet, als auch neue hinzugefügt werden können. Eine Seite gibt Informationen über die Performance des Portfolios b.z.w. auch über den Algorithmus. Im Einstellungsbereich sind Einstellungen zu Trading-relevanten Themen, wie beispielsweise Voreinstellungen für die Cut-Loss-Schwelle, sowie Accounteinstellungen vorzunehmen. Abbildung \ref{fig:web_aktien} stellt ein Grundgerüst der Aktien-Seite dar. Über die Suchfunktion können neue Aktien gefunden und hinzugefügt werden. Die Tabelle zeigt die wichtigsten Daten zu den verwalteten Aktien an. Durch Klick auf eines der Symbole gelangt der Benutzer zur Informationsseite dieser Aktie, wo Charts und  jeweilige Performance-Informationen präsentiert werden.\\
 
-\begin{itemize}
-	\item{Information}
-	\item{Settings}
+\begin{figure}[htb]
+	\centering
+		\includegraphics[width=1\textwidth]{graphics/benutzerschnittstelle/web_aktien.png}
+	\caption{Website-Grundgerüst}
+	\label{fig:web_aktien}
+\end{figure}
+
+\begin{minipage}{\textwidth}
+	Die Seitenstruktur weist folgende Struktur auf:
 	\begin{itemize}
-		\item{General}
-		\item{Stocks}
-		\item{Account}
+		\item{Aktien}
+			\begin{itemize}
+				\item{Symbolinformation}
+			\end{itemize}
+		\item{Performance}
+		\item{Einstellungen}
+		\begin{itemize}
+			\item{Trading}
+			\item{Account}
+		\end{itemize}
 	\end{itemize}
-\end{itemize}
-
-Besonders wichtig bei der Darstellung von Charts und Performance-Informationen ist ein übersichtliches Layout. Außerdem muss die gesamte Website eine übersichtliche und rasch zu bedienende Navigation aufweisen, um möglichst schnell auf Ereignisse reagieren zu können und möglichst wenig Zeit mit der Interpretation der Daten zu verschwenden.\\
+\end{minipage}\\
 \\
-/B10/\\
-\emph{Aktie hinzufügen}\\
-Unter dem Punkt \emph{Settings/Stocks} kann durch die Eingabe des Aktiensymbols eine Aktie vom Benutzer ausgewählt werden. Daraufhin muss der Benutzer die Größe der Postion einstellen und kann die Voreinstellungen zu der Cut-Loss-Schwelle, oder ob der Modus auf Automatik/Manuell gesetzt wird, verändern. Bevor der Benutzer die Einstellungen bestätigt wird das Gesamtkapital angezeigt, dass für einen Trade aufgewandt wird.\\
 \\
-/B20/\\
-\emph{Wechsel der Betrachteten Aktie}\\
+/B10/ \textbf{Grafisches Design}\\
+Das Design soll modern und schlicht sein, wodurch eine flotte Bedienung erreicht wird und Informationen schnell aufgenommen werden können. Durch einfache Farbkontraste werden auf simple Art und Weise Hinweise, wie der Status der Aktie oder mögliche Benutzerinteraktionen, angezeigt.\\
+\\
+/B20/ \textbf{Wechsel der Betrachteten Aktie}\\
 Im Informationsbereich kann der Benutzer aus den Aktien, die er aktuell handelt, eine auswählen, für die anschließend alle Informationen und Charts angezeigt werden.\\
 \\
-/B30/\\
-\emph{Anzeige der Performance}\\
+/B30/ \textbf{Anzeige der Performance}\\
 Die Performance des Algorithmus wird in Zahlen für die betrachtete Aktie für eine bestimmte Zeitperiode angezeigt.\\
 \\
-/B40/\\
-\emph{Charts}\\
-Zur Information des Benutzers soll als Chart die Preisentwicklung der betrachteten Aktie, sowie die \glspl{ma} und sowohl Einstiegs-, als auch Ausstiegspunkte des Algorithmus angezeigt werden. Dies soll sowohl kurz-, als auch langfristig möglich sein.\\
+/B40/ \textbf{Charts}\\
+Zur Information des Benutzers soll als Chart die Preisentwicklung der betrachteten Aktie, sowie die \glspl{ma} und sowohl Einstiegs-, als auch Ausstiegspunkte des Algorithmus angezeigt werden. Dies soll sowohl kurz-, als auch langfristig möglich sein.
 Außerdem soll das aktuelle Ergebnis des Algorithmus angezeigt werden.
