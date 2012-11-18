@@ -207,6 +207,6 @@ cxMin=10
 
 [Frame6_View0,0]
 Cursor.row=11
-Cursor.column=48
+Cursor.column=71
 TopSubLine=0
 

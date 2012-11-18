@@ -4,14 +4,14 @@ Version=2
 
 [SessionInfo]
 ActiveTab=0
-FrameCount=13
-ActiveFrame=0
+FrameCount=14
+ActiveFrame=1
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -24,23 +24,23 @@ Class=CLatexEdit
 Document=tex\chapter3.tex
 
 [Frame0_Row0]
-cyCur=641
+cyCur=239
 cyMin=10
 
 [Frame0_Col0]
-cxCur=1670
+cxCur=289
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=326
-Cursor.column=12
-TopSubLine=186
+Cursor.row=379
+Cursor.column=64
+TopSubLine=683
 
 [Frame1]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -53,17 +53,17 @@ Class=CLatexEdit
 Document=tex\chapter5.tex
 
 [Frame1_Row0]
-cyCur=219
+cyCur=554
 cyMin=10
 
 [Frame1_Col0]
-cxCur=293
+cxCur=1583
 cxMin=10
 
 [Frame1_View0,0]
-Cursor.row=28
-Cursor.column=81
-TopSubLine=72
+Cursor.row=84
+Cursor.column=26
+TopSubLine=95
 
 [Frame2]
 Columns=1
@@ -119,9 +119,9 @@ cxCur=967
 cxMin=10
 
 [Frame3_View0,0]
-Cursor.row=23
-Cursor.column=50
-TopSubLine=17
+Cursor.row=5
+Cursor.column=43
+TopSubLine=0
 
 [Frame4]
 Columns=1
@@ -177,8 +177,8 @@ cxCur=1339
 cxMin=10
 
 [Frame5_View0,0]
-Cursor.row=0
-Cursor.column=0
+Cursor.row=6
+Cursor.column=260
 TopSubLine=0
 
 [Frame6]
@@ -206,9 +206,9 @@ cxCur=1339
 cxMin=10
 
 [Frame6_View0,0]
-Cursor.row=29
-Cursor.column=0
-TopSubLine=38
+Cursor.row=68
+Cursor.column=332
+TopSubLine=102
 
 [Frame7]
 Columns=1
@@ -235,9 +235,9 @@ cxCur=1339
 cxMin=10
 
 [Frame7_View0,0]
-Cursor.row=97
-Cursor.column=108
-TopSubLine=137
+Cursor.row=103
+Cursor.column=20
+TopSubLine=139
 
 [Frame8]
 Columns=1
@@ -264,7 +264,7 @@ cxCur=1339
 cxMin=10
 
 [Frame8_View0,0]
-Cursor.row=11
+Cursor.row=9
 Cursor.column=0
 TopSubLine=0
 
@@ -380,7 +380,36 @@ cxCur=1456
 cxMin=10
 
 [Frame12_View0,0]
-Cursor.row=274
-Cursor.column=27
-TopSubLine=253
+Cursor.row=0
+Cursor.column=0
+TopSubLine=0
+
+[Frame13]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-9
+MaxPos.y=-34
+NormalPos.left=168
+NormalPos.top=168
+NormalPos.right=1608
+NormalPos.bottom=579
+Class=CLatexEdit
+Document=tex\versionierung.tex
+
+[Frame13_Row0]
+cyCur=343
+cyMin=10
+
+[Frame13_Col0]
+cxCur=1397
+cxMin=10
+
+[Frame13_View0,0]
+Cursor.row=0
+Cursor.column=0
+TopSubLine=0
 
