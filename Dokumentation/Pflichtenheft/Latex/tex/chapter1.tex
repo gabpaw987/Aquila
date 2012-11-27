@@ -4,8 +4,8 @@
 \chapter{Zielbestimmung} \label{chapter:zielbestimmung}
 \section{Musskriterien}
 
-Das Produkt ermöglicht das automatisierte Handeln von Aktien über einen bestehenden Online-Broker Account. Kursdaten, sowie eventuell andere relevante Daten, werden über einen Datenanbieter abgerufen und an das Algorithmus-Modul zur Verarbeitung weitergereicht.\\
-	Die Steuerung und das Controlling der Software kann manuell über eine Webschnittstelle vorgenommen werden. Über diese können die zu handelnden Aktien selektiert, sowie das einzusetzende Kapital festgelegt werden. Zusätzlich soll dem Benutzer der Kursverlauf als Chart, sowie die aktuelle Entscheidung des Algorithmus und falls praktikabel die Stärke der Entscheidung angezeigt werden. Das Risiko ist je Aktie regelbar. Die Implementierung der Risikosteuerung kann durch eine der folgenden Methoden erfolgen:
+Das Produkt ermöglicht das automatisierte Handeln von Aktien über einen bestehenden Online-Broker-Account. Kursdaten und eventuell andere relevante Daten, werden über einen Datenanbieter abgerufen und an das Algorithmus-Modul zur Verarbeitung weitergereicht.\\
+	Die Steuerung und das Controlling der Software kann manuell über eine Webschnittstelle vorgenommen werden. Über diese können die zu handelnden Aktien selektiert und das einzusetzende Kapital festgelegt werden. Zusätzlich soll dem Benutzer der Kursverlauf als Chart, die aktuelle Entscheidung des Algorithmus und falls praktikabel die Stärke der Entscheidung angezeigt werden. Das Risiko ist je Aktie regelbar. Die Implementierung der Risikosteuerung kann durch eine der folgenden Methoden erfolgen:
 
 \begin{itemize}
 	\item{Regelung der Höhe des Investitionskapitals}
@@ -16,7 +16,7 @@ Der Zugang zur Website ist gesichert und durch eine Benutzerverwaltung, die gege
 
 \section{Wunschkriterien}
 
-Die Webschnittstelle stellt neben den reinen Kursdaten zusätzlich noch relevante \glspl{ma}, sowie eine Art der Support- und Resistance-Level, zur Bestimmung von überkauften und überverkauften Bereichen, dar, damit Entscheidungen des Algorithmus nachvollzogen werden können. Aus dem selben Grund wird sowohl die tatsächlich realisierte Performance über eine Zeitperiode, als auch der noch nicht realisierte Gewinn oder Verlust des aktuellen Trades (vorzüglich inkl. Transaktionsgebühren) angezeigt.\\
+Die Webschnittstelle stellt neben den reinen Kursdaten zusätzlich noch relevante \glspl{ma} und eine Art der Support- und Resistance-Level zur Bestimmung von überkauften und überverkauften Bereichen dar, damit Entscheidungen des Algorithmus nachvollzogen werden können. Aus dem selben Grund wird sowohl die tatsächlich realisierte Performance über eine Zeitperiode als auch der noch nicht realisierte Gewinn oder Verlust des aktuellen Trades (vorzüglich inkl. Transaktionsgebühren) angezeigt.\\
 	Um die Entscheidungen besser nachvollziehen zu können oder auch um potentielle Fehlentscheidungen manuell korrigieren zu können, werden auf der Webseite aktuell relevante News-Headlines angezeigt.
 
 % FUNKTIONEN:
@@ -29,9 +29,9 @@ Die Webschnittstelle stellt neben den reinen Kursdaten zusätzlich noch relevante
 \section{Abgrenzungskriterien}
 
 Die bezogenen Kursdaten müssen, bedingt durch hohe Kosten, während der Entwicklungszeit nicht in Echtzeit bezogen werden. Allerdings muss darauf geachtet werden, dass die Umstellung für den tatsächlichen Einsatz problemlos vorgenommen werden kann.\\
-\\
-Die Zielgruppe des Produktes handelt mit relativ kleinen Positionen, weshalb Kaufentscheidungen weder in mehrere Orders geteilt (Oder-Splitting), noch auf Slippage (Änderungen im Aktienpreis durch eigene Order) Rücksicht genommen wird.\\
-\\
+
 Standardmäßig wird aufgrund der Datenkosten nur ein eingeschränkter Teil von Aktien unterstützt. Zusätzliche Aktien können gegen Entgelt nachträglich hinzugefügt werden.\\
-\\
-Falls für das Versenden von Benachrichtigungen ein Server oder ein Gateway notwendig ist, ist dieses vom Kunden der Software bereitzustellen. Dieses Service ist nicht Teil des Produktes.
+
+Falls für das Versenden von Benachrichtigungen ein Server oder ein Gateway notwendig ist, ist dieses vom Kunden der Software bereitzustellen. Dieses Service ist nicht Teil des Produktes.\\
+
+Die Zielgruppe des Produktes handelt mit relativ kleinen Positionen, weshalb Kaufentscheidungen weder in mehrere Orders geteilt (Oder-Splitting) noch auf Slippage (Änderungen im Aktienpreis durch eigene Order) Rücksicht genommen wird.\\
