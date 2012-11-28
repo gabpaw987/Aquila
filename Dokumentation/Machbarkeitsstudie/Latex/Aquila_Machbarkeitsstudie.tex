@@ -72,7 +72,7 @@
 %%-----------------------------------------------------------------------
 
 
-\renewcommand{\nomname}{List of symbols}
+\renewcommand{\nomname}{Abbildungsverzeichnis}
 %\renewcommand{\nompreamble}{The following list only contains symbols
 %  that are used continuously throughout the text. Local symbols are
 %  not listed.}
@@ -280,7 +280,7 @@
 \input{tex/chapter7}%
 
 
-\addcontentsline{toc}{chapter}{Glossary} 
+\addcontentsline{toc}{chapter}{Glossar} 
 %\printglossary[type=\acronymtype]
 %\glsaddall
 
@@ -290,7 +290,7 @@
 %% include appendix
 \begin{appendix}
 %\include{tex/appendix}%
-\printglossary[type=\acronymtype]
+\printglossary[type=\acronymtype, title=Glossar, toctitle=Glossar]
 \end{appendix}
 
 % Use of the sorted IEEE style, with changes:
