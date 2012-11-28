@@ -3,9 +3,9 @@ Type=TeXnicCenterProjectSessionInformation
 Version=2
 
 [SessionInfo]
-ActiveTab=0
+ActiveTab=2
 FrameCount=14
-ActiveFrame=1
+ActiveFrame=13
 
 [Frame0]
 Columns=1
@@ -39,8 +39,8 @@ TopSubLine=683
 [Frame1]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -53,17 +53,17 @@ Class=CLatexEdit
 Document=tex\chapter5.tex
 
 [Frame1_Row0]
-cyCur=554
+cyCur=219
 cyMin=10
 
 [Frame1_Col0]
-cxCur=1583
+cxCur=293
 cxMin=10
 
 [Frame1_View0,0]
 Cursor.row=84
 Cursor.column=26
-TopSubLine=95
+TopSubLine=246
 
 [Frame2]
 Columns=1
@@ -208,7 +208,7 @@ cxMin=10
 [Frame6_View0,0]
 Cursor.row=68
 Cursor.column=332
-TopSubLine=102
+TopSubLine=111
 
 [Frame7]
 Columns=1
@@ -237,7 +237,7 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=103
 Cursor.column=20
-TopSubLine=139
+TopSubLine=148
 
 [Frame8]
 Columns=1
@@ -387,8 +387,8 @@ TopSubLine=0
 [Frame13]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -401,15 +401,15 @@ Class=CLatexEdit
 Document=tex\versionierung.tex
 
 [Frame13_Row0]
-cyCur=343
+cyCur=554
 cyMin=10
 
 [Frame13_Col0]
-cxCur=1397
+cxCur=1583
 cxMin=10
 
 [Frame13_View0,0]
-Cursor.row=0
-Cursor.column=0
+Cursor.row=16
+Cursor.column=22
 TopSubLine=0
 
