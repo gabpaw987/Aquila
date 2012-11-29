@@ -81,7 +81,7 @@
 %%-----------------------------------------------------------------------
 
 
-\renewcommand{\nomname}{List of symbols}
+\renewcommand{\nomname}{Abbildungsverzeichnis}
 %\renewcommand{\nompreamble}{The following list only contains symbols
 %  that are used continuously throughout the text. Local symbols are
 %  not listed.}
@@ -257,7 +257,7 @@
 \clearpage
 \listoffigures
 \clearpage
-\lstlistoflistings %\listoftables
+%\lstlistoflistings %\listoftables
 \clearpage 
 \markboth{Contents}{Contents}
 
@@ -299,7 +299,7 @@
 
 
 
-\addcontentsline{toc}{chapter}{Glossary} 
+\addcontentsline{toc}{chapter}{Glossar} 
 %\printglossary[type=\acronymtype]
 
 %\printglossary[type=\acronymtype]
@@ -307,7 +307,7 @@
 
 %% include appendix
 \begin{appendix}
-\printglossary[type=\acronymtype]
+\printglossary[type=\acronymtype, title=Glossar, toctitle=Glossar]
 \end{appendix}
 
 % Use of the sorted IEEE style, with changes:
@@ -333,7 +333,7 @@
 %\addcontentsline{toc}{chapter}{\numberline{}\indexname}%
 
 %% include affidavit
-\include{tex/eid}%
+%\include{tex/eid}%
 
 
 

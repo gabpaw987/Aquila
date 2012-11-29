@@ -5,7 +5,7 @@ Version=2
 [SessionInfo]
 ActiveTab=2
 FrameCount=14
-ActiveFrame=6
+ActiveFrame=12
 
 [Frame0]
 Columns=1
@@ -32,9 +32,9 @@ cxCur=289
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=379
-Cursor.column=64
-TopSubLine=671
+Cursor.row=349
+Cursor.column=14
+TopSubLine=651
 
 [Frame1]
 Columns=1
@@ -184,8 +184,8 @@ TopSubLine=0
 [Frame6]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -198,17 +198,17 @@ Class=CLatexEdit
 Document=tex\chapter2.tex
 
 [Frame6_Row0]
-cyCur=554
+cyCur=410
 cyMin=10
 
 [Frame6_Col0]
-cxCur=1583
+cxCur=1339
 cxMin=10
 
 [Frame6_View0,0]
-Cursor.row=35
-Cursor.column=0
-TopSubLine=98
+Cursor.row=41
+Cursor.column=48
+TopSubLine=54
 
 [Frame7]
 Columns=1
@@ -237,7 +237,7 @@ cxMin=10
 [Frame7_View0,0]
 Cursor.row=103
 Cursor.column=20
-TopSubLine=148
+TopSubLine=157
 
 [Frame8]
 Columns=1
@@ -264,7 +264,7 @@ cxCur=1339
 cxMin=10
 
 [Frame8_View0,0]
-Cursor.row=9
+Cursor.row=0
 Cursor.column=0
 TopSubLine=0
 
@@ -358,8 +358,8 @@ TopSubLine=0
 [Frame12]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-9
@@ -372,17 +372,17 @@ Class=CLatexEdit
 Document=Aquila_Machbarkeitsstudie.tex
 
 [Frame12_Row0]
-cyCur=402
+cyCur=554
 cyMin=10
 
 [Frame12_Col0]
-cxCur=1456
+cxCur=1583
 cxMin=10
 
 [Frame12_View0,0]
-Cursor.row=0
-Cursor.column=0
-TopSubLine=0
+Cursor.row=302
+Cursor.column=4
+TopSubLine=282
 
 [Frame13]
 Columns=1
