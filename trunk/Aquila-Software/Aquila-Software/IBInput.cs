@@ -54,7 +54,7 @@ namespace Aquila_Software
         /// <remarks></remarks>
         public void GetHistoricalDataBars(BarSize barsize)
         {
-            inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, new TimeSpan(0, 23, 59, 59), barsize, HistoricalDataType.Trades, 0);
+            inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, new TimeSpan(0, 0, 0, 59), barsize, HistoricalDataType.Trades, 0);
         }
 
         /// <summary>
@@ -157,6 +157,7 @@ namespace Aquila_Software
             totalHistoricalBars = e.RecordTotal;
             //parses the received bar to one of my bars
             ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
+            Console.WriteLine(e.Date);
         }
     }
 }

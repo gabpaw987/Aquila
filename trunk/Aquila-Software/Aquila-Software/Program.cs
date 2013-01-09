@@ -43,7 +43,7 @@ namespace Aquila_Software
                 Thread mainThread = null;
 
                 //If a TextBox from NuTrade.SettingsGUI haven´t been filled with the required information an error message is displayed.
-                if (args.Length != 14)
+                /*if (args.Length != 14)
                 {
                     Console.Error.WriteLine("False Parameters have been provided! Please try again by restarting the application!");
                 }
@@ -58,24 +58,24 @@ namespace Aquila_Software
                         "If you didn't request an equity from NASDAQ, you chose a wrong equity.\n" +
                         "We only support NASDAQ as the primary exchange of the chosen equity.");
                 }
-                else
+                else*/
                 {
                     ListOfBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
                     ListOfSignals = new List<int>();
 
                     //parsing of arguments form the user.
-                    TradingAmount = Convert.ToInt32(args[1]) * Convert.ToInt32(args[13]);
+                    /*TradingAmount = Convert.ToInt32(args[1]) * Convert.ToInt32(args[13]);
 
                     equity = new Equity(args[7], args[9]);
                     equity.SecurityType = SecurityType.Stock;
-                    equity.Currency = args[11];
+                    equity.Currency = args[11];*/
 
                     //This part is here for the case anyone wants to test this application without the SettingsGUI.
-                    /*TradingAmount = 100;
-                    drawGraph = false;
+                    TradingAmount = 100;
+
                     equity = new Equity("GOOG", "SMART");
                     equity.SecurityType = SecurityType.Stock;
-                    equity.Currency = "USD";*/
+                    equity.Currency = "USD";
 
                     //Run the Start()-method in a thread to be able to keep listening on the keys pressed in the console and therefore to enable quitting by pressing 'Q'
                     mainThread = new Thread(new ThreadStart(Start));
