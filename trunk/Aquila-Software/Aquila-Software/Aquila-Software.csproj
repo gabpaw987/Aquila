@@ -37,6 +37,10 @@
     <Reference Include="Krs.Ats.IBNet, Version=9.67.130.15, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Library1, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="MoreLinq, Version=1.0.11522.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Npgsql, Version=2.0.12.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Npgsql.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseHandler.cs" />
     <Compile Include="IBInput.cs" />
     <Compile Include="IBOutput.cs" />
     <Compile Include="LogFileManager.cs" />
@@ -56,6 +61,7 @@
     <Content Include="Krs.Ats.IBNet.dll" />
     <Content Include="Library1.dll" />
     <Content Include="MoreLinq.dll" />
+    <Content Include="Npgsql.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
