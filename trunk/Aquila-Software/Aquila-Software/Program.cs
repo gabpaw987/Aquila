@@ -43,12 +43,13 @@ namespace Aquila_Software
                 Thread mainThread = null;
 
                 //If a TextBox from NuTrade.SettingsGUI haven´t been filled with the required information an error message is displayed.
-                if (args.Length != 14)
+                /*if (args.Length != 14)
                 {
                     Console.Error.WriteLine("False Parameters have been provided! Please try again by restarting the application!");
                 }
                 //If NASDAQ is closed, write an error, becuse we only support NASDAQ(It is open from 15:30 until 22:00 CET)
-                else if ((DateTime.Now.Hour < 16 && DateTime.Now.Minute < 30) || DateTime.Now.Hour < 15 || DateTime.Now.Hour > 22)
+                else 
+                if ((DateTime.Now.Hour < 16 && DateTime.Now.Minute < 30) || DateTime.Now.Hour < 15 || DateTime.Now.Hour > 22)
                 {
                     Console.Error.WriteLine("The exchange NASDAQ is closed!\n" +
                         "If you didn't request an equity from NASDAQ, you chose a wrong equity.\n" +
@@ -59,28 +60,27 @@ namespace Aquila_Software
                         "We only support NASDAQ as the primary exchange of the chosen equity.");
                 }
                 else
-                {
+                {*/
                     ListOfBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
                     ListOfSignals = new List<int>();
 
                     //parsing of arguments form the user.
-                    TradingAmount = Convert.ToInt32(args[1]) * Convert.ToInt32(args[13]);
+                    /*TradingAmount = Convert.ToInt32(args[1]) * Convert.ToInt32(args[13]);
 
                     equity = new Equity(args[7], args[9]);
                     equity.SecurityType = SecurityType.Stock;
-                    equity.Currency = args[11];
+                    equity.Currency = args[11];*/
 
                     //This part is here for the case anyone wants to test this application without the SettingsGUI.
-                    /*TradingAmount = 100;
-                    drawGraph = false;
+                    TradingAmount = 100;
                     equity = new Equity("GOOG", "SMART");
                     equity.SecurityType = SecurityType.Stock;
-                    equity.Currency = "USD";*/
+                    equity.Currency = "USD";
 
                     //Run the Start()-method in a thread to be able to keep listening on the keys pressed in the console and therefore to enable quitting by pressing 'Q'
                     mainThread = new Thread(new ThreadStart(Start));
                     mainThread.Start();
-                }
+                //}
 
                 //Listen on a key pressed at the keyboard. Close the application if the key 'Q' gets pressed.
                 var abortKey = new ConsoleKey();
@@ -119,7 +119,7 @@ namespace Aquila_Software
                 input.SubscribeForRealTimeBars();
 
                 int length = 0;
-
+                Boolean historical = true;
                 while (true)
                 {
                     //Wait until a new realtime bar is received
@@ -141,6 +141,24 @@ namespace Aquila_Software
                             output.placeOrder(ActionSide.Buy, TradingAmount);
                         else if (ListOfSignals[ListOfSignals.Count - 1] == -1)
                             output.placeOrder(ActionSide.Sell, TradingAmount);
+                    }
+                    if (historical)
+                    {
+                        foreach (Tuple<DateTime, decimal, decimal, decimal, decimal> t in ListOfBars)
+                        {
+                            //equity.LocalSymbol
+                            //TODO VOLUME???
+                            DatabaseHandler.executeModify("INSERT INTO mBar VALUES('" + t.Item1 + "'," + t.Item2 + "," + t.Item3 + "," + t.Item4 + "," + t.Item5 + ",0" + "" + ")");
+                        }
+                        for (int i = 0; i < ListOfSignals.Count; i++)
+                        {
+                            DatabaseHandler.executeModify("INSERT INTO signal VALUES('" + equity.LocalSymbol + "','" + ListOfBars[i].Item1 + "'," + ListOfSignals[i] + ")");
+                        }
+                    }
+                    else
+                    {
+                        DatabaseHandler.executeModify("INSERT INTO mBar VALUES('" + ListOfBars[ListOfBars.Count].Item1 + "'," + ListOfBars[ListOfBars.Count].Item2 + "," + ListOfBars[ListOfBars.Count].Item3 + "," + ListOfBars[ListOfBars.Count].Item4 + "," + ListOfBars[ListOfBars.Count].Item5 + ",0" + "" + ")");
+                        DatabaseHandler.executeModify("INSERT INTO signal VALUES('" + equity.LocalSymbol + "','" + ListOfBars[ListOfSignals.Count].Item1 + "'," + ListOfSignals[ListOfSignals.Count] + ")");
                     }
 
                     length = ListOfBars.Count;
