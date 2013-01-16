@@ -1,0 +1,191 @@
+﻿body{
+	margin:0px;
+	font-family: Arial;
+}
+
+h1{
+	/*position: relative;
+	line-height: 0px;
+	margin: 50px;*/
+	font-size: 5em;
+	margin: 0;
+}
+
+button, input[type="submit"]{
+	background:none;
+	border:0px;
+	color:lightgray;
+}
+
+	button:hover, input[type="submit"]:hover{
+		background-color:#555;
+	}
+
+	button.delete{
+
+	}
+
+#wrapper{
+	margin-left: auto;
+	margin-right: auto;
+	width: 1129px;
+	/*min-width: 730px;*/
+}
+
+#header{
+	margin-top: 20px;
+	height: 150px;
+	width: 100%;
+}
+
+	#header_top{
+		float: right;
+	}
+	
+	#header_main{
+	
+	}
+
+#menu{
+
+}
+
+	#menu_search{
+		float: right;
+	}
+	
+		#menu_search input[type="text"]{
+			margin: 0;
+			padding: 0;
+			height: 2.5em;
+			width: 260px;
+			border: 1px solid lightgray;
+		}
+
+#content{
+	border-top: 2px solid gray;
+}
+
+	#performance{
+		
+	}
+	
+		#performance h2{
+			display: inline;
+		}
+		
+		#performance_nr{
+			float: left;
+		}
+		
+		#performance_exp{
+			float: right;
+		}
+	
+		#performance span{
+			margin-left: 20px;
+			font-size: 1.2em;
+		}
+	
+	#table_wrapper{
+		margin-top: 85px;
+		text-align: center;
+	}
+	
+		#table_wrapper table{
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+        #content_portfolio_table_length {
+            float: left;
+            margin-bottom: 10px;
+        }
+
+        #content_portfolio_table_filter {
+            float: right;
+            margin-bottom: 10px;
+        }
+
+        #content_portfolio_table_info {
+            float: left;
+            margin-top: 10px;
+        }
+
+        #content_portfolio_table_paginate {
+            float: right;
+            margin-top: 10px;
+        }
+
+        .paginate_disabled_previous {
+            margin-top: 10px;
+            margin-right: 20px;
+        }
+
+ul.nav{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	list-style-image: none;
+}
+
+li.nav_selected{
+	background-color: #555;
+}
+
+ul.nav li{
+	float: left;
+	padding: 0.5em 1.3em 0.5em 1.3em;
+}
+
+ul.nav li:hover{
+	background-color: #555;
+}
+
+ul.nav a{
+	font-size: 1em;
+	text-decoration: none;
+	color: lightgrey;
+}
+
+.stock_data_table{
+	border-collapse: collapse;
+	empty-cells:hide;
+}
+
+	.stock_data_table tr{
+		border-style: solid;
+		border-right-width: 0px;
+		border-left-width: 0px;
+		border-top-width: 1px;
+		border-bottom-width: 1px;
+		border-color: lightgrey;
+	}
+	
+	.stock_data_table tr:hover{
+		background-color: #eee;
+	}
+	
+		.odd{
+			background-color:#fafafa;
+		}
+		
+		.even{
+			background-color:#f9f9f9;
+		}
+
+	.stock_data_table th, .stock_data_table td{
+		/* oben, rechts, unten, link */
+		padding: 10px 20px 10px 20px;
+		
+	}
+	
+	.stock_data_table td:hover{
+		
+	}
+	
+	/* TD HOVERS */
+	td.std_cell:hover{
+		background-color: #888;
+	}
+	

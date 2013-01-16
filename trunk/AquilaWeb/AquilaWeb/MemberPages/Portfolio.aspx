@@ -1,0 +1,65 @@
+﻿<%@ Page Title="Portfolio" Language="C#" MasterPageFile="~/Main.Master" AutoEventWireup="true" CodeBehind="Portfolio.aspx.cs" Inherits="AquilaWeb.MemberPages.Stocks" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+        
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="header" runat="server">
+    <h1>PORTFOLIO</h1>
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="content" runat="server">
+    <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
+        <Scripts>
+            <asp:ScriptReference Path="~/Scripts/tables.js" />
+        </Scripts>
+    </asp:ScriptManagerProxy>
+
+    <div id="performance">
+        <h2 id="performance_nr">Profit/Loss <span><asp:Label id="lbl_pl_ur" runat="server" Text="" /><asp:Label id="lbl_pl_r" runat="server" Text="" /></span></h2>
+        <h2 id="performance_exp">Invested <span><asp:Label id="lbl_invested" runat="server" Text="" /></span></h2>
+    </div>
+    <div id="table_wrapper">
+        <asp:Table id="portfolio_table" class="stock_data_table" runat="server">
+            <asp:TableHeaderRow TableSection="TableHeader">
+                <asp:TableHeaderCell>Symbol</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Close</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Position</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Gain/Loss</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Max. Investment</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Cut-Loss</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Decision</asp:TableHeaderCell>
+                <asp:TableHeaderCell>ROI</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Mode</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Status</asp:TableHeaderCell>
+                <asp:TableHeaderCell></asp:TableHeaderCell>
+            </asp:TableHeaderRow>
+            <asp:TableRow>
+                <asp:TableCell>AAPL:US</asp:TableCell>
+                <asp:TableCell class="std_cell">542.8300</asp:TableCell>
+                <asp:TableCell class="std_cell">2</asp:TableCell>
+                <asp:TableCell class="std_cell">200.48 $</asp:TableCell>
+                <asp:TableCell class="std_cell">10,000 $</asp:TableCell>
+                <asp:TableCell class="std_cell">5 %</asp:TableCell>
+                <asp:TableCell class="std_cell">Buy</asp:TableCell>
+                <asp:TableCell class="std_cell">10.17 $</asp:TableCell>
+                <asp:TableCell class="std_cell">Auto</asp:TableCell>
+                <asp:TableCell class="std_cell">Trading</asp:TableCell>
+                <asp:TableCell><button>x</button></asp:TableCell>
+            </asp:TableRow>
+            <asp:TableRow TableSection="TableFooter">
+                <asp:TableCell></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell class="std_cell"></asp:TableCell>
+                <asp:TableCell><button>x</button></asp:TableCell>
+            </asp:TableRow>
+        </asp:Table>
+    </div>
+</asp:Content>
