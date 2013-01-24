@@ -14,14 +14,14 @@
         <asp:Label ID="lbl_perf_header" runat="server" Text="" />
     </h2>
     <asp:Label ID="test" runat="server" />
-    <asp:Chart ID="Chart1" runat="server" ImageLocation="~/ChartImgs/ChartPic_#SEQ(300,3)">
+    <asp:Chart ID="Chart1" Width="500px" runat="server" ImageLocation="~/ChartImgs/ChartPic_#SEQ(300,3)">
         <Series>
         </Series>
         <ChartAreas>
             <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
         </ChartAreas>
     </asp:Chart>
-    <asp:Chart ID="Chart2" runat="server" ImageLocation="~/ChartImgs/ChartPic_#SEQ(300,3)">
+    <asp:Chart ID="Chart2" Width="500px" runat="server" ImageLocation="~/ChartImgs/ChartPic_#SEQ(300,3)">
         <Series>
         </Series>
         <ChartAreas>

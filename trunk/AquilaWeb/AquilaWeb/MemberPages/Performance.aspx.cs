@@ -67,6 +67,7 @@ namespace AquilaWeb.MemberPages
             if (s.BarType == PriceSeries.INTRADAY)
             {
                 c.Series["price"].XValueMember = "Time";
+                Chart1.Series["price"].IsXValueIndexed = true;
             }
             else if (s.BarType == PriceSeries.YEAR)
             {
@@ -74,7 +75,6 @@ namespace AquilaWeb.MemberPages
             }
             
             c.Series["price"].YValueMembers = "HighPrice, LowPrice, OpenPrice, ClosePrice";
-            // Chart1.Series["price"].IsXValueIndexed = true;
 
             // Scale
             decimal minPrice = s.MinPrice();
@@ -86,7 +86,7 @@ namespace AquilaWeb.MemberPages
             c.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
             c.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
             // Colors
-            c.Series["price"].BorderColor = System.Drawing.Color.Black;
+            //c.Series["price"].BorderColor = System.Drawing.Color.Black;
             c.Series["price"].Color = System.Drawing.Color.Black;
             c.Series["price"].CustomProperties = "PriceDownColor=Green, PriceUpColor=Red";
             c.Series["price"].XValueType = ChartValueType.Time;            

@@ -154,6 +154,7 @@ ul.nav a{
 }
 
 	.stock_data_table tr{
+        height: 40px;
 		border-style: solid;
 		border-right-width: 0px;
 		border-left-width: 0px;

@@ -34,32 +34,6 @@
                 <asp:TableHeaderCell>Status</asp:TableHeaderCell>
                 <asp:TableHeaderCell></asp:TableHeaderCell>
             </asp:TableHeaderRow>
-            <asp:TableRow>
-                <asp:TableCell>AAPL:US</asp:TableCell>
-                <asp:TableCell class="std_cell">542.8300</asp:TableCell>
-                <asp:TableCell class="std_cell">2</asp:TableCell>
-                <asp:TableCell class="std_cell">200.48 $</asp:TableCell>
-                <asp:TableCell class="std_cell">10,000 $</asp:TableCell>
-                <asp:TableCell class="std_cell">5 %</asp:TableCell>
-                <asp:TableCell class="std_cell">Buy</asp:TableCell>
-                <asp:TableCell class="std_cell">10.17 $</asp:TableCell>
-                <asp:TableCell class="std_cell">Auto</asp:TableCell>
-                <asp:TableCell class="std_cell">Trading</asp:TableCell>
-                <asp:TableCell><button>x</button></asp:TableCell>
-            </asp:TableRow>
-            <asp:TableRow TableSection="TableFooter">
-                <asp:TableCell></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell class="std_cell"></asp:TableCell>
-                <asp:TableCell><button>x</button></asp:TableCell>
-            </asp:TableRow>
         </asp:Table>
     </div>
 </asp:Content>

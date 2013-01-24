@@ -53,12 +53,19 @@ namespace AquilaWeb.App_Code
 
         public void LoadPrices(string symbol, int period)
         {
+            prices = new List<Bar>();
             barType = period;
 
             string sql = String.Empty;
             switch (period) {
                 case 0: 
-                    sql = "SELECT t, o, h, l, c FROM mbar WHERE symbol=:symbol AND t::timestamp::date = current_date";
+                    sql = "SELECT t, o, h, l, c " +
+                          "FROM mbar " +
+                          "WHERE symbol=:symbol " +
+                          "AND t::timestamp::date =(" +
+	                            "SELECT min(t::timestamp::date) " +
+	                            "FROM mbar " +
+	                            "WHERE symbol= :symbol2)";
                     break;
                 case 1:
                     sql = "SELECT bdate, o, h, l, c FROM dbar WHERE symbol=:symbol AND bdate > current_date - interval '1 year'";
@@ -71,6 +78,11 @@ namespace AquilaWeb.App_Code
             {
                 command.Parameters.Add(new NpgsqlParameter("symbol", NpgsqlDbType.Varchar));
                 command.Parameters[0].Value = symbol;
+                if (period == PriceSeries.INTRADAY)
+                {
+                    command.Parameters.Add(new NpgsqlParameter("symbol2", NpgsqlDbType.Varchar));
+                    command.Parameters[1].Value = symbol;
+                }
 
                 using (NpgsqlDataReader dr = command.ExecuteReader())
                 {
@@ -96,6 +108,7 @@ namespace AquilaWeb.App_Code
                     }
                 }
             }
+            conn.Close();
         }
     }
 }

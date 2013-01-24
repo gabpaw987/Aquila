@@ -215,7 +215,9 @@
     <Content Include="Scripts\init_menu.js" />
     <Content Include="Scripts\jquery-1.8.3.js" />
     <Content Include="Scripts\jquery-1.8.3.min.js" />
-    <Content Include="Scripts\tables.js" />
+    <Content Include="Scripts\tables.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Test_Search.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -223,10 +225,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\Bar.cs" />
+    <Compile Include="App_Code\DbParam.cs" />
     <Compile Include="App_Code\PortfolioElement.cs" />
     <Compile Include="App_Code\NpgsqlConnector.cs" />
     <Compile Include="App_Code\Portfolio.cs" />
     <Compile Include="App_Code\PriceSeries.cs" />
+    <Compile Include="App_Code\TableUtils.cs" />
     <Compile Include="Controls\SearchBox.ascx.cs">
       <DependentUpon>SearchBox.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

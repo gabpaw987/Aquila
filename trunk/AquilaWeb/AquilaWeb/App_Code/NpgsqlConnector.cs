@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using Npgsql;
+using NpgsqlTypes;
+using AquilaWeb.App_Code;
 
 /// <summary>
 /// Zusammenfassungsbeschreibung für NPGSQLConnector
@@ -41,7 +43,7 @@ public class NpgsqlConnector
 
     public NpgsqlConnector():this("aquila"){ }
 
-    public NpgsqlConnector(string database) : this("127.0.0.1", "aquila", "short", database) { }
+    public NpgsqlConnector(string database) : this("127.0.0.1", "postgres", "short", database) { }
 
 	public NpgsqlConnector(string server, string user, string pass, string database)
 	{
@@ -64,67 +66,96 @@ public class NpgsqlConnector
                                     "SSL=true;Sslmode=prefer;Pooling=true");
     }
 
-    public Object SelectSingleValue(string sql)
+    public T SelectSingleValue<T>(string sql)
     {
+        return SelectSingleValue<T>(sql, new List<DbParam>());
+    }
+
+    public T SelectSingleValue<T>(string sql, List<DbParam> p)
+    {
+        //Connected = false;
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+        using(NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        {
+            foreach (DbParam e in p)
+            {
+                command.Parameters.Add(new NpgsqlParameter(e.paramName, e.paramType));
+                command.Parameters[command.Parameters.Count-1].Value = e.paramValue;
+            }
 
-        Object scalar;
-        try
-        {
-            scalar = command.ExecuteScalar();
-            return scalar;
-        }
-        catch
-        { return null; }
-        finally
-        {
-            // Close db connection if closeAfterQuery is set
-            if (CloseAfterQuery) Connected = false;
+            Object scalar = new Object();
+            try
+            {
+                scalar = command.ExecuteScalar();
+                if (scalar is DBNull) scalar = default(T);
+                return (T)scalar;
+            }
+            //catch (Exception e)
+            //{
+                //e.printStackTrace
+                //return default(T);
+            //}
+            finally
+            {
+                // Close db connection if closeAfterQuery is set
+                if (CloseAfterQuery) Connected = false;
+            }
         }
     }
 
-    public decimal SelectSingleDecimal(string sql)
-    {
-        Object o = SelectSingleValue(sql);
-        if (!(o is DBNull))
-        {
-            return Convert.ToDecimal(o);
-        }
-        else
-        {
-            return 0m;
-        }
-        //return (o != null) ? (Decimal)o : 0m;
-    }
+    //public decimal SelectSingleDecimal(string sql)
+    //{
+    //    return SelectSingleValue<decimal>(sql, new List<DbParam>());
+    //    // return (!(o is DBNull)) ? Convert.ToDecimal(o) : 0m;
 
-    public string SelectSingleString(string sql)
-    {
-        Object o = SelectSingleValue(sql);
-        return (o != null) ? (string)o : null;
-    }
+    //    //if (!(o is DBNull))
+    //    //{
+    //    //    return Convert.ToDecimal(o);
+    //    //}
+    //    //else
+    //    //{
+    //    //    return 0m;
+    //    //}
+    //}
+
+    //public string SelectSingleString(string sql)
+    //{
+    //    Object o = SelectSingleValue(sql);
+    //    return !(o is DBNull) ? Convert.ToString(o) : null;
+    //}
 
     public NpgsqlDataReader Select(string sql)
     {
+        return Select(sql, new List<DbParam>());
+    }
+
+    public NpgsqlDataReader Select(string sql, List<DbParam> p)
+    {
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+        using (NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        {
+            foreach (DbParam e in p)
+            {
+                command.Parameters.Add(new NpgsqlParameter(e.paramName, e.paramType));
+                command.Parameters[command.Parameters.Count - 1].Value = e.paramValue;
+            }
 
-        NpgsqlDataReader dr;
-        try
-        {
-            dr = command.ExecuteReader();
-            return dr;
-        }
-        catch
-        { return null; }
-        finally
-        {
-            // Close db connection if closeAfterQuery is set
-            if (CloseAfterQuery) Connected = false;
+            NpgsqlDataReader dr;
+            try
+            {
+                dr = command.ExecuteReader();
+                return dr;
+            }
+            catch
+            { return null; }
+            finally
+            {
+
+            }
         }
     }
 
@@ -158,12 +189,5 @@ public class NpgsqlConnector
             // Close db connection if closeAfterQuery is set
             if (CloseAfterQuery) Connected = false;
         }
-    }
-
-    // MAIN
-    public static void main(string[] args)
-    { 
-        NpgsqlConnector db = new NpgsqlConnector();
-        Console.WriteLine("Mein Name ist {0}!", (String)db.SelectSingleValue("SELECT name FROM Test WHERE id=1"));
     }
 }

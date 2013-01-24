@@ -58,19 +58,15 @@ function edit_cell(cell)
         });
     }
 
-    // TODO: DeleteButton
-    //       Remove Input and Text (revoke focus)
     function addPortfolioRow(pfElement)
     {
         alert(pfElement.Symbol + ": " + pfElement.Position);
         $('#content_portfolio_table > tbody:last').append('<tr>' +
                                                         '<td>' + pfElement.Symbol + '</td>' +
-                                                        '<td>' + pfElement.Close + '</td>' +
                                                         '<td>' + pfElement.Position + '</td>' +
                                                         '<td>' + pfElement.Gain + '</td>' +
                                                         '<td>' + pfElement.Maxinvest + '</td>' +
                                                         '<td>' + pfElement.Cutloss + '</td>' +
-                                                        '<td>' + pfElement.Decision + '</td>' +
                                                         '<td>' + pfElement.Roi + '</td>' +
                                                         '<td>' + pfElement.Auto + '</td>' +
                                                         '<td>' + pfElement.Active + '</td>' +

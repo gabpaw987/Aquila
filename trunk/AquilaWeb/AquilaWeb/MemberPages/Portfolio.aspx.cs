@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -20,72 +21,101 @@ namespace AquilaWeb.MemberPages
             // load/calculate portfolio table data
             initPortfolioTable();
 
-            //
-            initPortfolioInfo();
+            // page newly called
+            if (!IsPostBack)
+            {
+                //
+                initPortfolioInfo();
+            }
+            // postback
+            else { 
+                
+            }
+        }
+
+        [WebMethod]
+        public static PortfolioElement LoadPortfolioElement(string symbol)
+        {
+            return Portfolio.AddSymbol(symbol);
         }
 
         protected void initPortfolioTable()
         {
             pf = new Portfolio();
 
+            List<TableRow> tRows = new List<TableRow>();
+            
+            int n = 1;
             foreach (PortfolioElement asset in pf.Assets)
             {
                 TableRow tRow = new TableRow();
 
-                Stocks.addTextCell(tRow, asset.Symbol, String.Empty);
-                Stocks.addTextCell(tRow, asset.Close + String.Empty, "std_cell");
-                Stocks.addTextCell(tRow, asset.Position + String.Empty, "std_cell");
-                Stocks.addTextCell(tRow, asset.Gain + String.Empty, "std_cell");
-                Stocks.addTextCell(tRow, asset.Maxinvest + String.Empty, "std_cell");
-                Stocks.addTextCell(tRow, asset.Cutloss + String.Empty, "std_cell");
+                // add symbol cell with editing onClick
+                TableUtils.addTextCell(tRow, asset.Symbol, null, "content_portfolio_sym_" + n, true);
+                TableUtils.addTextCell(tRow, asset.Close + String.Empty, "std_cell");
+                TableUtils.addTextCell(tRow, asset.Position + String.Empty, "std_cell");
+                TableUtils.addTextCell(tRow, asset.Gain + String.Empty, "std_cell");
+                TableUtils.addTextCell(tRow, asset.Maxinvest + String.Empty, "std_cell");
+                TableUtils.addTextCell(tRow, asset.Cutloss + String.Empty, "std_cell");
+
                 if (asset.Decision < 0)
                 {
-                    Stocks.addTextCell(tRow, "Sell", "std_class");
+                    TableUtils.addTextCell(tRow, "Sell", "std_class");
                 }
                 else if (asset.Decision > 0)
                 {
-                    Stocks.addTextCell(tRow, "Buy", "std_class");
+                    TableUtils.addTextCell(tRow, "Buy", "std_class");
                 }
                 else
                 {
-                    Stocks.addTextCell(tRow, "Hold", "std_class");
+                    TableUtils.addTextCell(tRow, "Hold", "std_class");
                 }
-                Stocks.addTextCell(tRow, asset.Roi + String.Empty, "std_cell");
+
+                TableUtils.addTextCell(tRow, asset.Roi + String.Empty, "std_cell");
+
                 if (asset.Auto)
                 {
-                    Stocks.addTextCell(tRow, "Auto", "std_cell");
+                    TableUtils.addTextCell(tRow, "Auto", "std_cell");
                 }
                 else
                 {
-                    Stocks.addTextCell(tRow, "Manual", "std_cell");
+                    TableUtils.addTextCell(tRow, "Manual", "std_cell");
                 }
+
                 if (asset.Active)
                 {
-                    Stocks.addTextCell(tRow, "Trading", "std_cell");
+                    TableUtils.addTextCell(tRow, "Trading", "std_cell");
                 }
                 else
                 {
-                    Stocks.addTextCell(tRow, "Inactive", "std_cell");
+                    TableUtils.addTextCell(tRow, "Inactive", "std_cell");
                 }
 
-                // Delte button at end of line
-                TableCell btCell = new TableCell();
-                Button delBt = new Button();
-                delBt.Text = "x";
-                btCell.Controls.Add(delBt);
-                tRow.Cells.Add(btCell);
-                
-                // add row before footer
-                portfolio_table.Rows.AddAt(portfolio_table.Rows.Count - 1, tRow);
-            }
-        }
+                // Add delete-button at end of line
+                TableUtils.addDeleteButtonCell(tRow);
 
-        protected static void addTextCell(TableRow tRow, string text, string cssclass)
-        {
-            TableCell tCell = new TableCell();
-            tCell.Text = text;
-            tCell.CssClass = cssclass;
-            tRow.Cells.Add(tCell);
+                tRows.Add(tRow);
+
+                lbl_invested.Text += n+": " + asset.Symbol;
+
+                n++;
+            }
+
+            // Add rows to the table
+            portfolio_table.Rows.AddRange(tRows.ToArray());
+
+            // Create empty footer row
+            TableFooterRow tfRow = new TableFooterRow();
+            tfRow.TableSection = TableRowSection.TableFooter;
+
+            TableUtils.addTextCell(tfRow, String.Empty, null, "content_portfolio_sym_n", true);
+            for (int i=0; i<10; i++)
+            {
+                TableUtils.addTextCell(tfRow, String.Empty, "std_cell");
+            }
+
+            // Add empty footer to the table
+            portfolio_table.Rows.Add(tfRow);
         }
 
         protected void initPortfolioInfo()
