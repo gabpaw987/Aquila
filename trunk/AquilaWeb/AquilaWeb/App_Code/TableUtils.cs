@@ -15,12 +15,12 @@ namespace AquilaWeb.App_Code
 
         public static void addTextCell(TableRow tRow, string text, string cssclass)
         {
-            addTextCell(tRow, text, text, null);
+            addTextCell(tRow, text, cssclass, null);
         }
 
         public static void addTextCell(TableRow tRow, string text, string cssclass, string id)
         {
-            addTextCell(tRow, text, text, null, false);
+            addTextCell(tRow, text, cssclass, null, false);
         }
 
         public static void addTextCell(TableRow tRow, string text, string cssclass, string id, bool editCell)
@@ -33,14 +33,25 @@ namespace AquilaWeb.App_Code
             tRow.Cells.Add(tCell);
         }
 
-        public static void addDeleteButtonCell(TableRow tRow)
+        public static void addTextCell(TableRow tRow, string text, string cssclass, string id, bool editCell, string href)
         {
-            // Delte-button at end of line
-            TableCell btCell = new TableCell();
-            Button delBt = new Button();
-            delBt.Text = "x";
-            btCell.Controls.Add(delBt);
-            tRow.Cells.Add(btCell);
+            TableCell tCell = new TableCell();
+            if (id != null) tCell.ID = id;
+            if (cssclass != null) tCell.CssClass = cssclass;
+            if (editCell) tCell.Attributes.Add("onclick", "edit_cell(this)");
+
+            if (href != null)
+            {
+                HyperLink a = new HyperLink();
+                a.NavigateUrl = href;
+                a.Text = text;
+                tCell.Controls.Add(a);
+            }
+            else
+            {
+                tCell.Text = text;
+            }
+            tRow.Cells.Add(tCell);
         }
     }
 }

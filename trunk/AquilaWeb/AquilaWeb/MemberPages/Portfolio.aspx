@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Portfolio" Language="C#" MasterPageFile="~/Main.Master" AutoEventWireup="true" CodeBehind="Portfolio.aspx.cs" Inherits="AquilaWeb.MemberPages.Stocks" %>
+﻿<%@ Page Title="Portfolio" Language="C#" MasterPageFile="~/Main.Master" AutoEventWireup="true" CodeBehind="Portfolio.aspx.cs" Inherits="AquilaWeb.MemberPages.PortfolioPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
         
@@ -14,6 +14,10 @@
             <asp:ScriptReference Path="~/Scripts/tables.js" />
         </Scripts>
     </asp:ScriptManagerProxy>
+
+    <div id="del_dialog">
+        <p class="message"></p>
+    </div>
 
     <div id="performance">
         <h2 id="performance_nr">Profit/Loss <span><asp:Label id="lbl_pl_ur" runat="server" Text="" /><asp:Label id="lbl_pl_r" runat="server" Text="" /></span></h2>

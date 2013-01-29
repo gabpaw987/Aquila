@@ -7,7 +7,7 @@ h1{
 	/*position: relative;
 	line-height: 0px;
 	margin: 50px;*/
-	font-size: 5em;
+	font-size: 3.5em;
 	margin: 0;
 }
 
@@ -34,7 +34,7 @@ button, input[type="submit"]{
 
 #header{
 	margin-top: 20px;
-	height: 150px;
+	/* height: 150px; */
 	width: 100%;
 }
 
@@ -47,11 +47,11 @@ button, input[type="submit"]{
 	}
 
 #menu{
-
+    height: 50px;
 }
 
 	#menu_search{
-		float: right;
+        float: right;
 	}
 	
 		#menu_search input[type="text"]{
@@ -61,6 +61,25 @@ button, input[type="submit"]{
 			width: 260px;
 			border: 1px solid lightgray;
 		}
+
+        #search_results {
+            position: fixed;
+            display: table-row;
+            width: 262px;
+            padding: 0px;
+            background-color: lightgray;
+        }
+
+            #search_results li {
+                display: table-cell;
+                width: 225px;
+                list-style-type: none;
+                clear: both;
+            }
+
+                #search_results li a{
+                    color: black;
+                }
 
 #content{
 	border-top: 2px solid gray;
@@ -189,4 +208,15 @@ ul.nav a{
 	td.std_cell:hover{
 		background-color: #888;
 	}
-	
+
+.usr_error {
+    color: red;
+}
+
+.usr_msg {
+    color: grey;
+}
+
+.usr_success {
+    color: green;
+}

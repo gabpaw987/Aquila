@@ -73,7 +73,6 @@ public class NpgsqlConnector
 
     public T SelectSingleValue<T>(string sql, List<DbParam> p)
     {
-        //Connected = false;
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
@@ -89,12 +88,11 @@ public class NpgsqlConnector
             try
             {
                 scalar = command.ExecuteScalar();
-                if (scalar is DBNull) scalar = default(T);
+                if (scalar == null || scalar is DBNull) scalar = default(T);
                 return (T)scalar;
             }
             //catch (Exception e)
             //{
-                //e.printStackTrace
                 //return default(T);
             //}
             finally
@@ -150,8 +148,8 @@ public class NpgsqlConnector
                 dr = command.ExecuteReader();
                 return dr;
             }
-            catch
-            { return null; }
+            //catch
+            //{ return null; }
             finally
             {
 
@@ -161,33 +159,37 @@ public class NpgsqlConnector
 
     public int Insert(string sql)
     {
-        return ExecuteDMLCommand(sql);
+        return ExecuteDMLCommand(sql, new List<DbParam>());
     }
 
     public int Update(string sql)
     {
-        return ExecuteDMLCommand(sql);
+        return ExecuteDMLCommand(sql, new List<DbParam>());
     }
 
-    protected int ExecuteDMLCommand(string sql)
+    public int ExecuteDMLCommand(string sql, List<DbParam> p)
     {
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        NpgsqlCommand command = new NpgsqlCommand(sql, conn);
+        using (NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        {
 
-        int rowsAffected;
-        try
-        {
-            rowsAffected = command.ExecuteNonQuery();
-            return rowsAffected;
-        }
-        catch
-        { return 0; }
-        finally
-        {
-            // Close db connection if closeAfterQuery is set
-            if (CloseAfterQuery) Connected = false;
+            foreach (DbParam e in p)
+            {
+                command.Parameters.Add(new NpgsqlParameter(e.paramName, e.paramType));
+                command.Parameters[command.Parameters.Count - 1].Value = e.paramValue;
+            }
+
+            try
+            {
+                return command.ExecuteNonQuery();
+            }
+            finally
+            {
+                // Close db connection if closeAfterQuery is set
+                if (CloseAfterQuery) Connected = false;
+            }
         }
     }
 }

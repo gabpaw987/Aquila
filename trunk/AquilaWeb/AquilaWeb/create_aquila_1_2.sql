@@ -329,12 +329,12 @@ CREATE TABLE sorder (
     executed      BOOLEAN,
     fee           DECIMAL(13,5),
     PRIMARY KEY (pfid, symbol, ten),
-    FOREIGN KEY (pfid, symbol)  REFERENCES pfsecurity (pfid, symbol)
+    FOREIGN KEY (pfid)  REFERENCES portfolio (pfid)
       ON UPDATE CASCADE
-      ON DELETE SET NULL,
+      ON DELETE CASCADE,
     FOREIGN KEY (symbol)       REFERENCES series (symbol)
       ON UPDATE CASCADE
-      ON DELETE SET NULL,
+      ON DELETE CASCADE,
     FOREIGN KEY (oname)        REFERENCES ordertype (oname)
       ON UPDATE CASCADE
       ON DELETE SET NULL

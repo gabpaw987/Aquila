@@ -76,6 +76,24 @@ namespace AquilaWeb {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl nav_i3;
         
         /// <summary>
+        /// search-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox search;
+        
+        /// <summary>
+        /// usr_msg-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel usr_msg;
+        
+        /// <summary>
         /// content-Steuerelement
         /// </summary>
         /// <remarks>

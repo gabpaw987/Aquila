@@ -10,7 +10,7 @@
 namespace AquilaWeb.MemberPages {
     
     
-    public partial class Stocks {
+    public partial class PortfolioPage {
         
         /// <summary>
         /// ScriptManagerProxy1-Steuerelement

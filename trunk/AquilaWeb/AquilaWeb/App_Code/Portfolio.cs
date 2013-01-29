@@ -91,8 +91,6 @@ namespace AquilaWeb.App_Code
                 dr.Close();
                 _conn.Connected = false;
             }
-
-            // TODO: FIX DB SelectSingleValue
             
             // how much currently is invested
             _invested = _conn.SelectSingleValue<decimal>("SELECT invested FROM portfolio WHERE pfid=" + this._pfid);
@@ -104,12 +102,7 @@ namespace AquilaWeb.App_Code
 
         public static bool isValidSymbol(string symbol)
         {
-            DbParam p = new DbParam();
-            p.paramName = "symbol";
-            p.paramType = NpgsqlDbType.Varchar;
-            p.paramValue = symbol;
-            List<DbParam> pl = new List<DbParam>();
-            pl.Add(p);
+            List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
             NpgsqlConnector conn = new NpgsqlConnector();
             conn.CloseAfterQuery = true;
@@ -122,15 +115,10 @@ namespace AquilaWeb.App_Code
             {
                 PortfolioElement e = new PortfolioElement();
 
-                DbParam p = new DbParam();
-                p.paramName = "symbol";
-                p.paramType = NpgsqlDbType.Varchar;
-                p.paramValue = symbol;
-                List<DbParam> pl = new List<DbParam>();
-                pl.Add(p);
+                List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
                 NpgsqlConnector conn = new NpgsqlConnector();
-                using (NpgsqlDataReader dr = conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + Portfolio.PFID +", :symbol) RETURNING *", pl))
+                using (NpgsqlDataReader dr = conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + Portfolio.PFID + ", :symbol) RETURNING *", pl))
                 {
                     dr.Read();
 
@@ -146,15 +134,11 @@ namespace AquilaWeb.App_Code
                     dr.Close();
                 }
 
-                // TODO: FIX DB SelectSingleValue
+                string query = "SELECT c FROM mbar WHERE symbol='" + e.Symbol + "' ORDER BY t DESC LIMIT 1";
+                e.Close = conn.SelectSingleValue<decimal>(query);
 
-                string query = "SELECT c FROM mbar WHERE symbol=" + e.Symbol + " ORDER BY t DESC LIMIT 1";
-                // e.Close = conn.SelectSingleValue<decimal>(query);
-                e.Close = 0m;
-
-                query = "SELECT decision FROM series WHERE symbol=" + e.Symbol;
-                // e.Decision = conn.SelectSingleValue<int>(query);
-                e.Decision = 0;
+                query = "SELECT decision FROM series WHERE symbol='" + e.Symbol + "'";
+                e.Decision = conn.SelectSingleValue<int>(query);
 
                 return e;
             }

@@ -1,4 +1,6 @@
 ﻿using AquilaWeb.App_Code;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace AquilaWeb.MemberPages
 {
-    public partial class Stocks : System.Web.UI.Page
+    public partial class PortfolioPage : System.Web.UI.Page
     {
         private Portfolio pf;
 
@@ -33,10 +35,51 @@ namespace AquilaWeb.MemberPages
             }
         }
 
+        // WEB METHODS //
+
         [WebMethod]
         public static PortfolioElement LoadPortfolioElement(string symbol)
         {
             return Portfolio.AddSymbol(symbol);
+        }
+
+        [WebMethod]
+        public static List<String> SearchForSymbol(string str)
+        {
+            string query = "SELECT symbol FROM series WHERE lower(symbol) LIKE :str ORDER BY symbol ASC LIMIT 10";
+
+            NpgsqlConnector conn = new NpgsqlConnector();
+            NpgsqlDataReader dr = conn.Select(query, new List<DbParam> { new DbParam("str", NpgsqlDbType.Varchar, "%" + str + "%") });
+            List<string> res = new List<string>();
+            while (dr != null && dr.Read())
+            {
+                // System.Diagnostics.Debug.WriteLine("in dr.read");
+                res.Add( (!dr.IsDBNull(0)) ? dr.GetString(0) : "" );
+            }
+            conn.Connected = false;
+            return res;
+        }
+
+        public bool RemovePortfolioElement(string symbol)
+        {
+            // check if symbol exists
+            if (Portfolio.isValidSymbol(symbol))
+            {
+                NpgsqlConnector conn = new NpgsqlConnector();
+                // conn.CloseAfterQuery = true;
+
+                string query = "SELECT active FROM pfsecurity WHERE symbol=:symbol";
+                List<DbParam> pl = new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+                bool active = conn.SelectSingleValue<bool>(query, pl);
+
+                if (!active)
+                {
+                    conn.CloseAfterQuery = true;
+                    query = "DELETE FROM pfsecurity WHERE symbol = :symbol";
+                    return (conn.ExecuteDMLCommand(query, new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) }) > 0) ? true : false;
+                }
+            }
+            return false;
         }
 
         protected void initPortfolioTable()
@@ -51,7 +94,7 @@ namespace AquilaWeb.MemberPages
                 TableRow tRow = new TableRow();
 
                 // add symbol cell with editing onClick
-                TableUtils.addTextCell(tRow, asset.Symbol, null, "content_portfolio_sym_" + n, true);
+                TableUtils.addTextCell(tRow, asset.Symbol, null, "content_portfolio_sym_" + n, false, "Instrument.aspx?symbol=" + asset.Symbol);
                 TableUtils.addTextCell(tRow, asset.Close + String.Empty, "std_cell");
                 TableUtils.addTextCell(tRow, asset.Position + String.Empty, "std_cell");
                 TableUtils.addTextCell(tRow, asset.Gain + String.Empty, "std_cell");
@@ -60,15 +103,15 @@ namespace AquilaWeb.MemberPages
 
                 if (asset.Decision < 0)
                 {
-                    TableUtils.addTextCell(tRow, "Sell", "std_class");
+                    TableUtils.addTextCell(tRow, "Sell", "std_cell");
                 }
                 else if (asset.Decision > 0)
                 {
-                    TableUtils.addTextCell(tRow, "Buy", "std_class");
+                    TableUtils.addTextCell(tRow, "Buy", "std_cell");
                 }
                 else
                 {
-                    TableUtils.addTextCell(tRow, "Hold", "std_class");
+                    TableUtils.addTextCell(tRow, "Hold", "std_cell");
                 }
 
                 TableUtils.addTextCell(tRow, asset.Roi + String.Empty, "std_cell");
@@ -92,11 +135,18 @@ namespace AquilaWeb.MemberPages
                 }
 
                 // Add delete-button at end of line
-                TableUtils.addDeleteButtonCell(tRow);
+                TableCell btCell = new TableCell();
+                Button delBt = new Button();
+                delBt.ID = "delBt_" + n;
+                delBt.CommandArgument = asset.Symbol;                   // Which symbol should be removed
+                delBt.Click += new EventHandler(this.DelBt_Clicked);    // function reference
+                delBt.CssClass = "delete";
+                delBt.Attributes.Add("rel", asset.Symbol);              // Add symbol for client side script
+                delBt.Text = "x";
+                btCell.Controls.Add(delBt);
+                tRow.Cells.Add(btCell);
 
                 tRows.Add(tRow);
-
-                lbl_invested.Text += n+": " + asset.Symbol;
 
                 n++;
             }
@@ -111,11 +161,20 @@ namespace AquilaWeb.MemberPages
             TableUtils.addTextCell(tfRow, String.Empty, null, "content_portfolio_sym_n", true);
             for (int i=0; i<10; i++)
             {
-                TableUtils.addTextCell(tfRow, String.Empty, "std_cell");
+                TableUtils.addTextCell(tfRow, String.Empty);
             }
 
             // Add empty footer to the table
             portfolio_table.Rows.Add(tfRow);
+        }
+
+        protected void DelBt_Clicked(Object sender, EventArgs e)
+        {
+            Button delBt = (Button)sender;
+            if (RemovePortfolioElement(delBt.CommandArgument))
+            {
+                portfolio_table.Rows.RemoveAt(Int32.Parse(delBt.ID.Substring(delBt.ID.Length - 1, 1)));
+            }
         }
 
         protected void initPortfolioInfo()
