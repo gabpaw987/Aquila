@@ -2,6 +2,6 @@
 {
     interface Command
     {
-        public bool Execute(params string[] args);
+        bool Execute(params string[] args);
     }
 }

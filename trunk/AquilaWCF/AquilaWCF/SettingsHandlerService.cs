@@ -4,7 +4,7 @@ namespace Aquila_Software
 {
     public class SettingsHandlerService : SettingsHandler
     {
-        public override bool SetSetting(params object[] args)
+        public bool SetSetting(params object[] args)
         {
             try
             {

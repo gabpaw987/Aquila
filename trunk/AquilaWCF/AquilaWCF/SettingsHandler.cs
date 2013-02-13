@@ -6,6 +6,6 @@ namespace Aquila_Software
     public interface SettingsHandler
     {
         [OperationContract]
-        public bool SetSetting(params object[] args);
+        bool SetSetting(params object[] args);
     }
 }
