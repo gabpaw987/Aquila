@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -7,15 +6,13 @@ namespace Aquila_Software
 {
     internal class WCFCommunication
     {
-        public Dictionary<string, Worker> Workers;
-
         private static void Main(string[] args)
         {
             // Step 1 of the address configuration procedure: Create a URI to serve as the base address.
             Uri baseAddress = new Uri("http://localhost:8000/ServiceHandler");
 
             // Step 2 of the hosting procedure: Create ServiceHost
-            ServiceHost selfHost = new ServiceHost(typeof(SettingsHandlerService), baseAddress);
+            ServiceHost selfHost = new ServiceHost(typeof(Server), baseAddress);
 
             try
             {
