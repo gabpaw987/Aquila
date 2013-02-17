@@ -78,6 +78,7 @@ button, input[type="submit"]{
             }
 
                 #search_results li a{
+                    width: 100%;
                     color: black;
                 }
 
@@ -154,17 +155,18 @@ li.nav_selected{
 
 ul.nav li{
 	float: left;
-	padding: 0.5em 1.3em 0.5em 1.3em;
-}
-
-ul.nav li:hover{
-	background-color: #555;
 }
 
 ul.nav a{
+    display: inline-block;
+    padding: 0.5em 1.3em 0.5em 1.3em;
 	font-size: 1em;
 	text-decoration: none;
 	color: lightgrey;
+}
+
+ul.nav a:hover {
+    background-color: #555;
 }
 
 .stock_data_table{

@@ -22,7 +22,7 @@
         <div id="wrapper">
             <div id="header">
                 <div id="header_top">
-                    <a href="#">Logout</a>
+                    <asp:LoginStatus ID="LoginStatus1" runat="server" LogoutText="Logout" />
                 </div>
                 <div id="header_main">
                     <asp:ContentPlaceHolder ID="header" runat="server" />

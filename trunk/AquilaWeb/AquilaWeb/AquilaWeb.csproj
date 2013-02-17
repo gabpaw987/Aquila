@@ -43,8 +43,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Npgsql.2.0.12.1\lib\net40\Mono.Security.dll</HintPath>
     </Reference>
-    <Reference Include="NauckIT.PostgreSQLProvider">
-      <HintPath>..\packages\Nauck.PostgresSQLProvider.1.4.0\lib\Net40\NauckIT.PostgreSQLProvider.dll</HintPath>
+    <Reference Include="NauckIT.PostgreSQLProvider, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e179b4c7dfb3984c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NauckIT.PostgreSQLProvider.2.0.0\lib\NauckIT.PostgreSQLProvider.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=2.0.12.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -216,6 +217,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Controls\SearchBox.ascx" />
+    <Content Include="DatabaseSchema.sql" />
     <Content Include="Main.Master" />
     <Content Include="MemberPages\Performance.aspx" />
     <Content Include="MemberPages\Portfolio.aspx" />
@@ -284,14 +286,15 @@
     <Content Include="Scripts\tables.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Test_Search.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\Bar.cs" />
+    <Compile Include="App_Code\ChartUtils.cs" />
     <Compile Include="App_Code\DbParam.cs" />
+    <Compile Include="App_Code\Instrument.cs" />
     <Compile Include="App_Code\PortfolioElement.cs" />
     <Compile Include="App_Code\NpgsqlConnector.cs" />
     <Compile Include="App_Code\Portfolio.cs" />
@@ -347,13 +350,6 @@
       <DependentUpon>Settings.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test_Search.aspx.cs">
-      <DependentUpon>Test_Search.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Test_Search.aspx.designer.cs">
-      <DependentUpon>Test_Search.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
