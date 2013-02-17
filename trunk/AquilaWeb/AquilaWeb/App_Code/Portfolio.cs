@@ -100,15 +100,6 @@ namespace AquilaWeb.App_Code
             _realizedPL = _conn.SelectSingleValue<decimal>("SELECT rpf FROM portfolio WHERE pfid=" + this._pfid);
         }
 
-        public static bool isValidSymbol(string symbol)
-        {
-            List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
-
-            NpgsqlConnector conn = new NpgsqlConnector();
-            conn.CloseAfterQuery = true;
-            return conn.SelectSingleValue<bool>("SELECT :symbol IN (SELECT symbol FROM series)", pl);
-        }
-
         public static PortfolioElement AddSymbol(string symbol)
         {
             if (Portfolio.isValidSymbol(symbol))
@@ -146,6 +137,24 @@ namespace AquilaWeb.App_Code
             {
                 return null;
             }
+        }
+
+        public static bool isValidSymbol(string symbol)
+        {
+            List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+
+            NpgsqlConnector conn = new NpgsqlConnector();
+            conn.CloseAfterQuery = true;
+            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM series WHERE symbol=:symbol", pl) == 1;
+        }
+
+        public static bool isInPortfolio(string symbol)
+        {
+            List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+
+            NpgsqlConnector conn = new NpgsqlConnector();
+            conn.CloseAfterQuery = true;
+            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=:symbol", pl) == 1;
         }
     }
 }
