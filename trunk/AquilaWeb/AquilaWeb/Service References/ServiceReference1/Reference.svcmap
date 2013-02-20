@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="e01f42b1-043b-411c-bc2c-50875a2626b9" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8000/SettingsHandler" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SettingsHandler.xsd" MetadataType="Schema" ID="ad2bc7b1-c9eb-481d-a424-3bca81534b65" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd0" />
+    <MetadataFile FileName="SettingsHandler.wsdl" MetadataType="Wsdl" ID="cd5f5c8f-8879-4f11-bdb6-35c1341f7630" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl=wsdl0" />
+    <MetadataFile FileName="SettingsHandler.disco" MetadataType="Disco" ID="2bb30759-a563-43b4-8672-199da3d50ba0" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?disco" />
+    <MetadataFile FileName="Server.wsdl" MetadataType="Wsdl" ID="47a1a5e0-4944-4fa2-82cb-346d32685744" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl" />
+    <MetadataFile FileName="SettingsHandler1.xsd" MetadataType="Schema" ID="c94bf472-6a80-4916-a117-f912c880421a" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd2" />
+    <MetadataFile FileName="SettingsHandler2.xsd" MetadataType="Schema" ID="87a95d3d-613d-4528-ba16-ecd19b6b7242" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
