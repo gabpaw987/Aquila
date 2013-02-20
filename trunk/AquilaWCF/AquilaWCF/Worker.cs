@@ -12,7 +12,7 @@ namespace Aquila_Software
         public volatile BarSize BarSize;
         public volatile HistoricalDataType HistoricalDataType;
         public volatile RealTimeBarType RealtimeBarType;
-        public volatile bool _Running;
+        public volatile bool isCalculating;
         public volatile float PricePremiumPercentage;
 
         public Worker(string symbol)
