@@ -9,7 +9,7 @@ namespace Aquila_Software
         private static void Main(string[] args)
         {
             // Step 1 of the address configuration procedure: Create a URI to serve as the base address.
-            Uri baseAddress = new Uri("http://localhost:8000/ServiceHandler");
+            Uri baseAddress = new Uri("http://localhost:8000/SettingsHandler");
 
             // Step 2 of the hosting procedure: Create ServiceHost
             ServiceHost selfHost = new ServiceHost(typeof(Server), baseAddress);

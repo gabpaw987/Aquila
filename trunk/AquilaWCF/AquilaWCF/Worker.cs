@@ -3,7 +3,7 @@ using Krs.Ats.IBNet.Contracts;
 
 namespace Aquila_Software
 {
-    internal class Worker
+    public class Worker
     {
         //public volatile ManualExecution ManualExecution;
         public volatile Equity Equity;
@@ -14,5 +14,10 @@ namespace Aquila_Software
         public volatile RealTimeBarType RealtimeBarType;
         public volatile bool _Running;
         public volatile float PricePremiumPercentage;
+
+        public Worker(string symbol)
+        {
+            this.Equity = new Equity(symbol);
+        }
     }
 }

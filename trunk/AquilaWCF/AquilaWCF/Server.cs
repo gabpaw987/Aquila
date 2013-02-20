@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Krs.Ats.IBNet;
-using Krs.Ats.IBNet.Contracts;
 
 namespace Aquila_Software
 {
@@ -23,10 +22,10 @@ namespace Aquila_Software
                         {
                             workerToSet.IsActive = (bool)args[2];
                         }
-                        else if (args[0].Equals("Equity") && args[2] is string)
+                        /*else if (args[0].Equals("Equity") && args[2] is string)
                         {
                             workerToSet.Equity = new Equity((string)args[2]);
-                        }
+                        }*/
                         else if (args[0].Equals("Amount") && args[2] is float)
                         {
                             workerToSet.Amount = (float)args[2];
