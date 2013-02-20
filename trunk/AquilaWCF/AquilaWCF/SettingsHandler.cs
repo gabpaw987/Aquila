@@ -7,5 +7,8 @@ namespace Aquila_Software
     {
         [OperationContract]
         bool SetSetting(params object[] args);
+
+        [OperationContract]
+        bool performAction(params object[] args);
     }
 }
