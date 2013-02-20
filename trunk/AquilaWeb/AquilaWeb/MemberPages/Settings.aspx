@@ -8,4 +8,8 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="content" runat="server">
+    <ul ID="SettingsList" runat="server">
+        <asp:HyperLink ID="ChangePwLink" runat="server" Text="Change Password" NavigateUrl="~/MemberPages/Settings/ChangePassword.aspx" />
+        <asp:HyperLink ID="ChangePresets" runat="server" Text="Change Presets" NavigateUrl="~/MemberPages/Settings/ChangePresets.aspx" />
+    </ul>
 </asp:Content>
