@@ -1,13 +1,13 @@
+C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Scripts\tables.js
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\AquilaWeb.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\AquilaWeb.pdb
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Mono.Security.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\NauckIT.PostgreSQLProvider.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Npgsql.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\policy.2.0.Npgsql.dll
+C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\NauckIT.PostgreSQLProvider.pdb
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Npgsql.pdb
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Npgsql.xml
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\policy.2.0.Npgsql.config
 C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.pdb
-C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Scripts\tables.js
-C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.csprojResolveAssemblyReference.cache
