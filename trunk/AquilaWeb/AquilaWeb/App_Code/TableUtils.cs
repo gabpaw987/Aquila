@@ -25,12 +25,7 @@ namespace AquilaWeb.App_Code
 
         public static void addTextCell(TableRow tRow, string text, string cssclass, string id, bool editCell)
         {
-            TableCell tCell = new TableCell();
-            if (id != null) tCell.ID = id;
-            tCell.Text = text;
-            if (cssclass != null) tCell.CssClass = cssclass;
-            if (editCell) tCell.Attributes.Add("onclick", "edit_cell(this)");
-            tRow.Cells.Add(tCell);
+            addTextCell(tRow, text, cssclass, id, editCell, null);
         }
 
         public static void addTextCell(TableRow tRow, string text, string cssclass, string id, bool editCell, string href)
@@ -38,7 +33,7 @@ namespace AquilaWeb.App_Code
             TableCell tCell = new TableCell();
             if (id != null) tCell.ID = id;
             if (cssclass != null) tCell.CssClass = cssclass;
-            if (editCell) tCell.Attributes.Add("onclick", "edit_cell(this)");
+            if (editCell) tCell.Attributes.Add("onclick", "edit_cell(this, addSymbolEnter)");
 
             if (href != null)
             {

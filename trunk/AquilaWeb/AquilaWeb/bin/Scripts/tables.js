@@ -36,47 +36,147 @@
     });
 });
 
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function changeValueInput(cell, symbol, setting) {
+    edit_cell(cell, function(e){ setSettingEnter(e, cell, symbol, setting) });
+}
+
 var inputShown = false;
-var tmp_cell_id;
 var tmp_cell_text;
 var cell_input;
-function edit_cell(cell)
+function edit_cell(cell, callback)
 {
     if (!inputShown) {                                  // semaphor: currently not edited
         inputShown = true;                              // input field is visible
-        tmp_cell_id = cell.id;                          // save table cell id
-        tmp_cell_text = cell.innerText;                 // save old text in tmp_cell_text
-        $("#"+tmp_cell_id).empty();                     // remove cell content
+        tmp_cell_text = $(cell).text();                 // save old text in tmp_cell_text
+        $(cell).empty();                                // remove cell content
         var input = document.createElement("input");    // create input field for editing
         input.type = "text";                            // text input
 
-        //input.width = "10px";                          // input field width
-        input.value = tmp_cell_text;                    // fill in old cell text
+        //input.width = "10px";                         // input field width
+        //input.value = tmp_cell_text;                  // fill in old cell text
+        input.value = $(cell).attr("rel");
         input.id = "cell_input";                        // set input field id to "cell_input" !
         cell.appendChild(input);                        // put input field in DOM inside cell
-        $("#cell_input").css("width", 80);
+        $(input).css("width", 80);
         input.focus();                                  // focus cursor inside input
 
         // input lost focus
-        $("#cell_input").focusout(function () {
+        $(input).focusout(function () {
             cell_input = $("#cell_input").val();        // save entered text        
 
-            $("#" + tmp_cell_id).empty();               // remove input field
-            $("#" + tmp_cell_id).text(tmp_cell_text);   // insert old text content
+            $(cell).empty();                            // remove input field
+            $(cell).text(tmp_cell_text);                // insert old text content
             inputShown = false;                         // reset semaphor
         });
 
-        // key presses
-        $("#" + cell.id).keypress(function (e) {
-            // enter pressed
-            if (e.which === 13) {
-                e.preventDefault();                     // no postback!
-                cell_input = $("#cell_input").val();    // save entered string
-                ajax_addSymbol(cell_input);
-                return false;                           // no postback!
-            }
-        });
+        // key pressed
+        $(cell).unbind('keypressed');
+        $(cell).keypress(callback);
     }
+}
+
+function addSymbolEnter(e, symbol, setting) {
+    // enter pressed
+    if (e.which === 13) {
+        e.preventDefault();                     // no postback!
+        cell_input = $("#cell_input").val();    // save entered string
+        $('#content_portfolio_table>tbody>tr>td:nth-child(1)').each(function () {
+            if ($(this).text().toUpperCase() == symbol.toUpperCase())
+                alert("This symbol has already beeen added to the portfolio.");
+            return false;
+        });
+        ajax_addSymbol(cell_input);
+        return false;                           // no postback!
+    }
+}
+
+function setSettingEnter(e, cell, symbol, setting) {
+    // enter pressed
+    if (e.which === 13) {
+        e.preventDefault();                     // no postback!
+        cell_input = $("#cell_input").val();    // save entered string
+        //alert(symbol + " " + setting + " " + parseFloat(cell_input));
+        if (isNumber(cell_input)) {
+            ajax_setSetting(symbol, setting, parseFloat(cell_input), function (msg) {
+                if (msg.d != null) {
+                    $(cell).empty();
+                    $(cell).text(msg.d);
+                    $(cell).attr('rel', cell_input);
+                    inputShown = false;
+                }
+            });
+        }
+        return false;                           // no postback!
+    }
+}
+
+function toggleCssClasses(e, c1, c2){
+    if ($(e).hasClass(c1)) {
+        $(e).removeClass(c1);
+        $(e).addClass(c2);
+    } else if ($(e).hasClass(c2)) {
+        $(e).removeClass(c2);
+        $(e).addClass(c1);
+    }
+}
+
+function toggleSetting(symbol, setting, values, e, classes) {
+    // WCF SetSetting
+    ajax_setSetting(symbol, setting, $(e).attr('rel'), function (msg) {
+        if (msg.d != null) {
+            if ($(e).hasClass("running")) $(e).text("Trading");
+            if ($(e).hasClass("inactive")) $(e).text("Inactive");
+            if ($(e).hasClass("auto")) $(e).text("Auto");
+            if ($(e).hasClass("manual")) $(e).text("Manual");
+        } else {
+            alert("failure!");
+        }
+    });
+
+    var value;
+    // setting value
+    for (var i = 0; i < values.length; i++) {
+        if (values[i] + "" == $(e).attr('rel')) {
+            if (i != values.length - 1) {
+                value = values[i + 1];
+            } else {
+                value = values[0];
+            }
+            break;
+        }
+    }
+    // change rel action for onclick
+    $(e).attr('rel', value);
+
+    // css class
+    for (var i = 0; i < classes.length; i++) {
+        if ($(e).hasClass(classes[i])) {
+            $(e).removeClass(classes[i]);
+            if (i != values.length - 1) {
+                $(e).addClass(classes[i + 1]);
+            } else {
+                $(e).addClass(classes[0]);
+            }
+            break;
+        }
+    }
+}
+
+function ajax_setSetting(symbol, setting, value, callback) {
+    $.ajax({
+        type: "POST",
+        url: "Portfolio.aspx/SetSetting",
+        data: "{ 'symbol' : '"+symbol+"', 'setting' : '"+setting+"', 'value':'"+value+"'}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (msg) {
+            callback(msg);
+        }
+    });
 }
 
 function ajax_addSymbol(symbol) {
@@ -87,39 +187,43 @@ function ajax_addSymbol(symbol) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (msg) {
-            addPortfolioRow(msg.d);
+            if (msg.d != null) {
+                window.location.reload();
+            } else {
+                alert("No database entry for this symbol!");
+            }
         }
     });
 }
 
-function ajax_removeSymbol(symbol) {
-    $.ajax({
-        type: "POST",
-        url: "Portfolio.aspx/RemovePortfolioElement",
-        data: "{'symbol':'" + symbol + "'}",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (msg) { }
-    });
-}
-
-function addPortfolioRow(pfElement) {
-    if (pfElement != null) {
-        // alert(pfElement.Symbol + ": " + pfElement.Position);
-        $('#content_portfolio_table > tbody:last').append('<tr>' +
-                                                    '<td>' + pfElement.Symbol + '</td>' +
-                                                    '<td>' + pfElement.Close + '</td>' +
-                                                    '<td>' + pfElement.Position + '</td>' +
-                                                    '<td>' + pfElement.Gain + '</td>' +
-                                                    '<td>' + pfElement.Maxinvest + '</td>' +
-                                                    '<td>' + pfElement.Cutloss + '</td>' +
-                                                    '<td>' + pfElement.Decision + '</td>' +
-                                                    '<td>' + pfElement.Roi + '</td>' +
-                                                    '<td>' + pfElement.Auto + '</td>' +
-                                                    '<td>' + pfElement.Active + '</td>' +
-                                                    '</tr>');
-        $("input").blur();
-    } else {
-        alert("No database entry for this symbol!");
+    function ajax_removeSymbol(symbol) {
+        $.ajax({
+            type: "POST",
+            url: "Portfolio.aspx/RemovePortfolioElement",
+            data: "{'symbol':'" + symbol + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (msg) { }
+        });
     }
-}
+
+    function addPortfolioRow(pfElement) {
+        if (pfElement != null) {
+            // alert(pfElement.Symbol + ": " + pfElement.Position);
+            $('#content_portfolio_table > tbody:last').append('<tr>' +
+                                                        '<td>' + pfElement.Symbol + '</td>' +
+                                                        '<td>' + pfElement.Close + '</td>' +
+                                                        '<td>' + pfElement.Position + '</td>' +
+                                                        '<td>' + pfElement.Gain + '</td>' +
+                                                        '<td>' + pfElement.Maxinvest + '</td>' +
+                                                        '<td>' + pfElement.Cutloss + '</td>' +
+                                                        '<td>' + pfElement.Decision + '</td>' +
+                                                        '<td>' + pfElement.Roi + '</td>' +
+                                                        '<td>' + pfElement.Auto + '</td>' +
+                                                        '<td>' + pfElement.Active + '</td>' +
+                                                        '</tr>');
+            $("input").blur();
+        } else {
+            alert("No database entry for this symbol!");
+        }
+    }

@@ -447,3 +447,19 @@ CREATE TABLE indicatorval (
       ON UPDATE CASCADE
       ON DELETE CASCADE
 );
+
+
+-- TRIGGER
+
+-- Only Uppercase Symbols
+CREATE OR REPLACE FUNCTION upper_symbol() RETURNS TRIGGER AS $upper_trigger$
+	BEGIN
+		NEW.symbol := upper(NEW.symbol);
+		RETURN NEW;
+	END;
+$upper_trigger$ LANGUAGE plpgsql;
+
+CREATE TRIGGER series_insert_symbol
+BEFORE INSERT ON series
+FOR EACH ROW
+EXECUTE PROCEDURE upper_symbol();

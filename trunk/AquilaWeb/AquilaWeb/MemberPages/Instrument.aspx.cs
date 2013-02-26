@@ -21,7 +21,7 @@ namespace AquilaWeb.MemberPages
             ((Main)Master).initMenu(1);
 
             // wrong symbol: back to portfolio overview
-            if (!Portfolio.isValidSymbol(Request["symbol"]))
+            if (!FinancialSeries.isValidSymbol(Request["symbol"]))
             {
                 Session["msg_text"] = "An instrument with the symbol " + Request["symbol"] + " could not be found.";
                 Session["msg_type"] = -1;
@@ -97,8 +97,9 @@ namespace AquilaWeb.MemberPages
             }
         }
 
-        protected void AddInstrumentToPortfolio(string symbol){
-        
+        protected void AddInstrumentToPortfolio(string symbol)
+        {
+            
         }
 
         protected void RemoveInstrumentFromPortfolio(string symbol)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="e01f42b1-043b-411c-bc2c-50875a2626b9" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="791f7411-39b6-4310-b951-2c6b738bd318" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -21,12 +21,12 @@
     <MetadataSource Address="http://localhost:8000/SettingsHandler" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="SettingsHandler.xsd" MetadataType="Schema" ID="ad2bc7b1-c9eb-481d-a424-3bca81534b65" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd0" />
-    <MetadataFile FileName="SettingsHandler.wsdl" MetadataType="Wsdl" ID="cd5f5c8f-8879-4f11-bdb6-35c1341f7630" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl=wsdl0" />
-    <MetadataFile FileName="SettingsHandler.disco" MetadataType="Disco" ID="2bb30759-a563-43b4-8672-199da3d50ba0" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?disco" />
-    <MetadataFile FileName="Server.wsdl" MetadataType="Wsdl" ID="47a1a5e0-4944-4fa2-82cb-346d32685744" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl" />
-    <MetadataFile FileName="SettingsHandler1.xsd" MetadataType="Schema" ID="c94bf472-6a80-4916-a117-f912c880421a" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd2" />
-    <MetadataFile FileName="SettingsHandler2.xsd" MetadataType="Schema" ID="87a95d3d-613d-4528-ba16-ecd19b6b7242" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd1" />
+    <MetadataFile FileName="SettingsHandler.xsd" MetadataType="Schema" ID="b4e08a4e-9535-4208-8e20-076133ca72e3" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd0" />
+    <MetadataFile FileName="SettingsHandler.wsdl" MetadataType="Wsdl" ID="40efc10d-23f9-40cf-be3e-64df3e25d1f2" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl=wsdl0" />
+    <MetadataFile FileName="SettingsHandler.disco" MetadataType="Disco" ID="40898062-4039-494d-80fb-79de56f471aa" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?disco" />
+    <MetadataFile FileName="Server.wsdl" MetadataType="Wsdl" ID="a920a9a0-1c6c-48e8-958f-4c1b957c06ab" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?wsdl" />
+    <MetadataFile FileName="SettingsHandler11.xsd" MetadataType="Schema" ID="9a89871b-9a12-4300-9135-2b85eb863be5" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd2" />
+    <MetadataFile FileName="SettingsHandler2.xsd" MetadataType="Schema" ID="e9315a68-05b9-4be8-9d4a-bece46847f76" SourceId="1" SourceUrl="http://localhost:8000/SettingsHandler?xsd=xsd1" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

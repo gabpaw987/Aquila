@@ -294,14 +294,14 @@
     <Content Include="Scripts\tables.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Service References\ServiceReference1\Server.wsdl" />
-    <Content Include="Service References\ServiceReference1\SettingsHandler.disco" />
-    <Content Include="Service References\ServiceReference1\configuration91.svcinfo" />
-    <Content Include="Service References\ServiceReference1\configuration.svcinfo" />
-    <Content Include="Service References\ServiceReference1\Reference.svcmap">
+    <None Include="Service References\ServiceReference1\Server.wsdl" />
+    <None Include="Service References\ServiceReference1\SettingsHandler.disco" />
+    <None Include="Service References\ServiceReference1\configuration91.svcinfo" />
+    <None Include="Service References\ServiceReference1\configuration.svcinfo" />
+    <None Include="Service References\ServiceReference1\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
-    </Content>
+    </None>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -309,12 +309,19 @@
   <ItemGroup>
     <Compile Include="App_Code\Bar.cs" />
     <Compile Include="App_Code\ChartUtils.cs" />
+    <Compile Include="App_Code\CurrencyFormatter.cs" />
     <Compile Include="App_Code\DbParam.cs" />
+    <Compile Include="App_Code\FinancialSeries.cs" />
     <Compile Include="App_Code\Instrument.cs" />
     <Compile Include="App_Code\PortfolioElement.cs" />
     <Compile Include="App_Code\NpgsqlConnector.cs" />
     <Compile Include="App_Code\Portfolio.cs" />
     <Compile Include="App_Code\PriceSeries.cs" />
+    <Compile Include="Service References\ServiceReference1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Content Include="App_Code\Settings.cs" />
     <Compile Include="MemberPages\Settings\ChangePassword.aspx.cs">
       <DependentUpon>ChangePassword.aspx</DependentUpon>
@@ -329,11 +336,6 @@
     </Compile>
     <Compile Include="MemberPages\Settings\ChangePresets.aspx.designer.cs">
       <DependentUpon>ChangePresets.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ServiceReference1\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="App_Code\TableUtils.cs" />
     <Compile Include="Controls\SearchBox.ascx.cs">
@@ -394,11 +396,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Service References\ServiceReference1\SettingsHandler.wsdl" />
+    <None Include="Service References\ServiceReference1\SettingsHandler.wsdl" />
     <None Include="Service References\ServiceReference1\SettingsHandler.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference1\SettingsHandler1.xsd">
+    <None Include="Service References\ServiceReference1\SettingsHandler11.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference1\SettingsHandler2.xsd">

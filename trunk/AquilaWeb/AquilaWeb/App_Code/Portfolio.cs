@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using AquilaWeb.ServiceReference1;
+using Npgsql;
 using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
@@ -100,16 +101,26 @@ namespace AquilaWeb.App_Code
             _realizedPL = _conn.SelectSingleValue<decimal>("SELECT rpf FROM portfolio WHERE pfid=" + this._pfid);
         }
 
-        public static PortfolioElement AddSymbol(string symbol)
+        public static PortfolioElement AddSymbol(string symbol, int pfid)
         {
-            if (Portfolio.isValidSymbol(symbol))
+            if (FinancialSeries.isValidSymbol(symbol) && !Portfolio.isInPortfolio(symbol))
             {
+                // WCF Communication
+                //SettingsHandlerClient client = new SettingsHandlerClient();
+                // start Thread
+                //try
+                //{
+                //client.performAction(new object[] { symbol, "Create" });
+                //}
+                //catch (Exception) { }
+
+                // DB Communication
                 PortfolioElement e = new PortfolioElement();
 
                 List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
                 NpgsqlConnector conn = new NpgsqlConnector();
-                using (NpgsqlDataReader dr = conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + Portfolio.PFID + ", :symbol) RETURNING *", pl))
+                using (NpgsqlDataReader dr = conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + pfid + ", :symbol) RETURNING *", pl))
                 {
                     dr.Read();
 
@@ -139,22 +150,13 @@ namespace AquilaWeb.App_Code
             }
         }
 
-        public static bool isValidSymbol(string symbol)
-        {
-            List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
-
-            NpgsqlConnector conn = new NpgsqlConnector();
-            conn.CloseAfterQuery = true;
-            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM series WHERE symbol=:symbol", pl) == 1;
-        }
-
         public static bool isInPortfolio(string symbol)
         {
             List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
             NpgsqlConnector conn = new NpgsqlConnector();
             conn.CloseAfterQuery = true;
-            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=:symbol", pl) == 1;
+            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=upper( :symbol ) AND pfid="+Portfolio.PFID, pl) == 1;
         }
     }
 }

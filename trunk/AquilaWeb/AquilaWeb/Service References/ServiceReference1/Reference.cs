@@ -18,6 +18,10 @@ namespace AquilaWeb.ServiceReference1 {
         [System.ServiceModel.OperationContractAttribute(Action="http://aquila.com/ServiceHandler/SettingsHandler/SetSetting", ReplyAction="http://aquila.com/ServiceHandler/SettingsHandler/SetSettingResponse")]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
         bool SetSetting(object[] args);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://aquila.com/ServiceHandler/SettingsHandler/performAction", ReplyAction="http://aquila.com/ServiceHandler/SettingsHandler/performActionResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(object[]))]
+        bool performAction(object[] args);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -49,6 +53,10 @@ namespace AquilaWeb.ServiceReference1 {
         
         public bool SetSetting(object[] args) {
             return base.Channel.SetSetting(args);
+        }
+        
+        public bool performAction(object[] args) {
+            return base.Channel.performAction(args);
         }
     }
 }

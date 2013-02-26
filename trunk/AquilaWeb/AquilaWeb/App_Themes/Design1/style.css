@@ -211,6 +211,19 @@ ul.nav a:hover {
 		background-color: #888;
 	}
 
+    td.button_cell {
+        
+    }
+
+    td.inactive {
+        background-color: #666;
+        color:wheat;
+    }
+
+    td.running {
+
+    } 
+
 .usr_error {
     color: red;
 }
