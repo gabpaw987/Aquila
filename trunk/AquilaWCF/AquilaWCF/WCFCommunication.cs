@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -12,7 +13,12 @@ namespace Aquila_Software
             Uri baseAddress = new Uri("http://localhost:8000/SettingsHandler");
 
             // Step 2 of the hosting procedure: Create ServiceHost
-            ServiceHost selfHost = new ServiceHost(typeof(Server), baseAddress);
+            //ServiceHost selfHost; = new ServiceHost(typeof(Server), baseAddress);
+
+            Dictionary<string, WorkerInfo> dict = new Dictionary<string, WorkerInfo>();
+
+            ServerHost selfHost = new ServerHost(dict, typeof(Server), baseAddress);
+            //selfHost.AddDefaultEndpoints();
 
             try
             {

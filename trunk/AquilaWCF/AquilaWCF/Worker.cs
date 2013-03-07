@@ -1,75 +1,79 @@
-﻿using Krs.Ats.IBNet;
-using Krs.Ats.IBNet.Contracts;
+﻿using System;
 using System.Threading;
-using System;
-using System.Runtime.Serialization;
+using Krs.Ats.IBNet;
+using Krs.Ats.IBNet.Contracts;
 
 namespace Aquila_Software
 {
-    [DataContract]
     public class Worker
     {
-        ////public volatile ManualExecution ManualExecution;
-        //[DataMember]
-        //public Equity Equity;
-        [DataMember]
+        public ManualExecution ManualExecution;
+        public Equity Equity;
         public bool IsActive;
-        [DataMember]
         public float Amount;
-        //[DataMember]
-
-        //private BarSize _barSize;
-        
-        [DataMember]
-        public string BarSize;
-        //{
-        //    get
-        //    {
-        //        if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneMinute)) return "1min";
-        //        else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneHour)) return "1hour";
-        //        else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneDay)) return "1day";
-        //        else return "";
-        //    }
-        //    set {
-        //        if (value.Equals("1min")) _barSize = Krs.Ats.IBNet.BarSize.OneMinute;
-        //        else if (value.Equals("1hour")) _barSize = Krs.Ats.IBNet.BarSize.OneHour;
-        //        else if (value.Equals("1day")) _barSize = Krs.Ats.IBNet.BarSize.OneDay;
-        //    }
-        //}
-
-        //[DataMember]
-        //public HistoricalDataType HistoricalDataType;
-        //[DataMember]
-        //public RealTimeBarType RealtimeBarType;
-        [DataMember]
+        public BarSize BarSize;
+        public HistoricalDataType HistoricalDataType;
+        public RealTimeBarType RealtimeBarType;
         public bool isCalculating;
-        [DataMember]
         public float PricePremiumPercentage;
 
-        ////private Thread thread;
+        private Thread thread;
 
-        public Worker(string symbol)
+        private WorkerInfo workerInfo;
+
+        public Worker(WorkerInfo workerInfo)
         {
-            Console.WriteLine(symbol);
-            Krs.Ats.IBNet.BarSize bs = Krs.Ats.IBNet.BarSize.FifteenMinutes;
-            if (bs == (Krs.Ats.IBNet.BarSize.FifteenMinutes)) 
-                Console.WriteLine("Peers Mutter wird alle " + DateTime.Now.Millisecond + "Minuten gefickt");
-
+            this.workerInfo = workerInfo;
         }
 
-        //public void run()
-        //{
-        //    while (true)
-        //    {
-        //        //Thread.Sleep(1000);
-        //        printInfo();
-        //    }
-        //}
+        public void run()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                getSettings();
+                Console.WriteLine(this.Amount);
+            }
+        }
 
-        //public void printInfo()
-        //{
-        //    Console.WriteLine("Hallo" + Amount);
-        //}
+        public void getSettings()
+        {
+            this.Equity = new Equity(workerInfo.Equity);
+            this.IsActive = workerInfo.IsActive;
+            this.Amount = workerInfo.Amount;
 
+            if (workerInfo.BarSize.Equals("mBar"))
+            {
+                this.BarSize = BarSize.OneMinute;
+            }
+            else if (workerInfo.BarSize.Equals("dBar"))
+            {
+                this.BarSize = BarSize.OneDay;
+            }
+
+            if (this.workerInfo.BarType.Equals("Bid"))
+            {
+                this.HistoricalDataType = HistoricalDataType.Bid;
+                this.RealtimeBarType = RealTimeBarType.Bid;
+            }
+            else if (this.workerInfo.BarType.Equals("Ask"))
+            {
+                this.HistoricalDataType = HistoricalDataType.Ask;
+                this.RealtimeBarType = RealTimeBarType.Ask;
+            }
+            else if (this.workerInfo.BarType.Equals("Last") || this.workerInfo.BarType.Equals("Trades"))
+            {
+                this.HistoricalDataType = HistoricalDataType.Trades;
+                this.RealtimeBarType = RealTimeBarType.Trades;
+            }
+            else if (this.workerInfo.BarType.Equals("Midpoint"))
+            {
+                this.HistoricalDataType = HistoricalDataType.Midpoint;
+                this.RealtimeBarType = RealTimeBarType.Midpoint;
+            }
+
+            this.isCalculating = workerInfo.isCalculating;
+            this.PricePremiumPercentage = workerInfo.PricePremiumPercentage;
+        }
     }
 }
