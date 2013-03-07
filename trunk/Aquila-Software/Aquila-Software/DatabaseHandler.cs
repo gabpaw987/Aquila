@@ -15,6 +15,11 @@ namespace Aquila_Software
         static string pw = "testpw";
         static string dbname = "aquila";
 
+        /// <summary>
+        /// Executes the select.
+        /// </summary>
+        /// <param name="statement">The statement.</param>
+        /// <returns></returns>
         public static DataTable executeSelect(string statement)
         {
             string connstring = "Server="+server+";Port="+port+";User Id="+userid+";Password="+pw+";Database="+dbname+";";
@@ -36,6 +41,11 @@ namespace Aquila_Software
             return ds.Tables[0];
         }
 
+        /// <summary>
+        /// Executes the modify.
+        /// </summary>
+        /// <param name="statement">The statement.</param>
+        /// <returns></returns>
         public static int executeModify(string statement)
         {
             string connstring = "Server=" + server + ";Port=" + port + ";User Id=" + userid + ";Password=" + pw + ";Database=" + dbname + ";";

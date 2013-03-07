@@ -148,17 +148,18 @@ namespace Aquila_Software
                         {
                             //equity.LocalSymbol
                             //TODO VOLUME???
-                            DatabaseHandler.executeModify("INSERT INTO mBar VALUES('" + equity.LocalSymbol + "','" + t.Item1.ToString("YYYY-MM-DD HH:mm:ss zzz") + "'," + t.Item2 + "," + t.Item3 + "," + t.Item4 + "," + t.Item5 + ",0" + "" + ")");
+                            //TODO bartype not hardcoded
+                            QueryHandler.insertBar(equity.LocalSymbol, "mBar", 0, t);
                         }
                         for (int i = 0; i < ListOfSignals.Count; i++)
                         {
-                            DatabaseHandler.executeModify("INSERT INTO signal VALUES('" + equity.LocalSymbol + "','" + ListOfBars[i].Item1.ToString("YYYY-MM-DD HH:mm:ss zzz") + "'," + ListOfSignals[i] + ")");
+                            QueryHandler.insertSignal(equity.LocalSymbol,ListOfSignals[i], ListOfBars[i].Item1);
                         }
                     }
                     else
                     {
-                        DatabaseHandler.executeModify("INSERT INTO mBar VALUES('" + equity.LocalSymbol + "','" + ListOfBars[ListOfBars.Count].Item1.ToString("YYYY-MM-DD HH:mm:ss zzz") + "'," + ListOfBars[ListOfBars.Count].Item2 + "," + ListOfBars[ListOfBars.Count].Item3 + "," + ListOfBars[ListOfBars.Count].Item4 + "," + ListOfBars[ListOfBars.Count].Item5 + ",0" + "" + ")");
-                        DatabaseHandler.executeModify("INSERT INTO signal VALUES('" + equity.LocalSymbol + "','" + ListOfBars[ListOfSignals.Count].Item1.ToString("YYYY-MM-DD HH:mm:ss zzz") + "'," + ListOfSignals[ListOfSignals.Count] + ")");
+                        QueryHandler.insertBar(equity.LocalSymbol, "mBar", 0, ListOfBars[ListOfBars.Count]);
+                        QueryHandler.insertSignal(equity.LocalSymbol, ListOfSignals[ListOfSignals.Count], ListOfBars[ListOfBars.Count].Item1);
                     }
 
                     length = ListOfBars.Count;

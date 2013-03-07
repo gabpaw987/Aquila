@@ -53,6 +53,7 @@
     <Compile Include="DatabaseHandler.cs" />
     <Compile Include="IBInput.cs" />
     <Compile Include="IBOutput.cs" />
+    <Compile Include="QueryHandler.cs" />
     <Compile Include="LogFileManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
