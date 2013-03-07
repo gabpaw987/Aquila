@@ -18,24 +18,24 @@ namespace Aquila_Software
         public float Amount;
         //[DataMember]
 
-        private BarSize _barSize;
+        //private BarSize _barSize;
         
         [DataMember]
-        public string BarSize 
-        {
-            get
-            {
-                if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneMinute)) return "1min";
-                else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneHour)) return "1hour";
-                else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneDay)) return "1day";
-                else return "";
-            }
-            set {
-                if (value.Equals("1min")) _barSize = Krs.Ats.IBNet.BarSize.OneMinute;
-                else if (value.Equals("1hour")) _barSize = Krs.Ats.IBNet.BarSize.OneHour;
-                else if (value.Equals("1day")) _barSize = Krs.Ats.IBNet.BarSize.OneDay;
-            }
-        }
+        public string BarSize;
+        //{
+        //    get
+        //    {
+        //        if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneMinute)) return "1min";
+        //        else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneHour)) return "1hour";
+        //        else if (_barSize.Equals(Krs.Ats.IBNet.BarSize.OneDay)) return "1day";
+        //        else return "";
+        //    }
+        //    set {
+        //        if (value.Equals("1min")) _barSize = Krs.Ats.IBNet.BarSize.OneMinute;
+        //        else if (value.Equals("1hour")) _barSize = Krs.Ats.IBNet.BarSize.OneHour;
+        //        else if (value.Equals("1day")) _barSize = Krs.Ats.IBNet.BarSize.OneDay;
+        //    }
+        //}
 
         //[DataMember]
         //public HistoricalDataType HistoricalDataType;
@@ -49,7 +49,11 @@ namespace Aquila_Software
         ////private Thread thread;
 
         public Worker(string symbol)
-        {            
+        {
+            Console.WriteLine(symbol);
+            Krs.Ats.IBNet.BarSize bs = Krs.Ats.IBNet.BarSize.FifteenMinutes;
+            if (bs == (Krs.Ats.IBNet.BarSize.FifteenMinutes)) 
+                Console.WriteLine("Peers Mutter wird alle " + DateTime.Now.Millisecond + "Minuten gefickt");
 
         }
 
