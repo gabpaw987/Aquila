@@ -14,23 +14,25 @@ namespace Aquila_Software
 
         public bool SetSetting(object[] args)
         {
-            Console.WriteLine((string)args[2]);
             try
             {
                 if (args.Length != 0 && args[0] is string && args[1] is string && this.WorkerInfos.ContainsKey((string)args[0]))
                 {
+                    Console.WriteLine((string)args[2]);
                     WorkerInfo workerInfoToSet = null;
                     this.WorkerInfos.TryGetValue((string)args[0], out workerInfoToSet);
                     if (args.Length == 3)
                     {
+                        //TODO: finish tryparses and edit float trys
+                        float trys;
                         if (args[1].Equals("IsActive") && args[2] is bool)
                         {
                             workerInfoToSet.IsActive = (bool)args[2];
                             return true;
                         }
-                        else if (args[1].Equals("Amount") && args[2] is float)
+                        else if (args[1].Equals("Amount") && Single.TryParse((string)args[2], out trys))
                         {
-                            workerInfoToSet.Amount = (float)args[2];
+                            workerInfoToSet.Amount = trys;
                             return true;
                         }
                         else if (args[1].Equals("BarSize") && args[2] is string)
