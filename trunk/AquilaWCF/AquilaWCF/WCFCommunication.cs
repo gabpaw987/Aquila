@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Threading;
 
 namespace Aquila_Software
 {
     internal class WCFCommunication
     {
+        private static Dictionary<string, WorkerInfo> workerInfos;
+        private static Dictionary<string, Worker> workers;
+        private static int lastLength;
+
         private static void Main(string[] args)
         {
             // Step 1 of the address configuration procedure: Create a URI to serve as the base address.
@@ -15,9 +20,10 @@ namespace Aquila_Software
             // Step 2 of the hosting procedure: Create ServiceHost
             //ServiceHost selfHost; = new ServiceHost(typeof(Server), baseAddress);
 
-            Dictionary<string, WorkerInfo> dict = new Dictionary<string, WorkerInfo>();
+            workerInfos = new Dictionary<string, WorkerInfo>();
+            lastLength = 0;
 
-            ServerHost selfHost = new ServerHost(dict, typeof(Server), baseAddress);
+            ServerHost selfHost = new ServerHost(workerInfos, typeof(Server), baseAddress);
             //selfHost.AddDefaultEndpoints();
 
             try
@@ -35,7 +41,35 @@ namespace Aquila_Software
                 Console.WriteLine("The service is ready.");
                 Console.WriteLine("Press <ENTER> to terminate service.");
                 Console.WriteLine();
-                Console.ReadLine();
+
+                //TODO: make stoppable
+                while (true)
+                {
+                    if (workerInfos.Count > lastLength)
+                    {
+                        foreach (WorkerInfo workerInfo in workerInfos.Values)
+                        {
+                            if (!workers.ContainsKey(workerInfo.Equity))
+                            {
+                                Worker tempWorker = new Worker(workerInfo);
+                                //TODO: run tempWorker
+                                workers.Add(workerInfo.Equity, tempWorker);
+                            }
+                        }
+                        lastLength = workerInfos.Count;
+                    }
+                    else if (workerInfos.Count < lastLength)
+                    {
+                        foreach (Worker worker in workers.Values)
+                        {
+                            if (!workerInfos.ContainsKey(worker.Equity.Symbol))
+                            {
+                                //TODO: interrupt and delete worker
+                            }
+                        }
+                    }
+                    Thread.Sleep(1000);
+                }
 
                 // Close the ServiceHostBase to shutdown the service.
                 selfHost.Close();

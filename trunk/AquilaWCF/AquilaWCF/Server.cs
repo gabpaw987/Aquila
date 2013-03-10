@@ -18,21 +18,20 @@ namespace Aquila_Software
             {
                 if (args.Length != 0 && args[0] is string && args[1] is string && this.WorkerInfos.ContainsKey((string)args[0]))
                 {
-                    Console.WriteLine((string)args[2]);
                     WorkerInfo workerInfoToSet = null;
                     this.WorkerInfos.TryGetValue((string)args[0], out workerInfoToSet);
                     if (args.Length == 3)
                     {
-                        //TODO: finish tryparses and edit float trys
-                        float trys;
-                        if (args[1].Equals("IsActive") && args[2] is bool)
+                        bool parseBool;
+                        float parseFloat;
+                        if (args[1].Equals("IsActive") && Boolean.TryParse((string)args[2], out parseBool))
                         {
-                            workerInfoToSet.IsActive = (bool)args[2];
+                            workerInfoToSet.IsActive = parseBool;
                             return true;
                         }
-                        else if (args[1].Equals("Amount") && Single.TryParse((string)args[2], out trys))
+                        else if (args[1].Equals("Amount") && Single.TryParse((string)args[2], out parseFloat))
                         {
-                            workerInfoToSet.Amount = trys;
+                            workerInfoToSet.Amount = parseFloat;
                             return true;
                         }
                         else if (args[1].Equals("BarSize") && args[2] is string)
@@ -45,14 +44,14 @@ namespace Aquila_Software
                             workerInfoToSet.BarType = (string)args[2];
                             return true;
                         }
-                        else if (args[1].Equals("PricePremiumPercentage") && args[2] is float)
+                        else if (args[1].Equals("PricePremiumPercentage") && Single.TryParse((string)args[2], out parseFloat))
                         {
-                            workerInfoToSet.PricePremiumPercentage = (float)args[2];
+                            workerInfoToSet.PricePremiumPercentage = parseFloat;
                             return true;
                         }
-                        else if (args[1].Equals("isCalculating") && args[2] is bool)
+                        else if (args[1].Equals("isCalculating") && Boolean.TryParse((string)args[2], out parseBool))
                         {
-                            workerInfoToSet.isCalculating = (bool)args[2];
+                            workerInfoToSet.isCalculating = parseBool;
                             return true;
                         }
                     }
