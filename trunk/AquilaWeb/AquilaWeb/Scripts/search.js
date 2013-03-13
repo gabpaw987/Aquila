@@ -37,7 +37,7 @@ function hide_search_results(search)
 function ajax_search_symbol(str) {
     $.ajax({
         type: "POST",
-        url: "Portfolio.aspx/SearchForSymbol",
+        url: "http://"+document.domain+":"+location.port+"/MemberPages/Portfolio.aspx/SearchForSymbol",
         data: "{'str':'" + str + "'}",
         contentType: "application/json; charset=utf-8",
         dataType: "json",

@@ -47,8 +47,11 @@ namespace AquilaWeb.MemberPages
             Button btCalculate = new Button();
             btCalculate.ID = "btCalculate";
             btCalculate.CommandArgument = symbol;
+
+            Portfolio pf = new Portfolio();
+
             // already in portfolio
-            if (Portfolio.isInPortfolio(symbol))
+            if (pf.IsInPortfolio(symbol))
             {
                 btCalculate.Click += (bt_sender, args) => RemoveInstrumentFromPortfolio(symbol);
                 btCalculate.Text = "Remove from portfolio";

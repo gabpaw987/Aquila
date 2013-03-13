@@ -225,6 +225,7 @@
     <Content Include="MemberPages\Performance.aspx" />
     <Content Include="MemberPages\Portfolio.aspx" />
     <Content Include="MemberPages\Settings.aspx" />
+    <Content Include="MemberPages\Settings\ChangePortfolio.aspx" />
     <Content Include="MemberPages\Settings\ChangePresets.aspx" />
     <Content Include="Scripts\DataTables-1.9.4\docs\media\js\doc.js" />
     <Content Include="Scripts\DataTables-1.9.4\docs\media\js\jquery.js" />
@@ -278,7 +279,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </Content>
     <None Include="Scripts\jquery-1.8.3.intellisense.js" />
-    <Content Include="create_aquila_1_2.sql" />
+    <None Include="create_aquila_1_2.sql" />
     <Content Include="Login.aspx" />
     <Content Include="MemberPages\Instrument.aspx" />
     <Content Include="Scripts\DataTables-1.9.4\extras\TableTools\media\js\ZeroClipboard.js" />
@@ -317,12 +318,14 @@
     <Compile Include="App_Code\NpgsqlConnector.cs" />
     <Compile Include="App_Code\Portfolio.cs" />
     <Compile Include="App_Code\PriceSeries.cs" />
-    <Compile Include="Service References\ServiceReference1\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
+    <Compile Include="MemberPages\Settings\ChangePortfolio.aspx.cs">
+      <DependentUpon>ChangePortfolio.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Content Include="App_Code\Settings.cs" />
+    <Compile Include="MemberPages\Settings\ChangePortfolio.aspx.designer.cs">
+      <DependentUpon>ChangePortfolio.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Code\Settings.cs" />
     <Compile Include="MemberPages\Settings\ChangePassword.aspx.cs">
       <DependentUpon>ChangePassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -393,6 +396,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Service References\ServiceReference1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -400,7 +408,7 @@
     <None Include="Service References\ServiceReference1\SettingsHandler.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference1\SettingsHandler11.xsd">
+    <None Include="Service References\ServiceReference1\SettingsHandler1.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference1\SettingsHandler2.xsd">

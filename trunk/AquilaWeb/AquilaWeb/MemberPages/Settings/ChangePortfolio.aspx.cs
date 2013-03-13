@@ -7,12 +7,11 @@ using System.Web.UI.WebControls;
 
 namespace AquilaWeb.MemberPages
 {
-    public partial class SettingsPage : System.Web.UI.Page
+    public partial class ChangePortfolio : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // change menu to display current page
-            ((Main)Master).initMenu(3);
+
         }
     }
 }

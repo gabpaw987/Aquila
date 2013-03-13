@@ -10,7 +10,7 @@
 namespace AquilaWeb.MemberPages {
     
     
-    public partial class Settings {
+    public partial class SettingsPage {
         
         /// <summary>
         /// SettingsList-Steuerelement
@@ -31,12 +31,21 @@ namespace AquilaWeb.MemberPages {
         protected global::System.Web.UI.WebControls.HyperLink ChangePwLink;
         
         /// <summary>
-        /// ChangePresets-Steuerelement
+        /// ChangePortfolioLink-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink ChangePresets;
+        protected global::System.Web.UI.WebControls.HyperLink ChangePortfolioLink;
+        
+        /// <summary>
+        /// ChangePresetsLink-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink ChangePresetsLink;
     }
 }

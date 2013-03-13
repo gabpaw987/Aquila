@@ -24,13 +24,13 @@ namespace AquilaWeb.MemberPages
             ((Main)Master).initMenu(1);
 
             // load/calculate portfolio table data
-            initPortfolioTable();
+            InitPortfolioTable();
 
             // page newly called
             if (!IsPostBack)
             {
                 //
-                initPortfolioInfo();
+                InitPortfolioInfo();
             }
             // postback
             else { 
@@ -43,7 +43,8 @@ namespace AquilaWeb.MemberPages
         [WebMethod]
         public static PortfolioElement LoadPortfolioElement(string symbol)
         {
-            return Portfolio.AddSymbol(symbol, Portfolio.PFID);
+            Portfolio pf = new Portfolio();
+            return pf.AddSymbol(symbol);
         }
 
         [WebMethod]
@@ -66,20 +67,20 @@ namespace AquilaWeb.MemberPages
         [WebMethod]
         public static string SetSetting(string symbol, string setting, string value)
         {
-            // WCF
-            //SettingsHandlerClient client = new SettingsHandlerClient();
-            //bool successWCF = client.SetSetting(symbol + "&&" + setting + "&&" + value);
-            bool successWCF = true;
-            if (successWCF == false) return null;
-
+            ///////////////
             // DB
+            ///////////////
+
             bool successDB = false;
             string query;
             NpgsqlConnector conn = new NpgsqlConnector();
-            conn.CloseAfterQuery = true;
+            conn.Connected = true;
 
-            // Start/Stop trading:
-            if (setting.Equals("Active"))
+            // Enable/start transactions
+            conn.StartTransaction();
+
+            // Start/Stop trading: (WCF performAction!)
+            if (setting.Equals("StartStop"))
             {
                 query = "UPDATE pfsecurity SET active=:value WHERE symbol=:symbol AND pfid=1";
                 bool val;
@@ -94,7 +95,7 @@ namespace AquilaWeb.MemberPages
                 }
             } 
             // Auto/Manual
-            else if (setting.Equals("isManual"))
+            else if (setting.Equals("IsActive"))
             {
                 query = "UPDATE pfsecurity SET auto=:value WHERE symbol=:symbol AND pfid=1";
                 bool val;
@@ -109,7 +110,7 @@ namespace AquilaWeb.MemberPages
                 }
             }
             // Change maximum investment
-            else if (setting.Equals("Maxinvest"))
+            else if (setting.Equals("Amount"))
             {
                 query = "UPDATE pfsecurity SET maxinvest=:value WHERE symbol=:symbol AND pfid=1";
                 if (conn.ExecuteDMLCommand(query, new List<DbParam> { 
@@ -117,15 +118,71 @@ namespace AquilaWeb.MemberPages
                         new DbParam("symbol", NpgsqlDbType.Varchar, symbol)
                     }) == 1)
                         successDB = true;
+            }
+            // Cutloss
+            else if (setting.Equals("CutLoss"))
+            {
+                //query = "UPDATE pfsecurity SET maxinvest=:value WHERE symbol=:symbol AND pfid=1";
+                //if (conn.ExecuteDMLCommand(query, new List<DbParam> { 
+                //        new DbParam("value", NpgsqlDbType.Numeric, value),
+                //        new DbParam("symbol", NpgsqlDbType.Varchar, symbol)
+                //    }) == 1)
+                    successDB = true;
+            }
+
+            if (successDB == false) return null;
+            
+            ///////////////
+            // WCF
+            ///////////////
+
+            SettingsHandlerClient client = new SettingsHandlerClient();
+            bool successWCF;
+
+            // performAction
+            if (setting.Equals("StartStop"))
+            {
+                try
+                {
+                    successWCF = (value.Equals("true"))
+                        ? client.performAction(new object[] { symbol, "Start" })
+                        : client.performAction(new object[] { symbol, "Stop" });
+                    conn.Commit();
+                }
+                catch (Exception ex)
+                {
+                    conn.Rollback();
+                    successWCF = false;
+                    System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
+                }
+            }
+            // setSetting
+            else
+            {
+                try
+                {
+                    successWCF = client.SetSetting(new object[] { symbol, setting, value });
+                    conn.Commit();
+                }
+                catch (Exception)
+                {
+                    conn.Rollback();
+                    successWCF = false;
+                }
+            }
+
+            // close DB connection
+            conn.Connected = false;
+
+            // format return value
+            if (setting.Equals("Amount"))
+            {
                 decimal val;
                 if (Decimal.TryParse(value, out val))
                 {
                     value = val.ToString("C2", CurrencyFormatter.getCurrencyFormatter(FinancialSeries.getCurrency(symbol)));
                 }
             }
-
-            // close connection
-            conn.Connected = false;
 
             if (successWCF == true && successDB == true)
                 return value;
@@ -155,9 +212,10 @@ namespace AquilaWeb.MemberPages
             return false;
         }
 
-        protected void initPortfolioTable()
+        protected void InitPortfolioTable()
         {
             pf = new Portfolio();
+            pf.LoadPortfolio();
 
             List<TableRow> tRows = new List<TableRow>();
             
@@ -175,12 +233,12 @@ namespace AquilaWeb.MemberPages
                 TableUtils.addTextCell(tRow, asset.Maxinvest.ToString("C2", CurrencyFormatter.getCurrencyFormatter(FinancialSeries.getCurrency(asset.Symbol))), "std_cell");
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("rel", asset.Maxinvest.ToString());
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("onclick",
-                    "changeValueInput(this, '"+asset.Symbol+"', 'Maxinvest')");
+                    "changeValueInput(this, '"+asset.Symbol+"', 'Amount')");
                 
                 TableUtils.addTextCell(tRow, Math.Round(asset.Cutloss,2) + "%", "std_cell");
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("rel", asset.Cutloss.ToString());
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("onclick",
-                    "changeValueInput(this, '" + asset.Symbol + "', 'cutloss')");
+                    "changeValueInput(this, '" + asset.Symbol + "', 'CutLoss')");
 
                 if (asset.Decision < 0)
                 {
@@ -207,7 +265,7 @@ namespace AquilaWeb.MemberPages
                 }
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("rel", (!asset.Auto).ToString().ToLower());
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("onclick",
-                    "toggleSetting(\'" + asset.Symbol + "\', \'isManual\', new Array(true,false), this, new Array('auto', 'manual'))");
+                    "toggleSetting(\'" + asset.Symbol + "\', \'IsActive\', new Array(true,false), this, new Array('auto', 'manual'))");
 
                 if (asset.Active)
                 {
@@ -219,7 +277,7 @@ namespace AquilaWeb.MemberPages
                 }
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("rel", (!asset.Active).ToString().ToLower());
                 tRow.Cells[tRow.Cells.Count - 1].Attributes.Add("onclick", 
-                    "toggleSetting(\'"+asset.Symbol+"\', \'Active\', new Array(true,false), this, new Array('running', 'inactive'))");
+                    "toggleSetting(\'"+asset.Symbol+"\', \'StartStop\', new Array(true,false), this, new Array('running', 'inactive'))");
 
                 // Add delete-button at end of line
                 TableCell btCell = new TableCell();
@@ -246,7 +304,7 @@ namespace AquilaWeb.MemberPages
             tfRow.TableSection = TableRowSection.TableFooter;
 
             TableUtils.addTextCell(tfRow, "+", null, "content_portfolio_sym_n", true);
-            tfRow.Cells[tfRow.Cells.Count - 1].Attributes.Add("rel", "+");
+            tfRow.Cells[tfRow.Cells.Count - 1].Attributes.Add("rel", "");
             for (int i=0; i<10; i++)
             {
                 TableUtils.addTextCell(tfRow, String.Empty);
@@ -265,7 +323,7 @@ namespace AquilaWeb.MemberPages
             }
         }
 
-        protected void initPortfolioInfo()
+        protected void InitPortfolioInfo()
         {
             lbl_invested.Text = pf.Invested.ToString("C2",CurrencyFormatter.getCurrencyFormatter("USD"));
             lbl_pl_ur.Text = pf.UnrealizedPL.ToString("C2", CurrencyFormatter.getCurrencyFormatter("USD"));

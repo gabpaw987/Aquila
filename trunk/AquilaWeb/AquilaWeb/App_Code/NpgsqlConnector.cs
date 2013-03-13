@@ -14,29 +14,30 @@ public class NpgsqlConnector
 {
     // FIELDS //
 
-    private NpgsqlConnection conn;
-    private bool connected;
-    private bool closeAfterQuery;
+    private NpgsqlConnection _conn;
+    private bool _connected;
+    private bool _closeAfterQuery;
+    private NpgsqlTransaction _t;
 
     // PROPERTIES //
 
     public bool Connected
     {
-        get { return this.connected; }
+        get { return this._connected; }
         set
         {
             // establish connection if true and currently closed
-            if (value == true && this.connected == false) this.conn.Open();
+            if (value == true && this._connected == false) this._conn.Open();
             // close connection if false and currently open
-            else if (value == false && this.connected == true) this.conn.Close();
-            this.connected = value;
+            else if (value == false && this._connected == true) this._conn.Close();
+            this._connected = value;
         }
     }
 
     public bool CloseAfterQuery
     {
-        get { return this.closeAfterQuery; }
-        set { this.closeAfterQuery = value; }
+        get { return this._closeAfterQuery; }
+        set { this._closeAfterQuery = value; }
     }
 
     // CONSTRUCTORS //
@@ -47,10 +48,10 @@ public class NpgsqlConnector
 
 	public NpgsqlConnector(string server, string user, string pass, string database)
 	{
-        connected = false;
-        closeAfterQuery = false;
+        _connected = false;
+        _closeAfterQuery = false;
         
-        conn = new NpgsqlConnection("Server="              + server + 
+        _conn = new NpgsqlConnection("Server="              + server + 
                                     ";Port=5432;User Id="  + user + 
                                     ";Password="           + pass + 
                                     ";Database="           + database + 
@@ -66,6 +67,23 @@ public class NpgsqlConnector
                                     "SSL=true;Sslmode=prefer;Pooling=true");
     }
 
+    public void StartTransaction()
+    {
+        if (Connected == false) Connected = true;
+        // TODO: TransactionIsolationLevel
+        _t = _conn.BeginTransaction();
+    }
+
+    public void Commit()
+    {
+        _t.Commit();
+    }
+
+    public void Rollback()
+    {
+        _t.Rollback();
+    }
+
     public T SelectSingleValue<T>(string sql)
     {
         return SelectSingleValue<T>(sql, new List<DbParam>());
@@ -76,7 +94,7 @@ public class NpgsqlConnector
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        using(NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        using(NpgsqlCommand command = new NpgsqlCommand(sql, _conn))
         {
             foreach (DbParam e in p)
             {
@@ -134,7 +152,7 @@ public class NpgsqlConnector
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        using (NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        using (NpgsqlCommand command = new NpgsqlCommand(sql, _conn))
         {
             foreach (DbParam e in p)
             {
@@ -172,7 +190,7 @@ public class NpgsqlConnector
         // Open connection if neccessary
         if (!Connected) Connected = true;
 
-        using (NpgsqlCommand command = new NpgsqlCommand(sql, conn))
+        using (NpgsqlCommand command = new NpgsqlCommand(sql, _conn))
         {
 
             foreach (DbParam e in p)

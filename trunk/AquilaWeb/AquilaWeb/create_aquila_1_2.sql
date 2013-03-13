@@ -95,7 +95,6 @@ CREATE TABLE "Sessions" (
 );
 
 -- DROP TABLE IF EXISTS portfolio CASCADE;
-
 CREATE TABLE portfolio (
     pfid          SERIAL,
     capital       DECIMAL(14,2) CONSTRAINT positive_capital CHECK (capital > 0),
@@ -113,6 +112,9 @@ INSERT INTO portfolio (capital) VALUES (500000);
 CREATE TABLE pfcontrol (
     pfid          INT,
     "pId"         VARCHAR(255),
+	maxinvest     DECIMAL(10,2),
+    cutloss       DECIMAL(7,4) DEFAULT 5,
+	auto          BOOLEAN,
     PRIMARY KEY (pfid, "pId"),
     FOREIGN KEY (pfid)    REFERENCES portfolio (pfid)
       ON UPDATE CASCADE
@@ -121,6 +123,8 @@ CREATE TABLE pfcontrol (
       ON UPDATE CASCADE
       ON DELETE CASCADE
 );
+
+INSERT INTO pfcontrol(pfid, "pId", maxinvest, cutloss, auto) VALUES(1, 'f9aca2d8-2440-4ce3-979d-647ebac91a61', 10000, true);
 
 -- DROP TABLE IF EXISTS exchange CASCADE;
 CREATE TABLE exchange (
@@ -451,7 +455,10 @@ CREATE TABLE indicatorval (
 
 -- TRIGGER
 
--- Only Uppercase Symbols
+-----------------------------------------------------------------
+-- Only Uppercase Symbols:
+-----------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION upper_symbol() RETURNS TRIGGER AS $upper_trigger$
 	BEGIN
 		NEW.symbol := upper(NEW.symbol);
@@ -463,3 +470,62 @@ CREATE TRIGGER series_insert_symbol
 BEFORE INSERT ON series
 FOR EACH ROW
 EXECUTE PROCEDURE upper_symbol();
+
+CREATE TRIGGER series_update_symbol
+BEFORE UPDATE ON series
+FOR EACH ROW
+EXECUTE PROCEDURE upper_symbol();
+
+-----------------------------------------------------------------
+-- Portfolio capital > sum of maximum individual investments:
+-----------------------------------------------------------------
+
+-- INSERT maxinvest
+CREATE OR REPLACE FUNCTION investment_cap_insert() RETURNS TRIGGER AS $investment_cap$
+	BEGIN
+		-- not enough capital
+		IF ((SELECT capital FROM portfolio WHERE pfid=NEW.pfid) <
+		((SELECT sum(maxinvest) FROM pfsecurity WHERE pfid=NEW.pfid)+NEW.maxinvest)) THEN
+			RAISE EXCEPTION 'Portfolio capital too small for this maximum investment.';
+		END IF;
+		RETURN NEW;
+	END;
+$investment_cap$ LANGUAGE plpgsql;
+
+CREATE TRIGGER pfsecurity_insert_maxinvest
+BEFORE INSERT ON pfsecurity
+FOR EACH ROW
+EXECUTE PROCEDURE investment_cap_insert();
+
+-- UPDATE maxinvest
+CREATE OR REPLACE FUNCTION investment_cap_update() RETURNS TRIGGER AS $investment_cap$
+	BEGIN
+		-- not enough capital
+		IF ((SELECT capital FROM portfolio WHERE pfid=NEW.pfid) < 
+		((SELECT sum(maxinvest) FROM pfsecurity WHERE pfid=NEW.pfid)-OLD.maxinvest+NEW.maxinvest)) THEN
+			RAISE EXCEPTION 'Portfolio capital too small for this maximum investment.';
+		END IF;
+		RETURN NEW;
+	END;
+$investment_cap$ LANGUAGE plpgsql;
+
+CREATE TRIGGER pfsecurity_update_maxinvest
+BEFORE UPDATE ON pfsecurity
+FOR EACH ROW
+EXECUTE PROCEDURE investment_cap_update();
+
+-- UPDATE capital
+CREATE OR REPLACE FUNCTION check_capital() RETURNS TRIGGER AS $check_capital$
+	BEGIN
+		-- not enough capital
+		IF (NEW.capital < (SELECT sum(maxinvest) FROM pfsecurity WHERE pfid=NEW.pfid)) THEN
+			RAISE EXCEPTION 'Portfolio capital too small for sum of maximum investments.';
+		END IF;
+		RETURN NEW;
+	END;
+$check_capital$ LANGUAGE plpgsql;
+
+CREATE TRIGGER portfolio_update_capital
+BEFORE UPDATE ON portfolio
+FOR EACH ROW
+EXECUTE PROCEDURE check_capital();

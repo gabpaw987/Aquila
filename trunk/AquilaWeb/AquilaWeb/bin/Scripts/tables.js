@@ -66,7 +66,7 @@ function edit_cell(cell, callback)
 
         // input lost focus
         $(input).focusout(function () {
-            cell_input = $("#cell_input").val();        // save entered text        
+            cell_input = $("#cell_input").val();        // save entered text
 
             $(cell).empty();                            // remove input field
             $(cell).text(tmp_cell_text);                // insert old text content
@@ -74,23 +74,27 @@ function edit_cell(cell, callback)
         });
 
         // key pressed
-        $(cell).unbind('keypressed');
+        $(cell).unbind('keypress');
         $(cell).keypress(callback);
     }
 }
 
-function addSymbolEnter(e, symbol, setting) {
+function addSymbolEnter(e) {
     // enter pressed
     if (e.which === 13) {
         e.preventDefault();                     // no postback!
         cell_input = $("#cell_input").val();    // save entered string
+        var doubleEntry = false;
         $('#content_portfolio_table>tbody>tr>td:nth-child(1)').each(function () {
-            if ($(this).text().toUpperCase() == symbol.toUpperCase())
+            if ($(this).text().toUpperCase() == cell_input.toUpperCase()) {
+                doubleEntry = true;
                 alert("This symbol has already beeen added to the portfolio.");
-            return false;
+            }
         });
-        ajax_addSymbol(cell_input);
-        return false;                           // no postback!
+        if (!doubleEntry) {
+            ajax_addSymbol(cell_input);
+            return false;                       // no postback!
+        }
     }
 }
 
@@ -102,13 +106,22 @@ function setSettingEnter(e, cell, symbol, setting) {
         //alert(symbol + " " + setting + " " + parseFloat(cell_input));
         if (isNumber(cell_input)) {
             ajax_setSetting(symbol, setting, parseFloat(cell_input), function (msg) {
+                $(cell).empty();
                 if (msg.d != null) {
-                    $(cell).empty();
+                    //alert("Ajax-msg: " + msg.d);
                     $(cell).text(msg.d);
                     $(cell).attr('rel', cell_input);
-                    inputShown = false;
+                } else {
+                    //$(cell).text($(cell).attr('rel'));
+                    alert("Failure!");
+                    $(cell).text(tmp_cell_text);
                 }
+                inputShown = false;
             });
+        } else {
+            $(cell).empty();
+            $(cell).text(tmp_cell_text);
+            inputShown = false;
         }
         return false;                           // no postback!
     }
@@ -125,45 +138,50 @@ function toggleCssClasses(e, c1, c2){
 }
 
 function toggleSetting(symbol, setting, values, e, classes) {
+
     // WCF SetSetting
     ajax_setSetting(symbol, setting, $(e).attr('rel'), function (msg) {
         if (msg.d != null) {
-            if ($(e).hasClass("running")) $(e).text("Trading");
-            if ($(e).hasClass("inactive")) $(e).text("Inactive");
+            //alert(msg.d);
+
             if ($(e).hasClass("auto")) $(e).text("Auto");
             if ($(e).hasClass("manual")) $(e).text("Manual");
+            if ($(e).hasClass("inactive")) $(e).text("Inactive");
+            if ($(e).hasClass("running")) $(e).text("Active");
+
+            var value;
+            // setting value
+            for (var i = 0; i < values.length; i++) {
+                if (values[i] + "" == $(e).attr('rel')) {
+                    if (i != values.length - 1) {
+                        value = values[i + 1];
+                    } else {
+                        value = values[0];
+                    }
+                    break;
+                }
+            }
+            // change rel action for onclick
+            $(e).attr('rel', value);
+
+            // css class
+            for (var i = 0; i < classes.length; i++) {
+                if ($(e).hasClass(classes[i])) {
+                    $(e).removeClass(classes[i]);
+                    if (i != values.length - 1) {
+                        $(e).addClass(classes[i + 1]);
+                    } else {
+                        $(e).addClass(classes[0]);
+                    }
+                    break;
+                }
+            }
         } else {
             alert("failure!");
         }
     });
 
-    var value;
-    // setting value
-    for (var i = 0; i < values.length; i++) {
-        if (values[i] + "" == $(e).attr('rel')) {
-            if (i != values.length - 1) {
-                value = values[i + 1];
-            } else {
-                value = values[0];
-            }
-            break;
-        }
-    }
-    // change rel action for onclick
-    $(e).attr('rel', value);
-
-    // css class
-    for (var i = 0; i < classes.length; i++) {
-        if ($(e).hasClass(classes[i])) {
-            $(e).removeClass(classes[i]);
-            if (i != values.length - 1) {
-                $(e).addClass(classes[i + 1]);
-            } else {
-                $(e).addClass(classes[0]);
-            }
-            break;
-        }
-    }
+    
 }
 
 function ajax_setSetting(symbol, setting, value, callback) {
@@ -207,23 +225,23 @@ function ajax_addSymbol(symbol) {
         });
     }
 
-    function addPortfolioRow(pfElement) {
-        if (pfElement != null) {
-            // alert(pfElement.Symbol + ": " + pfElement.Position);
-            $('#content_portfolio_table > tbody:last').append('<tr>' +
-                                                        '<td>' + pfElement.Symbol + '</td>' +
-                                                        '<td>' + pfElement.Close + '</td>' +
-                                                        '<td>' + pfElement.Position + '</td>' +
-                                                        '<td>' + pfElement.Gain + '</td>' +
-                                                        '<td>' + pfElement.Maxinvest + '</td>' +
-                                                        '<td>' + pfElement.Cutloss + '</td>' +
-                                                        '<td>' + pfElement.Decision + '</td>' +
-                                                        '<td>' + pfElement.Roi + '</td>' +
-                                                        '<td>' + pfElement.Auto + '</td>' +
-                                                        '<td>' + pfElement.Active + '</td>' +
-                                                        '</tr>');
-            $("input").blur();
-        } else {
-            alert("No database entry for this symbol!");
-        }
-    }
+    //function addPortfolioRow(pfElement) {
+    //    if (pfElement != null) {
+    //        // alert(pfElement.Symbol + ": " + pfElement.Position);
+    //        $('#content_portfolio_table > tbody:last').append('<tr>' +
+    //                                                    '<td>' + pfElement.Symbol + '</td>' +
+    //                                                    '<td>' + pfElement.Close + '</td>' +
+    //                                                    '<td>' + pfElement.Position + '</td>' +
+    //                                                    '<td>' + pfElement.Gain + '</td>' +
+    //                                                    '<td>' + pfElement.Maxinvest + '</td>' +
+    //                                                    '<td>' + pfElement.Cutloss + '</td>' +
+    //                                                    '<td>' + pfElement.Decision + '</td>' +
+    //                                                    '<td>' + pfElement.Roi + '</td>' +
+    //                                                    '<td>' + pfElement.Auto + '</td>' +
+    //                                                    '<td>' + pfElement.Active + '</td>' +
+    //                                                    '</tr>');
+    //        $("input").blur();
+    //    } else {
+    //        alert("No database entry for this symbol!");
+    //    }
+    //}

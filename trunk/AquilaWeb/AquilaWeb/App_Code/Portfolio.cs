@@ -24,6 +24,9 @@ namespace AquilaWeb.App_Code
             get { return this._pfid; }
             set
             {
+                // if portfolio doesn't exists
+                if (!PortfolioExists(value)) 
+                    throw new System.ArgumentException("There is no portfolio with a pfid of "+value);
                 this._pfid = (value > 0) ? value : this._pfid;
             }
         }
@@ -55,11 +58,9 @@ namespace AquilaWeb.App_Code
 
         public Portfolio(int pfid)
         {
-            this._pfid = pfid;
-            _assets = new List<PortfolioElement>();
             _conn = new NpgsqlConnector("localhost", "postgres", "short", "aquila");
-            LoadPortfolio();
-            _conn.Connected = false;
+            this.Pfid = pfid;
+            _assets = new List<PortfolioElement>();
         }
 
         public void LoadPortfolio()
@@ -101,26 +102,28 @@ namespace AquilaWeb.App_Code
             _realizedPL = _conn.SelectSingleValue<decimal>("SELECT rpf FROM portfolio WHERE pfid=" + this._pfid);
         }
 
-        public static PortfolioElement AddSymbol(string symbol, int pfid)
+        public PortfolioElement AddSymbol(string symbol)
         {
-            if (FinancialSeries.isValidSymbol(symbol) && !Portfolio.isInPortfolio(symbol))
+            if (FinancialSeries.isValidSymbol(symbol) && !IsInPortfolio(symbol))
             {
                 // WCF Communication
-                //SettingsHandlerClient client = new SettingsHandlerClient();
+                SettingsHandlerClient client = new SettingsHandlerClient();
                 // start Thread
-                //try
-                //{
-                //client.performAction(new object[] { symbol, "Create" });
-                //}
-                //catch (Exception) { }
+                try
+                {
+                    client.performAction(new object[] { symbol, "Create" });
+                }
+                catch (Exception ex)
+                { 
+                    System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace); 
+                }
 
                 // DB Communication
                 PortfolioElement e = new PortfolioElement();
 
                 List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
-                NpgsqlConnector conn = new NpgsqlConnector();
-                using (NpgsqlDataReader dr = conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + pfid + ", :symbol) RETURNING *", pl))
+                using (NpgsqlDataReader dr = _conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + _pfid + ", :symbol) RETURNING *", pl))
                 {
                     dr.Read();
 
@@ -137,10 +140,10 @@ namespace AquilaWeb.App_Code
                 }
 
                 string query = "SELECT c FROM mbar WHERE symbol='" + e.Symbol + "' ORDER BY t DESC LIMIT 1";
-                e.Close = conn.SelectSingleValue<decimal>(query);
+                e.Close = _conn.SelectSingleValue<decimal>(query);
 
                 query = "SELECT decision FROM series WHERE symbol='" + e.Symbol + "'";
-                e.Decision = conn.SelectSingleValue<int>(query);
+                e.Decision = _conn.SelectSingleValue<int>(query);
 
                 return e;
             }
@@ -150,13 +153,29 @@ namespace AquilaWeb.App_Code
             }
         }
 
-        public static bool isInPortfolio(string symbol)
+        public decimal GetCapital()
+        {
+            return _conn.SelectSingleValue<decimal>("SELECT capital FROM portfolio WHERE pfid="+_pfid);
+        }
+
+        public decimal GetSumMaxInvest()
+        {
+            return _conn.SelectSingleValue<decimal>("SELECT sum(maxinvest) FROM pfsecurity WHERE pfid="+_pfid);
+        }
+
+        public bool IsInPortfolio(string symbol)
         {
             List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+            return _conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=upper( :symbol ) AND pfid="+this._pfid, pl) == 1;
+        }
 
-            NpgsqlConnector conn = new NpgsqlConnector();
-            conn.CloseAfterQuery = true;
-            return conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=upper( :symbol ) AND pfid="+Portfolio.PFID, pl) == 1;
+        public bool PortfolioExists(int pfid)
+        {
+            List<DbParam> pl = new List<DbParam>() 
+            { 
+                new DbParam("pfid", NpgsqlDbType.Integer, pfid)
+            };
+            return _conn.SelectSingleValue<Int64>("SELECT count(*) FROM portfolio WHERE pfid=:pfid", pl) == 1;
         }
     }
 }
