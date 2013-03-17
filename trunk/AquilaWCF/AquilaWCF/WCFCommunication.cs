@@ -19,7 +19,7 @@ namespace Aquila_Software
 
             // Step 2 of the hosting procedure: Create ServiceHost
             //ServiceHost selfHost; = new ServiceHost(typeof(Server), baseAddress);
-
+            workers = new Dictionary<string, Worker>();
             workerInfos = new Dictionary<string, WorkerInfo>();
             lastLength = 0;
 
@@ -57,6 +57,7 @@ namespace Aquila_Software
                             }
                         }
                         lastLength = workerInfos.Count;
+                        Console.WriteLine("erste if");
                     }
                     else if (workerInfos.Count < lastLength)
                     {
@@ -67,6 +68,7 @@ namespace Aquila_Software
                                 //TODO: interrupt and delete worker
                             }
                         }
+                        Console.WriteLine("zweite if");
                     }
                     Thread.Sleep(1000);
                 }
@@ -77,6 +79,7 @@ namespace Aquila_Software
             catch (CommunicationException ce)
             {
                 Console.WriteLine("An exception occurred: {0}", ce.Message);
+                Console.ReadLine();
                 selfHost.Abort();
             }
         }

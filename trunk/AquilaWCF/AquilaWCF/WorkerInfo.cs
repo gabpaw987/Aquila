@@ -19,6 +19,8 @@ namespace Aquila_Software
         [DataMember]
         public bool isCalculating;
         [DataMember]
+        public float CutLoss;
+        [DataMember]
         public float PricePremiumPercentage;
 
         public WorkerInfo(string symbol)
