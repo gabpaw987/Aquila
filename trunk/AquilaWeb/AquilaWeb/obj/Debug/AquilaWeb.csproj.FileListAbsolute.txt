@@ -11,3 +11,4 @@ C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\Npgsql.xml
 C:\aquila\trunk\AquilaWeb\AquilaWeb\bin\policy.2.0.Npgsql.config
 C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.dll
 C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.pdb
+C:\aquila\trunk\AquilaWeb\AquilaWeb\obj\Debug\AquilaWeb.csprojResolveAssemblyReference.cache
