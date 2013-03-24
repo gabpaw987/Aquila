@@ -35,8 +35,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Krs.Ats.IBNet">
-      <HintPath>..\..\Aquila-Software\Aquila-Software\Krs.Ats.IBNet.dll</HintPath>
+    <Reference Include="Algorithms">
+      <HintPath>lib\Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="Krs.Ats.IBNet, Version=9.67.130.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>lib\Krs.Ats.IBNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>lib\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq">
+      <HintPath>lib\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>lib\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,7 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseHandler.cs" />
+    <Compile Include="IBID.cs" />
+    <Compile Include="IBInput.cs" />
+    <Compile Include="IBOutput.cs" />
+    <Compile Include="LogFileManager.cs" />
     <Compile Include="ManualExecution.cs" />
+    <Compile Include="QueryHandler.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerHost.cs" />
@@ -63,6 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mono.Security.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
