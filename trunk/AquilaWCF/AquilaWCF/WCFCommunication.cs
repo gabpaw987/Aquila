@@ -12,8 +12,28 @@ namespace Aquila_Software
         private static Dictionary<string, Worker> workers;
         private static int lastLength;
 
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
+
+            WorkerInfo workerInfo = new WorkerInfo("AAPL");
+            workerInfo.Amount = 1000;
+            workerInfo.BarSize = "mBar";
+            workerInfo.BarType = "last";
+            workerInfo.CutLoss = 1000;
+            workerInfo.IsActive = true;
+            workerInfo.isCalculating = true;
+            workerInfo.ManualExecution = "pending";
+            workerInfo.PricePremiumPercentage = 100;
+
+            Worker worker = new Worker(workerInfo);
+            worker.Start();
+        }
+
+        private static void Main1(string[] args)
+        {
+            LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
+
             // Step 1 of the address configuration procedure: Create a URI to serve as the base address.
             Uri baseAddress = new Uri("http://localhost:8000/SettingsHandler");
 
@@ -70,6 +90,7 @@ namespace Aquila_Software
                         }
                         Console.WriteLine("zweite if");
                     }
+                    //TODO: foreach both dictionaries for new manualexecution
                     Thread.Sleep(1000);
                 }
 
