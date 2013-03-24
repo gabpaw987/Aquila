@@ -9,8 +9,8 @@ namespace Aquila_Software
 {
     internal class SMSHelper
     {
-        static string server = "192.168.16.135";
-        static string port = "9090";
+        public static string server = "192.168.16.135";
+        public static string port = "9090";
 
         /// <summary>
         /// Sends the SMS, with the default text.
@@ -20,7 +20,7 @@ namespace Aquila_Software
         /// <returns></returns>
         public static bool sendDefaultSMS(string recipient, string equity)
         {
-            string url = "http://" + server + ":" + port + "/sendsms?phone=" + recipient + "&text="+ equity+ " is waiting for an decision&password=";
+            string url = "http://" + server + ":" + port + "/sendsms?phone=" + recipient + "&text="+ equity+ " is waiting for a decision&password=";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream resStream = response.GetResponseStream();
