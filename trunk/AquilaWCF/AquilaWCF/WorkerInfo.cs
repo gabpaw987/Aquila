@@ -6,20 +6,28 @@ namespace Aquila_Software
     {
         [DataMember]
         public string ManualExecution;
+
         [DataMember]
         public string Equity;
+
         [DataMember]
         public bool IsActive;
+
         [DataMember]
         public float Amount;
+
         [DataMember]
         public string BarSize;
+
         [DataMember]
         public string BarType;
+
         [DataMember]
         public bool isCalculating;
+
         [DataMember]
         public float CutLoss;
+
         [DataMember]
         public float PricePremiumPercentage;
 

@@ -16,18 +16,34 @@ namespace Aquila_Software
         {
             LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
 
-            WorkerInfo workerInfo = new WorkerInfo("AAPL");
-            workerInfo.Amount = 1000;
+            WorkerInfo workerInfo = new WorkerInfo("AAPL:US");
+            workerInfo.Amount = 800000;
             workerInfo.BarSize = "mBar";
             workerInfo.BarType = "last";
             workerInfo.CutLoss = 1000;
-            workerInfo.IsActive = true;
+            workerInfo.IsActive = false;
             workerInfo.isCalculating = true;
             workerInfo.ManualExecution = "pending";
             workerInfo.PricePremiumPercentage = 100;
 
+            WorkerInfo workerInfo2 = new WorkerInfo("MSFT:US");
+            workerInfo2.Amount = 800000;
+            workerInfo2.BarSize = "mBar";
+            workerInfo2.BarType = "last";
+            workerInfo2.CutLoss = 1000;
+            workerInfo2.IsActive = false;
+            workerInfo2.isCalculating = true;
+            workerInfo2.ManualExecution = "pending";
+            workerInfo2.PricePremiumPercentage = 100;
+
             Worker worker = new Worker(workerInfo);
+            Worker worker2 = new Worker(workerInfo2);
             worker.Start();
+            Thread.Sleep(100);
+            worker2.Start();
+            Thread.Sleep(20000);
+            worker.executeOrder(); Thread.Sleep(10000);
+            worker2.executeOrder();
         }
 
         private static void Main1(string[] args)
@@ -91,6 +107,30 @@ namespace Aquila_Software
                         Console.WriteLine("zweite if");
                     }
                     //TODO: foreach both dictionaries for new manualexecution
+                    foreach (WorkerInfo workerInfo in workerInfos.Values)
+                    {
+                        if (!workerInfo.IsActive)
+                        {
+                            if (workerInfo.ManualExecution.Equals(ManualExecution.Accepted))
+                            {
+                                Worker worker;
+                                workers.TryGetValue(workerInfo.Equity, out worker);
+                                if (worker != null)
+                                {
+                                    worker.executeOrder();
+                                }
+                            }
+                            else if (workerInfo.ManualExecution.Equals(ManualExecution.Denied))
+                            {
+                                Worker worker;
+                                workers.TryGetValue(workerInfo.Equity, out worker);
+                                if (worker != null)
+                                {
+                                    worker.dismissOrder();
+                                }
+                            }
+                        }
+                    }
                     Thread.Sleep(1000);
                 }
 

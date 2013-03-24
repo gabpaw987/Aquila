@@ -40,6 +40,8 @@ namespace Aquila_Software
         /// <remarks></remarks>
         public Equity Equity { get; private set; }
 
+        public string LocalSymbol;
+
         /// <summary>
         /// In this list the received realtime bars are saved. Whenever a new one is received, it a method checks if there are already 12 bars in the list.<br/>
         /// If this is the case, the CreateMinuteBar()-method is called to create a minute-bar out of the 12 5-second bars and this minute bar is added to the<br/>
@@ -57,8 +59,8 @@ namespace Aquila_Software
         /// <remarks></remarks>
         public void GetHistoricalDataBars(TimeSpan timespan)
         {
-            //inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, timespan, this.BarSize, HistoricalDataType.Trades, 1);
-            inputClient.RequestHistoricalData(22, new Future("ES", "GLOBEX", "201306"), DateTime.Now, timespan, this.BarSize, HistoricalDataType.Trades, 0);
+            inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, timespan, this.BarSize, HistoricalDataType.Trades, 1);
+            //inputClient.RequestHistoricalData(22, new Future("ES", "GLOBEX", "201306"), DateTime.Now, timespan, this.BarSize, HistoricalDataType.Trades, 0);
         }
 
         /// <summary>
@@ -101,11 +103,11 @@ namespace Aquila_Software
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(List<Tuple<DateTime, decimal, decimal, decimal, decimal>> minuteBars, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> dailyBars, Equity equity, BarSize barsize)
+        public IBInput(List<Tuple<DateTime, decimal, decimal, decimal, decimal>> minuteBars, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> dailyBars, Equity equity,string localSymbol, BarSize barsize)
         {
             this.BarSize = barsize;
             this.Equity = equity;
-
+            this.LocalSymbol = localSymbol;
             MinuteBars = minuteBars;
             DailyBars = dailyBars;
 
@@ -151,7 +153,7 @@ namespace Aquila_Software
                     LogFileManager.WriteToLog("Received Real Time Minute-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5);
 
                     MinuteBars.Add(b);
-                    QueryHandler.insertBar(this.Equity.LocalSymbol, "mBar", 0, b);
+                    QueryHandler.insertBar(this.LocalSymbol, "mBar", 0, b);
                 }
             }
             else if (this.BarSize.Equals(BarSize.OneDay))
@@ -183,7 +185,7 @@ namespace Aquila_Software
                         }
                     }
                     var dailyBar = new Tuple<DateTime, decimal, decimal, decimal, decimal>(this.MinuteBars[(this.MinuteBars.Count - 1)].Item1.Date, open, high, low, close);
-                    QueryHandler.insertBar(this.Equity.LocalSymbol, "dBar", 0, dailyBar);
+                    QueryHandler.insertBar(this.LocalSymbol, "dBar", 0, dailyBar);
                     this.DailyBars.Add(dailyBar);
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Npgsql;
+using System;
 
 namespace Aquila_Software
 {
@@ -53,9 +54,9 @@ namespace Aquila_Software
                 NpgsqlCommand command = new NpgsqlCommand(statement, nc);
                 rowsaffected = command.ExecuteNonQuery();
             }
-            //catch (Exception)
-            //{
-            //}
+            catch (Exception)
+            {
+            }
             finally
             {
                 nc.Close();

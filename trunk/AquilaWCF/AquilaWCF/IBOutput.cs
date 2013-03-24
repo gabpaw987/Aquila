@@ -35,29 +35,26 @@ namespace Aquila_Software
         /// This attribute represents the current(the last one received) Ask price of the specified equity. It gets received again every time an order gets placed.
         /// </summary>
         public decimal currentAskPrice = 0;
+
         /// <summary>
         /// This attribute represents the current(the last one received) Bid price of the specified equity. It gets received again every time an order gets placed.
         /// </summary>
         public decimal currentBidPrice = 0;
 
-        /// <summary>
-        /// This is the connection ID that is used for the next connection by and output client to the InteractiveBrokers TWS. It increments every time a new connection<br/>
-        /// to IB is built and it starts at 1 because 0 is the ID of the IBInput. The IBInput only needs one connection which means one ID.
-        /// </summary>
-        private static int connectionID = 1;
-
+        //TODO: next 2 booleans private
         /// <summary>
         /// This is a boolean indicating if the a current Bid price is set. It is used to know when the requestMarketData method is finished and the bid price<br/>
         /// is recieved. In cooperation with the isCurrentAskSet variable it is used when an order shall be placed, if the valiues for the limit price have already<br/>
         /// been received.
         /// </summary>
-        private static Boolean isCurrentBidSet = false;
+        private Boolean isCurrentBidSet = false;
+
         /// <summary>
         /// This is a boolean indicating if the a current Ask price is set. It is used to know when the requestMarketData method is finished and the ask price<br/>
         /// is recieved. In cooperation with the isCurrentBidSet variable it is used when an order shall be placed, if the valiues for the limit price have already<br/>
         /// been received.
         /// </summary>
-        private static Boolean isCurrentAskSet = false;
+        private Boolean isCurrentAskSet = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IBOutput"/> class. It sets the equity from the parameters, initialises a new outputClient and adds the<br/>
@@ -75,7 +72,11 @@ namespace Aquila_Software
             //Add the important eventhandler to the outputClient
             outputClient.NextValidId += client_NextValidId;
             outputClient.TickPrice += client_TickPrice;
+            outputClient.Error += client_Error;
         }
+
+        private Order BuyContract;
+        private ActionSide buyOrSell;
 
         /// <summary>
         /// Places the order and transmits it. Transmit means that it is really submitted from IB to the dealer network.
@@ -85,74 +86,78 @@ namespace Aquila_Software
         /// <remarks></remarks>
         public int placeOrder(ActionSide buyOrSell, int totalQuantity)
         {
+            try
+            {
+                this.buyOrSell = buyOrSell;
+
+                //Connect to ib with a new ID.
+                //outputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
+
+                //Make a new order like the user specified and also trade outside regular trading hours.
+                this.BuyContract = new Order();
+                this.BuyContract.Action = buyOrSell;
+                this.BuyContract.OutsideRth = true;
+
+                //Finish the order with the totalQuantity from the parameters. Tif is the Time an order stays in the TWS when it´s not filled.
+                this.BuyContract.OrderType = OrderType.Limit;
+                this.BuyContract.TotalQuantity = totalQuantity;
+                this.BuyContract.Tif = TimeInForce.Day;
+
+                //really transmit the order
+
+                BuyContract.Transmit = true;
+
+                //disconnec the outputClient again after placing the order.
+                //outputClient.Disconnect();
+
+                //Writes what happened to the Console and the log file
+                Console.WriteLine("Order Placed with Order ID: " + (IBID.OrderID) + "!");
+                LogFileManager.WriteToLog("Order Placed with Order ID: " + (IBID.OrderID) + "!");
+                return IBID.OrderID++;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("An error occured while placing the order!");
+            }
             return 0;
-            //try
-            //{
-            //    //Connect to ib with a new ID.
-            //    outputClient.Connect("127.0.0.1", 7496, connectionID++);
-
-            //    //Request the current market data(bid and ask prices) that are then received thorugh the client_TickPrice eventhandler.
-            //    //This data is used to set the limit price.
-            //    outputClient.RequestMarketData(IBID.TickerID, this.Equity, null, true, false);
-
-            //    //Make a new order like the user specified and also trade outside regular trading hours.
-            //    Order BuyContract = new Order();
-            //    BuyContract.Action = buyOrSell;
-            //    BuyContract.OutsideRth = true;
-
-            //    //When the limit prices are already recieved, set the proper variables back to false and apply the limit price
-            //    while (!isCurrentAskSet || !isCurrentBidSet)
-            //        Thread.Sleep(100);
-
-            //    isCurrentAskSet = false;
-            //    isCurrentBidSet = false;
-
-            //    if (buyOrSell.Equals(ActionSide.Buy))
-            //        BuyContract.LimitPrice = currentAskPrice;
-            //    else if (buyOrSell.Equals(ActionSide.Sell))
-            //        BuyContract.LimitPrice = currentBidPrice;
-
-            //    //Finish the order with the totalQuantity from the parameters. Tif is the Time an order stays in the TWS when it´s not filled.
-            //    BuyContract.OrderType = OrderType.Limit;
-            //    BuyContract.TotalQuantity = totalQuantity;
-            //    BuyContract.Tif = TimeInForce.Day;
-            //    //really transmit the order
-            //    BuyContract.Transmit = true;
-
-            //    //place it and request its execution.
-            //    outputClient.PlaceOrder(orderId, this.Equity, BuyContract);
-
-            //    //disconnec the outputClient again after placing the order.
-            //    outputClient.Disconnect();
-
-            //    //Writes what happened to the Console and the log file
-            //    Console.WriteLine("Order Placed with Order ID: " + (IBID.OrderID) + "!");
-            //    LogFileManager.WriteToLog("Order Placed with Order ID: " + (IBID.OrderID) + "!");
-            //    return IBID.OrderID++;
-            //}
-            //catch (Exception)
-            //{
-            //    Console.WriteLine("An error occured while placing the order!");
-            //}
         }
 
-        public void executeOrder()
+        public void executeOrder(float pricePremiumPercentage)
         {
-            return;
-            //try
-            //{
-            //    outputClient.RequestExecutions(IBID.RequestID++, new ExecutionFilter());
-            //    //disconnec the outputClient again after placing the order.
-            //    outputClient.Disconnect();
+            try
+            {
+                //Request the current market data(bid and ask prices) that are then received thorugh the client_TickPrice eventhandler.
+                //This data is used to set the limit price.
+                outputClient.RequestMarketData(IBID.TickerID++, this.Equity, null, true, false);
 
-            //    //Writes what happened to the Console and the log file
-            //    Console.WriteLine("Order Executed with Request ID: " + (IBID.RequestID - 1) + "!");
-            //    LogFileManager.WriteToLog("Order Executed with Request ID: " + (IBID.RequestID - 1) + "!");
-            //}
-            //catch (Exception)
-            //{
-            //    Console.WriteLine("An error occured while placing the order!");
-            //}
+                //When the limit prices are already recieved, set the proper variables back to false and apply the limit price
+                while (!isCurrentAskSet || !isCurrentBidSet)
+                    Thread.Sleep(100);
+
+                isCurrentAskSet = false;
+                isCurrentBidSet = false;
+
+                //TODO: check this with pieer
+                if (buyOrSell.Equals(ActionSide.Buy))
+                    this.BuyContract.LimitPrice = currentAskPrice + (currentAskPrice / 100 * (decimal)pricePremiumPercentage);
+                else if (buyOrSell.Equals(ActionSide.Sell))
+                    this.BuyContract.LimitPrice = currentBidPrice - (currentBidPrice / 100 * (decimal)pricePremiumPercentage); ;
+
+                //place it and request its execution.
+                outputClient.PlaceOrder(IBID.OrderID++, this.Equity, BuyContract);
+
+                //outputClient.RequestExecutions(IBID.RequestID++, new ExecutionFilter());
+                //disconnec the outputClient again after placing the order.
+                outputClient.Disconnect();
+
+                //Writes what happened to the Console and the log file
+                Console.WriteLine("Order Executed with Order ID: " + (IBID.OrderID) + "!");
+                LogFileManager.WriteToLog("Order Executed with Request ID: " + (IBID.OrderID) + "!");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("An error occured while placing the order!");
+            }
         }
 
         /// <summary>
@@ -192,7 +197,9 @@ namespace Aquila_Software
 
         public void RequestTickPrice()
         {
-            this.outputClient.RequestMarketData(IBID.TickerID++, this.Equity, null, true, false);
+            //Connect to ib with a new ID.
+            outputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
+            this.outputClient.RequestMarketData(IBID.TickerID++, this.Equity, null, false, false);
 
             //When the limit prices are already recieved, set the proper variables back to false and apply the limit price
             while (!isCurrentAskSet || !isCurrentBidSet)
@@ -200,6 +207,13 @@ namespace Aquila_Software
 
             isCurrentAskSet = false;
             isCurrentBidSet = false;
+
+            //outputClient.Disconnect();
+        }
+
+        private static void client_Error(object sender, ErrorEventArgs e)
+        {
+            Console.WriteLine("Msg: " + e.ErrorMsg + "." + e.ErrorCode + "." + e.TickerId);
         }
     }
 }
