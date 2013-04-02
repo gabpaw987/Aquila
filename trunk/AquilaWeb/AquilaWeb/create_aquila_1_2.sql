@@ -99,10 +99,10 @@ CREATE TABLE portfolio (
     pfid          SERIAL,
     capital       DECIMAL(14,2) CONSTRAINT positive_capital CHECK (capital > 0),
 	-- cash at risk; invested (exposure)
-	invested      DECIMAL(14,2),
-    ytdreturn     DECIMAL(12,2),
-	urpf          DECIMAL(12,2),
-	rpf           DECIMAL(12,2),
+	invested      DECIMAL(14,2) DEFAULT 0,
+    ytdreturn     DECIMAL(12,2) DEFAULT 0,
+	urpf          DECIMAL(12,2) DEFAULT 0,
+	rpf           DECIMAL(12,2) DEFAULT 0,
     PRIMARY KEY(pfid)
 );
 
@@ -275,8 +275,11 @@ CREATE TABLE bond (
 CREATE TABLE pfsecurity (
     pfid          INT,
     symbol        VARCHAR(30),
-    position      INT,
-	gain          DECIMAL(13,5),
+    position      INT  DEFAULT 0,
+	-- unrealised
+	gain          DECIMAL(13,5) DEFAULT 0,
+	-- realised
+	rgain		  DECIMAL(13,5) DEFAULT 0,
 	maxinvest     DECIMAL(10,2),
     cutloss       DECIMAL(7,4),
 	roi           DECIMAL(10,4),
@@ -344,8 +347,38 @@ CREATE TABLE sorder (
       ON DELETE SET NULL
 );
 
-INSERT INTO sorder (pfid, symbol,    ten,                                      tex,               oname,   priceen, priceex, osize, executed, fee)
-            VALUES (1,   'AAPL:US', current_timestamp - INTERVAL '5 seconds', current_timestamp, 'limit', 575.900, 575.860, 5,     true,     1.0);
+DELETE FROM sorder;
+UPDATE pfsecurity SET gain = 0;
+UPDATE pfsecurity SET rgain = 0;
+UPDATE pfsecurity SET position = 0;
+--UPDATE portfolio SET rpf = 0;
+--UPDATE portfolio SET urpf = 0;
+--UPDATE portfolio SET invested = 0;
+
+INSERT INTO sorder (pfid, symbol, ten, tex, oname, priceen, priceex, osize, executed, fee)
+VALUES (1, 'AAPL:US', current_timestamp - INTERVAL '31 seconds', current_timestamp - INTERVAL '30 seconds', 'limit', 599.900, 600.000, 5, true, 1.0);
+
+SELECT * FROM pfsecurity;
+
+INSERT INTO sorder (pfid, symbol, ten, tex, oname, priceen, priceex, osize, executed, fee)
+VALUES (1, 'AAPL:US', current_timestamp - INTERVAL '21 seconds', current_timestamp - INTERVAL '20 seconds', 'limit', 609.900, 600.400, -5, true, 1.0);
+
+SELECT * FROM pfsecurity;
+
+INSERT INTO sorder (pfid, symbol, ten, tex, oname, priceen, priceex, osize, executed, fee)
+VALUES (1, 'AAPL:US', current_timestamp - INTERVAL '16 seconds', current_timestamp - INTERVAL '15 seconds', 'limit', 599.900, 600.000, 4, true, 1.0);
+	
+SELECT * FROM pfsecurity;
+
+INSERT INTO sorder (pfid, symbol, ten, tex, oname, priceen, priceex, osize, executed, fee)
+VALUES (1, 'AAPL:US', current_timestamp - INTERVAL '11 seconds', current_timestamp - INTERVAL '10 seconds', 'limit', 609.900, 610.000, -3, true, 1.0);
+
+SELECT * FROM pfsecurity;
+
+INSERT INTO sorder (pfid, symbol, ten, tex, oname, priceen, priceex, osize, executed, fee)
+VALUES (1, 'AAPL:US', current_timestamp - INTERVAL '6 seconds', current_timestamp - INTERVAL '5 seconds', 'limit', 609.900, 610.000, -1, true, 1.0);	
+
+SELECT * FROM pfsecurity;
 
 -- Minute Bar
 -- DROP TABLE IF EXISTS mbar CASCADE;
@@ -412,6 +445,8 @@ CREATE TABLE dbar (
       ON DELETE CASCADE
 );
 
+INSERT INTO dbar VALUES('AAPL:US',current_date,590,620,590,610,0);
+
 -- DROP TABLE IF EXISTS indicatortype CASCADE;
 CREATE TABLE indicatortype (
     iname         VARCHAR(255),
@@ -456,6 +491,177 @@ CREATE TABLE indicatorval (
 -- TRIGGER
 
 -----------------------------------------------------------------
+-- Orders change position and gain:
+-----------------------------------------------------------------
+
+SELECT c
+FROM(
+	SELECT t, c FROM mbar WHERE t=(SELECT max(t) FROM mbar)
+	UNION
+	SELECT bdate, c FROM dbar WHERE bdate=(SELECT max(bdate) FROM dbar)
+)AS temp1
+ORDER BY t DESC
+LIMIT 1;
+
+CREATE OR REPLACE FUNCTION get_pos_buying_price (INTEGER, VARCHAR) RETURNS DECIMAL AS $get_pos_buying_price$
+	DECLARE
+		pos INTEGER;
+		price DECIMAL := 0;
+		v RECORD;
+	BEGIN
+		-- current position
+		SELECT position INTO pos
+		FROM pfsecurity
+		WHERE symbol = $2
+		AND pfid = $1;
+
+		-- loop thru orders with different signs
+		FOR v IN (SELECT osize, priceex FROM sorder WHERE sign(osize)=sign(pos) ORDER BY tex DESC) LOOP
+			IF (abs(pos) <= v.osize) THEN
+				RETURN price + pos*v.priceex;
+			ELSE
+				price := price + v.osize*v.priceex;
+				IF (pos > 0) THEN
+					pos := pos - v.osize;
+				ELSE
+					pos := pos + v.osize;
+				END IF;
+			END IF;
+		END LOOP;
+		RETURN 0;
+	END;
+$get_pos_buying_price$ LANGUAGE plpgsql;
+
+SELECT * FROM get_pos_buying_price(1, 'AAPL:US');
+
+CREATE OR REPLACE FUNCTION order_aggregate_insert() RETURNS TRIGGER AS $position_aggregate_insert$
+	DECLARE
+		pos_old INTEGER;
+		pos_new INTEGER;
+		liq_size INTEGER;
+		cash DECIMAL;
+		unrealised DECIMAL;
+	BEGIN
+		IF (NEW.executed = true) THEN
+			-- get old position
+			SELECT position INTO pos_old
+			FROM pfsecurity
+			WHERE symbol = NEW.symbol
+			AND pfid = NEW.pfid;
+
+			-- new position
+			pos_new := pos_old + NEW.osize;
+
+			-- update position
+			UPDATE pfsecurity
+			SET position = pos_new
+			WHERE symbol = NEW.symbol
+			AND pfid = NEW.pfid;
+
+			-- cash:
+			-- revenues minus spendings
+			SELECT (coalesce(sum(-1*osize*priceex - fee),0) + (-1*NEW.osize*NEW.priceex - NEW.fee)) INTO cash
+			FROM sorder
+			WHERE symbol = NEW.symbol
+			AND pfid = NEW.pfid;
+
+			--RAISE NOTICE '%', (SELECT sum(-1*osize*priceex - fee) FROM sorder);
+			--RAISE NOTICE '%', (-1*NEW.osize*NEW.priceex - NEW.fee);
+			--RAISE NOTICE '%', (SELECT (sum(-1*osize*priceex - fee) + (-1*NEW.osize*NEW.priceex - NEW.fee)) FROM sorder);
+
+			-- closing of positions -> realised gain/loss
+			IF (abs(pos_new) < abs(pos_old)) THEN
+				IF (abs(pos_old - pos_new) < abs(pos_old)) THEN
+					liq_size := abs(pos_old - pos_new);
+				ELSE
+					liq_size := abs(pos_old);
+				END IF;
+
+				-- realised profit
+				UPDATE pfsecurity
+				SET rgain = cash + get_pos_buying_price(NEW.pfid, NEW.symbol)
+				WHERE symbol = NEW.symbol
+				AND pfid = NEW.pfid;
+			END IF;
+
+			-- unrealised profit:
+			SELECT pos_new * (
+			-- newest closing price (dbar or mbar)
+				SELECT c
+				FROM(
+					SELECT t, c FROM mbar WHERE t=(SELECT max(t) FROM mbar)
+					UNION
+					SELECT bdate, c FROM dbar WHERE bdate=(SELECT max(bdate) FROM dbar)
+				)AS temp1
+				ORDER BY t DESC
+				LIMIT 1
+			) INTO unrealised;
+
+			-- update unrealised profit
+			UPDATE pfsecurity
+			SET gain = cash + unrealised
+			WHERE symbol = NEW.symbol
+			AND pfid = NEW.pfid;
+
+			--RAISE NOTICE '% %', cash, unrealised;
+
+		END IF;
+		RETURN NEW;
+	END;
+$position_aggregate_insert$ LANGUAGE plpgsql;
+
+CREATE TRIGGER sorder_insert
+BEFORE INSERT ON sorder
+FOR EACH ROW
+EXECUTE PROCEDURE order_aggregate_insert();
+
+-----------------------------------------------------------------
+-- Gain changes rpf (realised profit) and urpf (unrealised profit):
+-----------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION gain_aggregate_update() RETURNS TRIGGER AS $gain_aggregate_update$
+	BEGIN
+		UPDATE portfolio
+		SET rpf = rpf - OLD.rgain + NEW.rgain,
+			urpf = urpf - OLD.gain + NEW.gain
+		WHERE pfid = NEW.pfid;
+
+		RETURN NEW;
+	END;
+$gain_aggregate_update$ LANGUAGE plpgsql;
+
+CREATE TRIGGER gain_update
+BEFORE UPDATE ON pfsecurity
+FOR EACH ROW
+EXECUTE PROCEDURE gain_aggregate_update();
+
+-----------------------------------------------------------------
+-- Aggregate invested:
+-----------------------------------------------------------------
+
+SELECT * FROM get_pos_buying_price(1, 'AAPL:US');
+
+CREATE OR REPLACE FUNCTION update_invested() RETURNS TRIGGER AS $update_invested$
+	BEGIN
+		-- RAISE NOTICE '%', (SELECT * FROM get_pos_buying_price(NEW.pfid, NEW.symbol));
+		IF NEW.executed = true THEN
+			UPDATE portfolio
+			SET invested = (
+				SELECT *
+				FROM get_pos_buying_price(NEW.pfid, NEW.symbol)
+			);
+		END IF;
+
+		RETURN NEW;
+	END;
+$update_invested$ LANGUAGE plpgsql;
+
+CREATE TRIGGER sorder_invested_after_insert
+AFTER INSERT ON sorder
+FOR EACH ROW
+EXECUTE PROCEDURE update_invested();
+
+-----------------------------------------------------------------
 -- Only Uppercase Symbols:
 -----------------------------------------------------------------
 
@@ -475,6 +681,36 @@ CREATE TRIGGER series_update_symbol
 BEFORE UPDATE ON series
 FOR EACH ROW
 EXECUTE PROCEDURE upper_symbol();
+
+-----------------------------------------------------------------
+-- Standard values for maxinvest, cutloss and auto in pfsecurity:
+-----------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION std_values_pfsecurity() RETURNS TRIGGER AS $std_values_pfsecurity$
+	BEGIN
+		IF (NEW.maxinvest IS NULL) THEN
+			SELECT maxinvest INTO NEW.maxinvest
+			FROM pfcontrol
+			WHERE pfid = NEW.pfid;
+		END IF;
+		IF (NEW.cutloss IS NULL) THEN
+			SELECT cutloss INTO NEW.cutloss
+			FROM pfcontrol
+			WHERE pfid = NEW.pfid;
+		END IF;
+		IF (NEW.auto IS NULL) THEN
+			SELECT auto INTO NEW.auto
+			FROM pfcontrol
+			WHERE pfid = NEW.pfid;
+		END IF;
+		RETURN NEW;
+	END;
+$std_values_pfsecurity$ LANGUAGE plpgsql;
+
+CREATE TRIGGER pfsecurity_insert_std_values
+BEFORE INSERT ON pfsecurity
+FOR EACH ROW
+EXECUTE PROCEDURE std_values_pfsecurity();
 
 -----------------------------------------------------------------
 -- Portfolio capital > sum of maximum individual investments:
