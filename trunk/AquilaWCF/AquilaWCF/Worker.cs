@@ -132,7 +132,7 @@ namespace Aquila_Software
 
                         float roundLotPrice = 0f;
 
-                        //TODO: pieer wegen pricepremium
+                        //TODO: peer wegen pricepremium
                         if (isBuy)
                         {
                             roundLotPrice = (float)(this.IBOutput.currentAskPrice * 100);

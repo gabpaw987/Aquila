@@ -60,6 +60,7 @@ namespace Aquila_Software
             lastLength = 0;
 
             ServerHost selfHost = new ServerHost(workerInfos, typeof(Server), baseAddress);
+
             //selfHost.AddDefaultEndpoints();
 
             try
@@ -87,8 +88,10 @@ namespace Aquila_Software
                         {
                             if (!workers.ContainsKey(workerInfo.Equity))
                             {
+                                //TODO: wichtig!!! das darf erst gemacht werden wenn der peer alle wichtigen settings gemacht hat
                                 Worker tempWorker = new Worker(workerInfo);
-                                //TODO: run tempWorker
+
+                                //DONE: run tempWorker is done in the constructor of Worker
                                 workers.Add(workerInfo.Equity, tempWorker);
                             }
                         }
@@ -106,6 +109,7 @@ namespace Aquila_Software
                         }
                         Console.WriteLine("zweite if");
                     }
+
                     //TODO: foreach both dictionaries for new manualexecution
                     foreach (WorkerInfo workerInfo in workerInfos.Values)
                     {

@@ -77,6 +77,7 @@ namespace Aquila_Software
                         string temp = (string)args[0];
                         WorkerInfo tempWorkerInfo = new WorkerInfo(temp);
                         Console.WriteLine("Worker erstellt");
+
                         //TODO: start the Thread
                         this.WorkerInfos.Add(temp, tempWorkerInfo);
                         Console.WriteLine("geadded");
@@ -87,6 +88,7 @@ namespace Aquila_Software
                         WorkerInfo tempWorkerInfo = null;
                         string temp = (string)args[0];
                         this.WorkerInfos.TryGetValue(temp, out tempWorkerInfo);
+
                         //TODO: start the Thread
                         return true;
                     }
@@ -95,12 +97,27 @@ namespace Aquila_Software
                         //TODO: stop the thread
                         return true;
                     }
+                    else if (args[1].Equals("Delete"))
+                    {
+                        if (WorkerInfos.ContainsKey((string)args[0]))
+                        {
+                            WorkerInfos.Remove((string)args[0]);
+                            return true;
+                        }
+                        return false;
+                    }
                     else if (args.Length == 3)
                     {
-                        if (args[1].Equals("ExecutionDecision") && args[2] is ManualExecution)
+                        if (args[1].Equals("ExecutionDecision") && args[2] is string)
                         {
-                            //TODO:ExecutionDecision
-                            return true;
+                            if (WorkerInfos.ContainsKey((string)args[0]))
+                            {
+                                WorkerInfo wi = null;
+                                WorkerInfos.TryGetValue((string)args[0], out wi);
+                                wi.ManualExecution = (string)args[2];
+                                return true;
+                            }
+                            return false;
                         }
                     }
                 }
