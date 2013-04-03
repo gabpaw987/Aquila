@@ -37,5 +37,14 @@ namespace Aquila_Software
             }
             return false;
         }
+
+        public static bool insertOrder(string equtiySymbol, DateTime ten, DateTime tex, decimal pen, decimal pex, int size)
+        {
+            if (DatabaseHandler.executeModify("INSERT INTO signal SORDER('1," + equtiySymbol + "','" + ten + "'," + tex + "','limit'," + pen.ToString(CultureInfo.InvariantCulture) + "," + pex.ToString(CultureInfo.InvariantCulture) + "," + size + "," + "true" + "1.0" + ")") >= 1)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

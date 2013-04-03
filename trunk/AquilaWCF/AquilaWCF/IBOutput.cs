@@ -41,7 +41,7 @@ namespace Aquila_Software
         /// </summary>
         public decimal currentBidPrice = 0;
 
-        //TODO: next 2 booleans private
+        //DONE: next 2 booleans private
         /// <summary>
         /// This is a boolean indicating if the a current Bid price is set. It is used to know when the requestMarketData method is finished and the bid price<br/>
         /// is recieved. In cooperation with the isCurrentAskSet variable it is used when an order shall be placed, if the valiues for the limit price have already<br/>
@@ -77,6 +77,7 @@ namespace Aquila_Software
 
         private Order BuyContract;
         private ActionSide buyOrSell;
+        private DateTime Tor;
 
         /// <summary>
         /// Places the order and transmits it. Transmit means that it is really submitted from IB to the dealer network.
@@ -89,6 +90,7 @@ namespace Aquila_Software
             try
             {
                 this.buyOrSell = buyOrSell;
+                Tor = DateTime.Now;
 
                 //Connect to ib with a new ID.
                 //outputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
@@ -137,16 +139,20 @@ namespace Aquila_Software
                 isCurrentAskSet = false;
                 isCurrentBidSet = false;
 
-                //TODO: check this with pieer
-                if (buyOrSell.Equals(ActionSide.Buy))
-                    this.BuyContract.LimitPrice = currentAskPrice + (currentAskPrice / 100 * (decimal)pricePremiumPercentage);
-                else if (buyOrSell.Equals(ActionSide.Sell))
-                    this.BuyContract.LimitPrice = currentBidPrice - (currentBidPrice / 100 * (decimal)pricePremiumPercentage); ;
+                //DONE: check this with pieer
+                if ((decimal)pricePremiumPercentage > 0)
+                {
+                    if (buyOrSell.Equals(ActionSide.Buy))
+                        this.BuyContract.LimitPrice = currentAskPrice + ((currentAskPrice - currentBidPrice) * (decimal)pricePremiumPercentage) / 100;
+                    else if (buyOrSell.Equals(ActionSide.Sell))
+                        this.BuyContract.LimitPrice = currentBidPrice - ((currentAskPrice - currentBidPrice) * (decimal)pricePremiumPercentage) / 100;
+                }
 
                 //place it and request its execution.
                 outputClient.PlaceOrder(IBID.OrderID++, this.Equity, BuyContract);
 
-                //outputClient.RequestExecutions(IBID.RequestID++, new ExecutionFilter());
+                outputClient.RequestExecutions(IBID.OrderID - 1, new ExecutionFilter());
+
                 //disconnec the outputClient again after placing the order.
                 outputClient.Disconnect();
 
@@ -214,6 +220,20 @@ namespace Aquila_Software
         private static void client_Error(object sender, ErrorEventArgs e)
         {
             Console.WriteLine("Msg: " + e.ErrorMsg + "." + e.ErrorCode + "." + e.TickerId);
+        }
+
+        private static void client_ExecDetails(object sender, ExecDetailsEventArgs e)
+        {
+            Console.WriteLine(e.Execution.Time);
+            try
+            {
+                //TODO: find out how Time is written in e.Execution
+                QueryHandler.insertOrder(e.Contract.LocalSymbol + ":" + e.Contract.Currency, DateTime.Today, DateTime.Now, 1m, Convert.ToDecimal(e.Execution.Price), e.Execution.Shares);
+            }
+            catch (Exception) { }
+            Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
+                e.Contract.Symbol, e.Execution.AccountNumber, e.Execution.ClientId, e.Execution.Exchange, e.Execution.ExecutionId,
+                e.Execution.Liquidation, e.Execution.OrderId, e.Execution.PermId, e.Execution.Price, e.Execution.Shares, e.Execution.Side, e.Execution.Time);
         }
     }
 }
