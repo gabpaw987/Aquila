@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace Aquila_Software
         public static void Main(string[] args)
         {
             LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
+
+            restoreWorkerInfos();
 
             WorkerInfo workerInfo = new WorkerInfo("AAPL:US");
             workerInfo.Amount = 800000;
@@ -78,6 +81,8 @@ namespace Aquila_Software
                 Console.WriteLine("The service is ready.");
                 Console.WriteLine("Press <ENTER> to terminate service.");
                 Console.WriteLine();
+
+                restoreWorkerInfos();
 
                 //TODO: make stoppable
                 while (true)
@@ -147,6 +152,28 @@ namespace Aquila_Software
                 Console.ReadLine();
                 selfHost.Abort();
             }
+        }
+
+        private static void restoreWorkerInfos()
+        {
+            //TODO: addbarsize, bartype, ppp
+            //DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,bartype,barsize,cutloss,auto,active,pricepremiumpercentage FROM pfsecurity");
+
+            //foreach (DataRow row in table.AsEnumerable())
+            //{
+            //    WorkerInfo workerInfo = new WorkerInfo(row.Field<string>(0));
+            //    workerInfo.Amount = row.Field<int>(1);
+            //    workerInfo.BarSize = row.Field<string>(2);
+            //    workerInfo.BarType = row.Field<string>(3);
+            //    workerInfo.CutLoss = row.Field<int>(4);
+            //    workerInfo.IsActive = row.Field<bool>(5);
+            //    workerInfo.isCalculating = row.Field<bool>(6);
+            //    workerInfo.ManualExecution = "pending";
+            //    workerInfo.PricePremiumPercentage = row.Field<int>(7);
+            //    workerInfos.Add(workerInfo);
+            //}
+
+            DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,cutloss,auto,active FROM pfsecurity");
         }
     }
 }
