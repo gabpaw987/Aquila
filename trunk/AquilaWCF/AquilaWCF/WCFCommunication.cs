@@ -157,23 +157,21 @@ namespace Aquila_Software
         private static void restoreWorkerInfos()
         {
             //TODO: addbarsize, bartype, ppp
-            //DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,bartype,barsize,cutloss,auto,active,pricepremiumpercentage FROM pfsecurity");
+            DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,bartype,barsize,cutloss,auto,active,pricepremiumpercentage FROM pfsecurity");
 
-            //foreach (DataRow row in table.AsEnumerable())
-            //{
-            //    WorkerInfo workerInfo = new WorkerInfo(row.Field<string>(0));
-            //    workerInfo.Amount = row.Field<int>(1);
-            //    workerInfo.BarSize = row.Field<string>(2);
-            //    workerInfo.BarType = row.Field<string>(3);
-            //    workerInfo.CutLoss = row.Field<int>(4);
-            //    workerInfo.IsActive = row.Field<bool>(5);
-            //    workerInfo.isCalculating = row.Field<bool>(6);
-            //    workerInfo.ManualExecution = "pending";
-            //    workerInfo.PricePremiumPercentage = row.Field<int>(7);
-            //    workerInfos.Add(workerInfo);
-            //}
-
-            DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,cutloss,auto,active FROM pfsecurity");
+            foreach (DataRow row in table.Rows)
+            {
+                WorkerInfo workerInfo = new WorkerInfo(row.Field<string>(0));
+                workerInfo.Amount = row.Field<int>(1);
+                workerInfo.BarSize = row.Field<string>(2);
+                workerInfo.BarType = row.Field<string>(3);
+                workerInfo.CutLoss = row.Field<int>(4);
+                workerInfo.IsActive = row.Field<bool>(5);
+                workerInfo.isCalculating = row.Field<bool>(6);
+                workerInfo.ManualExecution = "pending";
+                workerInfo.PricePremiumPercentage = row.Field<int>(7);
+                workerInfos.Add(row.Field<string>(0), workerInfo);
+            }
         }
     }
 }
