@@ -1,16 +1,16 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using Npgsql;
-using System;
 
 namespace Aquila_Software
 {
     internal class DatabaseHandler
     {
-        static string server = "localhost";
-        static string port = "5432";
-        static string userid = "testuser";
-        static string pw = "testpw";
-        static string dbname = "aquila";
+        private static string server = "localhost";
+        private static string port = "5432";
+        private static string userid = "testuser";
+        private static string pw = "testpw";
+        private static string dbname = "aquila";
 
         /// <summary>
         /// Executes the select.
@@ -33,7 +33,11 @@ namespace Aquila_Software
             {
                 nc.Close();
                 string[] splittedStatement = statement.Split(' ');
-                LogFileManager.WriteToLog("Selected from database: " + dbname + " and " + "read from: " + splittedStatement[2]);
+                try
+                {
+                    LogFileManager.WriteToLog("Selected from database: " + dbname + " and " + "read from: " + splittedStatement[2]);
+                }
+                catch (Exception) { }
             }
             return ds.Tables[0];
         }
@@ -61,7 +65,11 @@ namespace Aquila_Software
             {
                 nc.Close();
                 string[] splittedStatement = statement.Split(' ');
-                LogFileManager.WriteToLog("Modified database: " + dbname + " and " + "changed in: " + splittedStatement[1]);
+                try
+                {
+                    LogFileManager.WriteToLog("Modified database: " + dbname + " and " + "changed in: " + splittedStatement[1]);
+                }
+                catch (Exception) { }
             }
             return rowsaffected;
         }

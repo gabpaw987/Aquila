@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="9f43d23a-9749-4aa0-8e01-45ad3d50ab59" name="Josefs@JOSEF-PC 2013-04-11 12:54:17" runUser="JOSEF-PC\Josefs" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Lokal" id="65770dc9-174f-40ea-ab59-740cafac096c">
+    <Description>Dies sind die standardmäßigen Testeinstellungen für einen lokalen Testlauf.</Description>
+    <Deployment enabled="false" runDeploymentRoot="Josefs_JOSEF-PC 2013-04-11 12_54_17">
+      <DeploymentItem filename="C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\AquilaWCF\bin\Debug\AquilaWCF.exe" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2013-04-11T12:54:17.9856312+02:00" queuing="2013-04-11T12:54:17.9966318+02:00" start="2013-04-11T12:54:18.0096325+02:00" finish="2013-04-11T12:54:18.5486634+02:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="TestInsertSignal" storage="c:\users\josefs\documents\schule\ppm\aquila\trunk\aquilawcf\wcfaquilatest\bin\debug\wcfaquilatest.dll" id="1ae604f0-76f7-94d1-d081-b25925753fd2">
+      <Execution id="1988f8e4-a07f-420d-a414-1bcc3b9284be" />
+      <TestMethod codeBase="C:/Users/Josefs/Documents/Schule/PPM/aquila/trunk/AquilaWCF/WCFAquilaTest/bin/Debug/WCFAquilaTest.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WCFAquilaTest.QueryHandlerTest, WCFAquilaTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestInsertSignal" />
+    </UnitTest>
+    <UnitTest name="TestInsertBar" storage="c:\users\josefs\documents\schule\ppm\aquila\trunk\aquilawcf\wcfaquilatest\bin\debug\wcfaquilatest.dll" id="376cee97-336d-fe2c-2334-5b77ff229745">
+      <Execution id="df66c39e-9f00-41e5-ad18-beff2de6e567" />
+      <TestMethod codeBase="C:/Users/Josefs/Documents/Schule/PPM/aquila/trunk/AquilaWCF/WCFAquilaTest/bin/Debug/WCFAquilaTest.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WCFAquilaTest.QueryHandlerTest, WCFAquilaTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestInsertBar" />
+    </UnitTest>
+    <UnitTest name="TestInsertOrder" storage="c:\users\josefs\documents\schule\ppm\aquila\trunk\aquilawcf\wcfaquilatest\bin\debug\wcfaquilatest.dll" id="0dbf1f05-3666-f9c4-7863-3311e887550e">
+      <Execution id="6d53132d-a319-42e6-8151-bc9e6dc3967c" />
+      <TestMethod codeBase="C:/Users/Josefs/Documents/Schule/PPM/aquila/trunk/AquilaWCF/WCFAquilaTest/bin/Debug/WCFAquilaTest.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WCFAquilaTest.QueryHandlerTest, WCFAquilaTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestInsertOrder" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Nicht in einer Liste enthaltene Ergebnisse" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="376cee97-336d-fe2c-2334-5b77ff229745" executionId="df66c39e-9f00-41e5-ad18-beff2de6e567" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0dbf1f05-3666-f9c4-7863-3311e887550e" executionId="6d53132d-a319-42e6-8151-bc9e6dc3967c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ae604f0-76f7-94d1-d081-b25925753fd2" executionId="1988f8e4-a07f-420d-a414-1bcc3b9284be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="df66c39e-9f00-41e5-ad18-beff2de6e567" testId="376cee97-336d-fe2c-2334-5b77ff229745" testName="TestInsertBar" computerName="JOSEF-PC" duration="00:00:00.2166815" startTime="2013-04-11T12:54:18.0186330+02:00" endTime="2013-04-11T12:54:18.4816595+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df66c39e-9f00-41e5-ad18-beff2de6e567">
+    </UnitTestResult>
+    <UnitTestResult executionId="6d53132d-a319-42e6-8151-bc9e6dc3967c" testId="0dbf1f05-3666-f9c4-7863-3311e887550e" testName="TestInsertOrder" computerName="JOSEF-PC" duration="00:00:00.0038076" startTime="2013-04-11T12:54:18.4856598+02:00" endTime="2013-04-11T12:54:18.4936602+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d53132d-a319-42e6-8151-bc9e6dc3967c">
+    </UnitTestResult>
+    <UnitTestResult executionId="1988f8e4-a07f-420d-a414-1bcc3b9284be" testId="1ae604f0-76f7-94d1-d081-b25925753fd2" testName="TestInsertSignal" computerName="JOSEF-PC" duration="00:00:00.0064800" startTime="2013-04-11T12:54:18.4986605+02:00" endTime="2013-04-11T12:54:18.5196617+02:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1988f8e4-a07f-420d-a414-1bcc3b9284be">
+    </UnitTestResult>
+  </Results>
+</TestRun>

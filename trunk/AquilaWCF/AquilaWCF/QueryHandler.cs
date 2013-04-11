@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Aquila_Software
 {
-    internal class QueryHandler
+    public class QueryHandler
     {
         /// <summary>
         /// Inserts the bar.

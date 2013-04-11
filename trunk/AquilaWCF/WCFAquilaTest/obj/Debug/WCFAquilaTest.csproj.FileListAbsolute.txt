@@ -1,0 +1,12 @@
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\WCFAquilaTest.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\WCFAquilaTest.pdb
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\AquilaWCF.exe
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\Krs.Ats.IBNet.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\Algorithms.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\Npgsql.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\MoreLinq.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\Mono.Security.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\bin\Debug\AquilaWCF.pdb
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\obj\Debug\WCFAquilaTest.dll
+C:\Users\Josefs\Documents\Schule\PPM\aquila\trunk\AquilaWCF\WCFAquilaTest\obj\Debug\WCFAquilaTest.pdb
