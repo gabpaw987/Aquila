@@ -31,6 +31,11 @@ namespace Aquila_Software
         [DataMember]
         public float PricePremiumPercentage;
 
+        public string ToString()
+        {
+            return Equity + " " + CutLoss + " " + Amount + " " + IsActive;
+        }
+
         public WorkerInfo(string symbol)
         {
             this.Equity = symbol;

@@ -9,6 +9,6 @@ namespace Aquila_Software
         bool SetSetting(object[] args);
 
         [OperationContract]
-        bool performAction(object[] args);
+        bool PerformAction(object[] args);
     }
 }
