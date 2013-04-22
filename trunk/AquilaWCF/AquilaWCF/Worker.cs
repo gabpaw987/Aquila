@@ -29,11 +29,14 @@ namespace Aquila_Software
 
         private IBOutput IBOutput;
 
+        // to stop the thread from the main method
+        public bool RunThread = true;
+
         public Worker(WorkerInfo workerInfo)
         {
             this.workerInfo = workerInfo;
             this.Thread = new Thread(this.Run);
-
+            this.LocalSymbol = workerInfo.Equity;
             this.MinuteBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.DailyBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
@@ -44,7 +47,7 @@ namespace Aquila_Software
             GetSettings();
             this.loadHistoricalData();
             var length = 0;
-            while (true)
+            while (RunThread)
             {
                 GetSettings();
 
@@ -248,6 +251,7 @@ namespace Aquila_Software
             this.IsActive = workerInfo.IsActive;
             this.Amount = workerInfo.Amount;
 
+            //TODO: cutloss dazu
             if (workerInfo.BarSize.Equals("mBar"))
             {
                 this.BarSize = BarSize.OneMinute;

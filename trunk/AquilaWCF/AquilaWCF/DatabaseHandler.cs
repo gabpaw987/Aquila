@@ -8,8 +8,8 @@ namespace Aquila_Software
     {
         private static string server = "localhost";
         private static string port = "5432";
-        private static string userid = "testuser";
-        private static string pw = "testpw";
+        private static string userid = "postgres";
+        private static string pw = "short";
         private static string dbname = "aquila";
 
         /// <summary>

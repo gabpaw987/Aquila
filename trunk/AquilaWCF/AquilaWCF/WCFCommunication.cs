@@ -13,7 +13,7 @@ namespace Aquila_Software
         private static Dictionary<string, Worker> workers;
         private static int lastLength;
 
-        public static void Main(string[] args)
+        public static void Main1(string[] args)
         {
             LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
 
@@ -49,7 +49,7 @@ namespace Aquila_Software
             worker2.executeOrder();
         }
 
-        private static void Main1(string[] args)
+        private static void Main(string[] args)
         {
             LogFileManager.CreateLog("Aquila_Log_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + ".txt");
 
@@ -82,6 +82,7 @@ namespace Aquila_Software
                 Console.WriteLine("Press <ENTER> to terminate service.");
                 Console.WriteLine();
 
+                //DONE: RestoreWorkerInfos
                 restoreWorkerInfos();
 
                 //TODO: make stoppable
@@ -96,50 +97,64 @@ namespace Aquila_Software
                                 //TODO: wichtig!!! das darf erst gemacht werden wenn der peer alle wichtigen settings gemacht hat
                                 Worker tempWorker = new Worker(workerInfo);
 
+                                //tempWorker.Start();
+
                                 //DONE: run tempWorker is done in the constructor of Worker
                                 workers.Add(workerInfo.Equity, tempWorker);
                             }
                         }
                         lastLength = workerInfos.Count;
-                        Console.WriteLine("erste if");
                     }
                     else if (workerInfos.Count < lastLength)
                     {
+                        List<Worker> toRemove = new List<Worker>();
                         foreach (Worker worker in workers.Values)
                         {
-                            if (!workerInfos.ContainsKey(worker.Equity.Symbol))
+                            if (!workerInfos.ContainsKey(worker.LocalSymbol))
                             {
-                                //TODO: interrupt and delete worker
+                                worker.RunThread = false; //TODO: interrupt and delete worker
+                                Console.WriteLine(worker.LocalSymbol);
+                                toRemove.Add(worker);
                             }
                         }
-                        Console.WriteLine("zweite if");
+                        foreach (Worker w in toRemove)
+                        {
+                            workers.Remove(w.LocalSymbol);
+                        }
                     }
 
                     //TODO: foreach both dictionaries for new manualexecution
                     foreach (WorkerInfo workerInfo in workerInfos.Values)
                     {
-                        if (!workerInfo.IsActive)
+                        if (!workerInfo.IsActive && workerInfo.ManualExecution != null)
                         {
-                            if (workerInfo.ManualExecution.Equals(ManualExecution.Accepted))
+                            if (workerInfo.ManualExecution.Equals("Accepted"))
                             {
-                                Worker worker;
+                                Worker worker = null;
                                 workers.TryGetValue(workerInfo.Equity, out worker);
                                 if (worker != null)
                                 {
                                     worker.executeOrder();
                                 }
+                                workerInfo.ManualExecution = "Pending";
                             }
-                            else if (workerInfo.ManualExecution.Equals(ManualExecution.Denied))
+                            else if (workerInfo.ManualExecution.Equals("Denied"))
                             {
-                                Worker worker;
+                                Worker worker = null;
                                 workers.TryGetValue(workerInfo.Equity, out worker);
                                 if (worker != null)
                                 {
                                     worker.dismissOrder();
                                 }
+                                workerInfo.ManualExecution = "Pending";
                             }
                         }
                     }
+
+                    //foreach (WorkerInfo workerInfo in workerInfos.Values)
+                    //{
+                    //    Console.WriteLine(workerInfo.ToString());
+                    //}
                     Thread.Sleep(1000);
                 }
 
@@ -156,20 +171,20 @@ namespace Aquila_Software
 
         private static void restoreWorkerInfos()
         {
-            //TODO: addbarsize, bartype, ppp
-            DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,bartype,barsize,cutloss,auto,active,pricepremiumpercentage FROM pfsecurity");
+            //DONE: addbarsize, bartype, ppp
+            DataTable table = DatabaseHandler.executeSelect("SELECT symbol,maxinvest,btype,bsize,cutloss,auto,active,ppp FROM portfolio NATURAL JOIN pfsecurity");
 
             foreach (DataRow row in table.Rows)
             {
                 WorkerInfo workerInfo = new WorkerInfo(row.Field<string>(0));
-                workerInfo.Amount = row.Field<int>(1);
+                workerInfo.Amount = (float)row.Field<decimal>(1);
                 workerInfo.BarSize = row.Field<string>(2);
                 workerInfo.BarType = row.Field<string>(3);
-                workerInfo.CutLoss = row.Field<int>(4);
+                workerInfo.CutLoss = (float)row.Field<decimal>(4);
                 workerInfo.IsActive = row.Field<bool>(5);
                 workerInfo.isCalculating = row.Field<bool>(6);
                 workerInfo.ManualExecution = "pending";
-                workerInfo.PricePremiumPercentage = row.Field<int>(7);
+                workerInfo.PricePremiumPercentage = (float)row.Field<decimal>(7);
                 workerInfos.Add(row.Field<string>(0), workerInfo);
             }
         }
