@@ -46,5 +46,9 @@ namespace Aquila_Software
             }
             return false;
         }
+
+        //TODO: insert indicator implementieren
+        //Microsoft.FSharp.Collections.FSharpMap<string, decimal[]>
+        //http://stackoverflow.com/questions/8522511/accessing-an-f-map-from-inside-c-sharp-code
     }
 }
