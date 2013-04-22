@@ -106,22 +106,12 @@ namespace AquilaWeb.App_Code
         {
             if (FinancialSeries.isValidSymbol(symbol) && !IsInPortfolio(symbol))
             {
-                // WCF Communication
-                SettingsHandlerClient client = new SettingsHandlerClient();
-                // start Thread
-                try
-                {
-                    client.performAction(new object[] { symbol, "Create" });
-                }
-                catch (Exception ex)
-                { 
-                    System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace); 
-                }
-
                 // DB Communication
                 PortfolioElement e = new PortfolioElement();
 
                 List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+
+                _conn.StartTransaction();
 
                 using (NpgsqlDataReader dr = _conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + _pfid + ", :symbol) RETURNING *", pl))
                 {
@@ -139,11 +129,48 @@ namespace AquilaWeb.App_Code
                     dr.Close();
                 }
 
-                string query = "SELECT c FROM mbar WHERE symbol='" + e.Symbol + "' ORDER BY t DESC LIMIT 1";
+                string query = "SELECT * FROM get_latest_bar('" + e.Symbol + "')";
                 e.Close = _conn.SelectSingleValue<decimal>(query);
 
                 query = "SELECT decision FROM series WHERE symbol='" + e.Symbol + "'";
                 e.Decision = _conn.SelectSingleValue<int>(query);
+
+                // WCF Communication
+                SettingsHandlerClient client = new SettingsHandlerClient();
+                // start Thread
+                try
+                {
+                    //// new element
+                    //client.PerformAction(new object[] { symbol, "Create" });
+                    //// set all settings
+                    System.Diagnostics.Debug.WriteLine("Amount (Maxinvest) " + (float)e.Maxinvest);
+                    //client.SetSetting(new object[] {symbol, "Amount", (float)e.Maxinvest});
+                    System.Diagnostics.Debug.WriteLine("Cutloss " + (float)e.Cutloss);
+                    //client.SetSetting(new object[] {symbol, "Cutloss", (float)e.Cutloss });
+                    //client.SetSetting(new object[] {symbol, "IsActive", e.Auto});
+                    System.Diagnostics.Debug.WriteLine("IsActive (Auto) " + e.Auto);
+                    //client.SetSetting(new object[] {symbol, "IsCalculating", e.Active});
+                    System.Diagnostics.Debug.WriteLine("IsCalculating (Active) " + e.Active);
+                    //// TODO: PricePremiumPercentage, BarSize, BarType (Last/Trade, Bid, Ask)
+                    //// Equity, Create, Amount, Cutloss, IsActive, PricePremiumPercentage, BarSize, BarType
+
+                    //client.PerformAction(new object[] {
+                    //    symbol, "Create", (float)e.Maxinvest, (float)e.Cutloss, e.Auto, (float)0.0, "dBar", "Last" });
+                    float a = 5.0f;
+                    client.PerformAction(new object[] {
+                        symbol, "Create", e.Maxinvest.ToString(), a+"", "true", "0.0", "dBar", "Last" 
+                    });
+
+                    _conn.Commit();
+                }
+                catch (Exception ex)
+                {
+                    _conn.Rollback();
+                    System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
+                }
+
+                // close connection
+                _conn.Connected = false;
 
                 return e;
             }
@@ -151,6 +178,52 @@ namespace AquilaWeb.App_Code
             {
                 return null;
             }
+        }
+
+        public bool RemoveSymbol(string symbol)
+        {
+            // check if symbol exists
+            if (FinancialSeries.isValidSymbol(symbol) && IsInPortfolio(symbol))
+            {
+                string query = "SELECT active FROM pfsecurity WHERE symbol=:symbol";
+                List<DbParam> pl = new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+                bool active = _conn.SelectSingleValue<bool>(query, pl);
+
+                if (!active)
+                {
+                    _conn.StartTransaction();
+
+                    query = "DELETE FROM pfsecurity WHERE symbol = :symbol";
+                    bool dbSuccess = (_conn.ExecuteDMLCommand(query, new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) }) > 0) ? true : false;
+
+                    if (dbSuccess)
+                    {
+                        System.Diagnostics.Debug.WriteLine("dbSuccess!");
+                        // WCF Communication
+                        SettingsHandlerClient client = new SettingsHandlerClient();
+                        // start Thread
+                        try
+                        {
+                            client.PerformAction(new object[] { symbol, "Delete" });
+                            _conn.Commit();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            _conn.Rollback();
+                            System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        _conn.Rollback();
+                    }
+                }
+                // close connection
+                _conn.Connected = false;
+            }
+            return false;
         }
 
         public decimal GetCapital()

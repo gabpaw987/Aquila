@@ -134,7 +134,7 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsp:Policy wsu:Id="WSHttpBinding_SettingsHandler_performAction_Input_policy">
+  <wsp:Policy wsu:Id="WSHttpBinding_SettingsHandler_PerformAction_Input_policy">
     <wsp:ExactlyOne>
       <wsp:All>
         <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
@@ -153,7 +153,7 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsp:Policy wsu:Id="WSHttpBinding_SettingsHandler_performAction_output_policy">
+  <wsp:Policy wsu:Id="WSHttpBinding_SettingsHandler_PerformAction_output_policy">
     <wsp:ExactlyOne>
       <wsp:All>
         <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
@@ -188,14 +188,14 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="performAction">
-      <soap12:operation soapAction="http://aquila.com/ServiceHandler/SettingsHandler/performAction" style="document" />
+    <wsdl:operation name="PerformAction">
+      <soap12:operation soapAction="http://aquila.com/ServiceHandler/SettingsHandler/PerformAction" style="document" />
       <wsdl:input>
-        <wsp:PolicyReference URI="#WSHttpBinding_SettingsHandler_performAction_Input_policy" />
+        <wsp:PolicyReference URI="#WSHttpBinding_SettingsHandler_PerformAction_Input_policy" />
         <soap12:body use="literal" />
       </wsdl:input>
       <wsdl:output>
-        <wsp:PolicyReference URI="#WSHttpBinding_SettingsHandler_performAction_output_policy" />
+        <wsp:PolicyReference URI="#WSHttpBinding_SettingsHandler_PerformAction_output_policy" />
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>

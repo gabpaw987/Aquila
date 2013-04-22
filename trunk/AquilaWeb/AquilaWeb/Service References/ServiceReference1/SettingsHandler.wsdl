@@ -13,20 +13,20 @@
   <wsdl:message name="SettingsHandler_SetSetting_OutputMessage">
     <wsdl:part name="parameters" element="tns:SetSettingResponse" />
   </wsdl:message>
-  <wsdl:message name="SettingsHandler_performAction_InputMessage">
-    <wsdl:part name="parameters" element="tns:performAction" />
+  <wsdl:message name="SettingsHandler_PerformAction_InputMessage">
+    <wsdl:part name="parameters" element="tns:PerformAction" />
   </wsdl:message>
-  <wsdl:message name="SettingsHandler_performAction_OutputMessage">
-    <wsdl:part name="parameters" element="tns:performActionResponse" />
+  <wsdl:message name="SettingsHandler_PerformAction_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PerformActionResponse" />
   </wsdl:message>
   <wsdl:portType name="SettingsHandler">
     <wsdl:operation name="SetSetting">
       <wsdl:input wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/SetSetting" message="tns:SettingsHandler_SetSetting_InputMessage" />
       <wsdl:output wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/SetSettingResponse" message="tns:SettingsHandler_SetSetting_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="performAction">
-      <wsdl:input wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/performAction" message="tns:SettingsHandler_performAction_InputMessage" />
-      <wsdl:output wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/performActionResponse" message="tns:SettingsHandler_performAction_OutputMessage" />
+    <wsdl:operation name="PerformAction">
+      <wsdl:input wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/PerformAction" message="tns:SettingsHandler_PerformAction_InputMessage" />
+      <wsdl:output wsaw:Action="http://aquila.com/ServiceHandler/SettingsHandler/PerformActionResponse" message="tns:SettingsHandler_PerformAction_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>
