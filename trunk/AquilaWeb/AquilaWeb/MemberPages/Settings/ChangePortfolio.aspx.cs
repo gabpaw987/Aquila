@@ -11,6 +11,12 @@ namespace AquilaWeb.MemberPages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // change menu to display current page
+            ((Main)Master).initMenu(3);
+        }
+
+        protected void SubmitPortfolioSettings(object sender, EventArgs e)
+        {
 
         }
     }

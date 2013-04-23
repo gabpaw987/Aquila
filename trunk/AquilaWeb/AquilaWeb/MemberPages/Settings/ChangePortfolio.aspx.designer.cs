@@ -67,13 +67,13 @@ namespace AquilaWeb.MemberPages {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldCapital;
         
         /// <summary>
-        /// RangeValidatorPresetCutLoss-Steuerelement
+        /// RangeValidatorCapital-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RangeValidator RangeValidatorPresetCutLoss;
+        protected global::System.Web.UI.WebControls.RangeValidator RangeValidatorCapital;
         
         /// <summary>
         /// Submit-Steuerelement

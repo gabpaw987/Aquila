@@ -32,7 +32,7 @@ namespace AquilaWeb.MemberPages
 
         private void FillInputsWithPresets()
         {
-            Settings s = new Settings();
+            AquilaWeb.App_Code.Settings s = new AquilaWeb.App_Code.Settings();
 
             PresetCutLoss.Text = Math.Round(s.GetPresetCutLoss(), 2).ToString();
             PresetMaxInvest.Text = Math.Round(s.GetPresetMaxInvest(), 2).ToString();
@@ -50,7 +50,7 @@ namespace AquilaWeb.MemberPages
                 // auto / manual
                 bool auto = PresetMode.SelectedItem.Text == "Automatic" ? true : false;
 
-                Settings s = new Settings();
+                AquilaWeb.App_Code.Settings s = new AquilaWeb.App_Code.Settings();
                 int status = s.SetPresets(cl, mi, auto);
             }
             catch(FormatException ex)

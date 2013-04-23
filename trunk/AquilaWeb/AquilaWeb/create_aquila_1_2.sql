@@ -94,6 +94,9 @@ CREATE TABLE "Sessions" (
     CONSTRAINT sessions_pkey PRIMARY KEY ("SessionId", "ApplicationName")
 );
 
+CREATE TYPE bsizetypes AS ENUM ('mBar', 'dBar');
+CREATE TYPE btypetype AS ENUM ('Ask', 'Last', 'Trades', 'Bid', 'Midpoint');
+
 -- DROP TABLE IF EXISTS portfolio CASCADE;
 CREATE TABLE portfolio (
     pfid          SERIAL,
@@ -103,6 +106,12 @@ CREATE TABLE portfolio (
     ytdreturn     DECIMAL(12,2) DEFAULT 0,
 	urpf          DECIMAL(12,2) DEFAULT 0,
 	rpf           DECIMAL(12,2) DEFAULT 0,
+	-- price premium percentage
+	ppp           DECIMAL(5,2),
+	-- bar size (mBar, dBar)
+	bsize         BSIZETYPES,
+	-- bar type (Ask, Last/Trades, Bid, Midpoint)
+	btype         BTYPETYPE,
     PRIMARY KEY(pfid)
 );
 
@@ -496,12 +505,62 @@ CREATE TABLE indicatorval (
 
 SELECT c
 FROM(
-	SELECT t, c FROM mbar WHERE t=(SELECT max(t) FROM mbar)
+	SELECT t, c
+	FROM mbar
+	WHERE t=(
+		SELECT max(t)
+		FROM mbar
+		WHERE symbol='AAPL:US'
+	)
+	AND symbol='AAPL:US'
+	
 	UNION
-	SELECT bdate, c FROM dbar WHERE bdate=(SELECT max(bdate) FROM dbar)
+	
+	SELECT bdate, c
+	FROM dbar
+	WHERE bdate=(
+		SELECT max(bdate)
+		FROM dbar
+		WHERE symbol='AAPL:US'
+	)
+	AND symbol='AAPL:US'
 )AS temp1
 ORDER BY t DESC
 LIMIT 1;
+
+CREATE OR REPLACE FUNCTION get_latest_bar (VARCHAR) RETURNS DECIMAL AS $get_latest_bar$
+	DECLARE
+		ret DECIMAL;
+	BEGIN
+		SELECT c INTO ret
+		FROM(
+			SELECT t, c
+			FROM mbar
+			WHERE t=(
+				SELECT max(t)
+				FROM mbar
+				WHERE symbol=$1
+			)
+			AND symbol=$1
+	
+			UNION
+	
+			SELECT bdate, c
+			FROM dbar
+			WHERE bdate=(
+				SELECT max(bdate)
+				FROM dbar
+				WHERE symbol=$1
+			)
+			AND symbol=$1
+		)AS temp1
+		ORDER BY t DESC
+		LIMIT 1;
+		RETURN ret;
+	END;
+$get_latest_bar$ LANGUAGE plpgsql;
+
+SELECT * FROM get_latest_bar('AAPL:US');
 
 CREATE OR REPLACE FUNCTION get_pos_buying_price (INTEGER, VARCHAR) RETURNS DECIMAL AS $get_pos_buying_price$
 	DECLARE
@@ -585,17 +644,9 @@ CREATE OR REPLACE FUNCTION order_aggregate_insert() RETURNS TRIGGER AS $position
 			END IF;
 
 			-- unrealised profit:
-			SELECT pos_new * (
+			SELECT pos_new * 
 			-- newest closing price (dbar or mbar)
-				SELECT c
-				FROM(
-					SELECT t, c FROM mbar WHERE t=(SELECT max(t) FROM mbar)
-					UNION
-					SELECT bdate, c FROM dbar WHERE bdate=(SELECT max(bdate) FROM dbar)
-				)AS temp1
-				ORDER BY t DESC
-				LIMIT 1
-			) INTO unrealised;
+			(SELECT * FROM get_latest_bar(NEW.symbol)) INTO unrealised;
 
 			-- update unrealised profit
 			UPDATE pfsecurity

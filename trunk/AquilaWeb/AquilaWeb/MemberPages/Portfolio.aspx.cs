@@ -79,7 +79,7 @@ namespace AquilaWeb.MemberPages
             // Enable/start transactions
             conn.StartTransaction();
 
-            // Start/Stop trading: (WCF performAction!)
+            // Start/Stop trading: (WCF PerformAction!)
             if (setting.Equals("StartStop"))
             {
                 query = "UPDATE pfsecurity SET active=:value WHERE symbol=:symbol AND pfid=1";
@@ -122,15 +122,20 @@ namespace AquilaWeb.MemberPages
             // Cutloss
             else if (setting.Equals("CutLoss"))
             {
-                //query = "UPDATE pfsecurity SET maxinvest=:value WHERE symbol=:symbol AND pfid=1";
-                //if (conn.ExecuteDMLCommand(query, new List<DbParam> { 
-                //        new DbParam("value", NpgsqlDbType.Numeric, value),
-                //        new DbParam("symbol", NpgsqlDbType.Varchar, symbol)
-                //    }) == 1)
-                    successDB = true;
+                query = "UPDATE pfsecurity SET cutloss=:value WHERE symbol=:symbol AND pfid=1";
+                if (conn.ExecuteDMLCommand(query, new List<DbParam> { 
+                        new DbParam("value", NpgsqlDbType.Numeric, value),
+                        new DbParam("symbol", NpgsqlDbType.Varchar, symbol)
+                    }) == 1)
+                        successDB = true;
             }
 
-            if (successDB == false) return null;
+            if (!successDB)
+            {
+                conn.Rollback();
+                conn.Connected = false;
+                return null;
+            }
             
             ///////////////
             // WCF
@@ -139,15 +144,14 @@ namespace AquilaWeb.MemberPages
             SettingsHandlerClient client = new SettingsHandlerClient();
             bool successWCF;
 
-            // performAction
+            // PerformAction
             if (setting.Equals("StartStop"))
             {
                 try
                 {
                     successWCF = (value.Equals("true"))
-                        ? client.performAction(new object[] { symbol, "Start" })
-                        : client.performAction(new object[] { symbol, "Stop" });
-                    conn.Commit();
+                        ? client.PerformAction(new object[] { symbol, "Start" })
+                        : client.PerformAction(new object[] { symbol, "Stop" });
                 }
                 catch (Exception ex)
                 {
@@ -162,7 +166,6 @@ namespace AquilaWeb.MemberPages
                 try
                 {
                     successWCF = client.SetSetting(new object[] { symbol, setting, value });
-                    conn.Commit();
                 }
                 catch (Exception)
                 {
@@ -171,8 +174,20 @@ namespace AquilaWeb.MemberPages
                 }
             }
 
-            // close DB connection
-            conn.Connected = false;
+            if (successWCF)
+            {
+                conn.Commit();
+                // close DB connection
+                conn.Connected = false;
+            }
+            else
+            {
+                conn.Rollback();
+                // close DB connection
+                conn.Connected = false;
+                return null;
+            }
+            
 
             // format return value
             if (setting.Equals("Amount"))
@@ -183,33 +198,22 @@ namespace AquilaWeb.MemberPages
                     value = val.ToString("C2", CurrencyFormatter.getCurrencyFormatter(FinancialSeries.getCurrency(symbol)));
                 }
             }
+            else if (setting.Equals("CutLoss"))
+            {
+                decimal val;
+                if (Decimal.TryParse(value, out val))
+                {
+                    value = Math.Round(val, 2) + "%";
+                }
+            }
 
-            if (successWCF == true && successDB == true)
-                return value;
-            else
-                return null;
+            return value;
         }
 
         public bool RemovePortfolioElement(string symbol)
         {
-            // check if symbol exists
-            if (FinancialSeries.isValidSymbol(symbol))
-            {
-                NpgsqlConnector conn = new NpgsqlConnector();
-                // conn.CloseAfterQuery = true;
-
-                string query = "SELECT active FROM pfsecurity WHERE symbol=:symbol";
-                List<DbParam> pl = new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
-                bool active = conn.SelectSingleValue<bool>(query, pl);
-
-                if (!active)
-                {
-                    conn.CloseAfterQuery = true;
-                    query = "DELETE FROM pfsecurity WHERE symbol = :symbol";
-                    return (conn.ExecuteDMLCommand(query, new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) }) > 0) ? true : false;
-                }
-            }
-            return false;
+            Portfolio pf = new Portfolio();
+            return pf.RemoveSymbol(symbol);
         }
 
         protected void InitPortfolioTable()

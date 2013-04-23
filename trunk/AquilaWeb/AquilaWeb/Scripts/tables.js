@@ -144,11 +144,6 @@ function toggleSetting(symbol, setting, values, e, classes) {
         if (msg.d != null) {
             //alert(msg.d);
 
-            if ($(e).hasClass("auto")) $(e).text("Auto");
-            if ($(e).hasClass("manual")) $(e).text("Manual");
-            if ($(e).hasClass("inactive")) $(e).text("Inactive");
-            if ($(e).hasClass("running")) $(e).text("Active");
-
             var value;
             // setting value
             for (var i = 0; i < values.length; i++) {
@@ -176,12 +171,15 @@ function toggleSetting(symbol, setting, values, e, classes) {
                     break;
                 }
             }
+
+            if ($(e).hasClass("auto")) $(e).text("Auto");
+            if ($(e).hasClass("manual")) $(e).text("Manual");
+            if ($(e).hasClass("inactive")) $(e).text("Inactive");
+            if ($(e).hasClass("running")) $(e).text("Active");
         } else {
             alert("failure!");
         }
-    });
-
-    
+    }); 
 }
 
 function ajax_setSetting(symbol, setting, value, callback) {
@@ -209,21 +207,21 @@ function ajax_addSymbol(symbol) {
                 window.location.reload();
             } else {
                 alert("No database entry for this symbol!");
-            }
+            }addPortfolio
         }
     });
 }
 
-    function ajax_removeSymbol(symbol) {
-        $.ajax({
-            type: "POST",
-            url: "Portfolio.aspx/RemovePortfolioElement",
-            data: "{'symbol':'" + symbol + "'}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (msg) { }
-        });
-    }
+    //function ajax_removeSymbol(symbol) {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "Portfolio.aspx/RemovePortfolioElement",
+    //        data: "{'symbol':'" + symbol + "'}",
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (msg) { }
+    //    });
+    //}
 
     //function addPortfolioRow(pfElement) {
     //    if (pfElement != null) {
