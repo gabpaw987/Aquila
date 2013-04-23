@@ -94,7 +94,6 @@ namespace Aquila_Software
                         {
                             if (!workers.ContainsKey(workerInfo.Equity))
                             {
-                                //TODO: wichtig!!! das darf erst gemacht werden wenn der peer alle wichtigen settings gemacht hat
                                 Worker tempWorker = new Worker(workerInfo);
 
                                 //tempWorker.Start();
@@ -112,7 +111,7 @@ namespace Aquila_Software
                         {
                             if (!workerInfos.ContainsKey(worker.LocalSymbol))
                             {
-                                worker.RunThread = false; //TODO: interrupt and delete worker
+                                worker.RunThread = false;
                                 Console.WriteLine(worker.LocalSymbol);
                                 toRemove.Add(worker);
                             }
@@ -123,7 +122,6 @@ namespace Aquila_Software
                         }
                     }
 
-                    //TODO: foreach both dictionaries for new manualexecution
                     foreach (WorkerInfo workerInfo in workerInfos.Values)
                     {
                         if (!workerInfo.IsActive && workerInfo.ManualExecution != null)
