@@ -41,7 +41,7 @@ namespace Aquila_Software
 
         public static bool insertOrder(string equtiySymbol, DateTime ten, DateTime tex, decimal pen, decimal pex, int size)
         {
-            if (DatabaseHandler.executeModify("INSERT INTO signal SORDER('1," + equtiySymbol + "','" + ten + "'," + tex + "','limit'," + pen.ToString(CultureInfo.InvariantCulture) + "," + pex.ToString(CultureInfo.InvariantCulture) + "," + size + "," + "true" + "1.0" + ")") >= 1)
+            if (DatabaseHandler.executeModify("INSERT INTO sorder VALUES(1,'" + equtiySymbol + "','" + ten + "','" + tex + "','limit'," + pen.ToString(CultureInfo.InvariantCulture) + "," + pex.ToString(CultureInfo.InvariantCulture) + "," + size + "," + "true," + "1.0" + ")") >= 1)
             {
                 return true;
             }
