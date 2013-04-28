@@ -19,6 +19,7 @@ namespace Aquila_Software
         public bool isCalculating;
         public float PricePremiumPercentage;
         public string LocalSymbol;
+        public float CutLoss;
 
         private volatile List<Tuple<DateTime, decimal, decimal, decimal, decimal>> MinuteBars;
         private volatile List<Tuple<DateTime, decimal, decimal, decimal, decimal>> DailyBars;
@@ -92,9 +93,9 @@ namespace Aquila_Software
                 }
                 if (isCalculating)
                 {
-                    //TODO: remove this
-                    Signals.Add(3);
-                    Signals.Add(1);
+                    //DONE: remove this
+                    //Signals.Add(3);
+                    //Signals.Add(1);
                     if (Signals[Signals.Count - 1] != Signals[Signals.Count - 2])
                     {
                         int oldSignal = Signals[Signals.Count - 2];
@@ -135,7 +136,7 @@ namespace Aquila_Software
 
                         float roundLotPrice = 0f;
 
-                        //TODO: peer wegen pricepremium
+                        //DONE: peer wegen pricepremium
                         if (isBuy)
                         {
                             roundLotPrice = (float)(this.IBOutput.currentAskPrice * 100);
@@ -229,9 +230,9 @@ namespace Aquila_Software
 
         public void NewTradeNotification(int newDecision, int oldDecision, float transactionPrice, int size)
         {
-            //TODO: remove this
-            return;
-            //TODO: change localhost
+            //DONE: remove this
+            //return;
+            //DONE: change localhost
             string url = "http://localhost:80/notifications.aspx?symbol=" + this.Equity.LocalSymbol + "&newDecision=" + newDecision +
                 "&oldDecision=" + oldDecision + "&transactionPrice=" + transactionPrice + "&size=" + size;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -250,8 +251,8 @@ namespace Aquila_Software
             this.LocalSymbol = workerInfo.Equity;
             this.IsActive = workerInfo.IsActive;
             this.Amount = workerInfo.Amount;
+            this.CutLoss = workerInfo.CutLoss;
 
-            //TODO: cutloss dazu
             if (workerInfo.BarSize.Equals("mBar"))
             {
                 this.BarSize = BarSize.OneMinute;

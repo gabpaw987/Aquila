@@ -12,6 +12,7 @@ namespace Aquila_Software
         private static Dictionary<string, WorkerInfo> workerInfos;
         private static Dictionary<string, Worker> workers;
         private static int lastLength;
+        private static volatile bool isStopped = false;
 
         public static void Main1(string[] args)
         {
@@ -85,8 +86,11 @@ namespace Aquila_Software
                 //DONE: RestoreWorkerInfos
                 restoreWorkerInfos();
 
-                //TODO: make stoppable
-                while (true)
+                Thread mainThread = new Thread(new ThreadStart(WaitForUserInput));
+                mainThread.Start();
+
+                //DONE: make stoppable
+                while (!isStopped)
                 {
                     if (workerInfos.Count > lastLength)
                     {
@@ -153,7 +157,7 @@ namespace Aquila_Software
                     //{
                     //    Console.WriteLine(workerInfo.ToString());
                     //}
-                    Thread.Sleep(1000);
+                    Thread.Sleep(250);
                 }
 
                 // Close the ServiceHostBase to shutdown the service.
@@ -185,6 +189,16 @@ namespace Aquila_Software
                 workerInfo.PricePremiumPercentage = (float)row.Field<decimal>(7);
                 workerInfos.Add(row.Field<string>(0), workerInfo);
             }
+        }
+
+        private static void WaitForUserInput()
+        {
+            var abortKey = new ConsoleKey();
+
+            while (!(abortKey.Equals(ConsoleKey.Q) || abortKey.Equals(ConsoleKey.Enter)))
+                abortKey = Console.ReadKey().Key;
+
+            isStopped = true;
         }
     }
 }

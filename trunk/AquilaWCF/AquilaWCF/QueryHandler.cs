@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Krs.Ats.IBNet;
 
 namespace Aquila_Software
 {
@@ -47,7 +48,40 @@ namespace Aquila_Software
             return false;
         }
 
-        //TODO: insert indicator implementieren
+        public static bool insertIndicator(string iname, BarSize barsize)
+        {
+            string interval = "";
+
+            if (barsize.Equals(BarSize.OneMinute))
+            {
+                interval = "1 minute";
+            }
+            else if (barsize.Equals(BarSize.OneDay))
+            {
+                interval = "1 day";
+            }
+            else
+            {
+                return false;
+            }
+
+            if (DatabaseHandler.executeModify("INSERT INTO indicator VALUES('" + iname + "','" + interval + "')") >= 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool insertIndicatorValue(string equtiySymbol, string iname, DateTime t, decimal value)
+        {
+            if (DatabaseHandler.executeModify("INSERT INTO indicatorval VALUES('" + equtiySymbol + "','" + iname + "','" + t + "'," + value.ToString(CultureInfo.InvariantCulture) + ")") >= 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        //DONE: insert indicator implementieren
         //Microsoft.FSharp.Collections.FSharpMap<string, decimal[]>
         //http://stackoverflow.com/questions/8522511/accessing-an-f-map-from-inside-c-sharp-code
     }
