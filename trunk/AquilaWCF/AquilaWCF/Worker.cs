@@ -24,7 +24,7 @@ namespace Aquila_Software
         private volatile List<Tuple<DateTime, decimal, decimal, decimal, decimal>> MinuteBars;
         private volatile List<Tuple<DateTime, decimal, decimal, decimal, decimal>> DailyBars;
         private List<int> Signals;
-
+        private Dictionary<string, List<decimal>> Indicators;
         private Thread Thread;
         private WorkerInfo workerInfo;
 
@@ -41,6 +41,7 @@ namespace Aquila_Software
             this.MinuteBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.DailyBars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
+            this.Indicators = new Dictionary<string, List<decimal>>();
         }
 
         public void Run()
@@ -62,6 +63,7 @@ namespace Aquila_Software
 
                     //Calculate the decision
                     //TODO: Add "MAP" to Algorithm
+                    //Algorithm.DecisionCalculator.startCalculation(DailyBars, Signals,Indicators);
                     Algorithm.DecisionCalculator.startCalculation(DailyBars, Signals);
 
                     int countToInsert = DailyBars.Count - length;
@@ -81,6 +83,7 @@ namespace Aquila_Software
 
                     //Calculate the decision
                     //TODO: Add "MAP" to Algorithm
+                    //Algorithm.DecisionCalculator.startCalculation(MinuteBars, Signals,Indicators);
                     Algorithm.DecisionCalculator.startCalculation(MinuteBars, Signals);
 
                     int countToInsert = MinuteBars.Count - length;
