@@ -488,7 +488,7 @@ CREATE TABLE dbar (
 
 INSERT INTO dbar VALUES('AAPL:US',current_date,590,620,590,610,0);
 
--- DROP TABLE IF EXISTS indicator CASCADE;
+DROP TABLE IF EXISTS indicator CASCADE;
 CREATE TABLE indicator (
     iname         VARCHAR(255),
     ilength       INTERVAL,
@@ -500,7 +500,7 @@ CREATE TABLE indicatorval (
     iname         VARCHAR(255),
     t             TIMESTAMP WITH TIME ZONE,
     ival          DECIMAL(13,5),
-    PRIMARY KEY (symbol),
+    PRIMARY KEY (symbol, iname, t),
     FOREIGN KEY (iname) REFERENCES indicator (iname)
       ON UPDATE CASCADE
       ON DELETE CASCADE,
