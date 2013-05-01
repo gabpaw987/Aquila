@@ -94,8 +94,9 @@ CREATE TABLE "Sessions" (
     CONSTRAINT sessions_pkey PRIMARY KEY ("SessionId", "ApplicationName")
 );
 
-CREATE TYPE bsizetypes AS ENUM ('mBar', 'dBar');
-CREATE TYPE btypetype AS ENUM ('Ask', 'Last', 'Trades', 'Bid', 'Midpoint');
+-- no more enums
+--CREATE TYPE bsizetypes AS ENUM ('mBar', 'dBar');
+--CREATE TYPE btypetype AS ENUM ('Ask', 'Last', 'Trades', 'Bid', 'Midpoint');
 
 -- DROP TABLE IF EXISTS portfolio CASCADE;
 CREATE TABLE portfolio (
@@ -109,13 +110,42 @@ CREATE TABLE portfolio (
 	-- price premium percentage
 	ppp           DECIMAL(5,2),
 	-- bar size (mBar, dBar)
-	bsize         BSIZETYPES,
+	bsize         VARCHAR CHECK(bsize IN ('mBar', 'dBar')),
 	-- bar type (Ask, Last/Trades, Bid, Midpoint)
-	btype         BTYPETYPE,
+	btype         VARCHAR CHECK(btype IN ('Ask', 'Last', 'Trades', 'Bid', 'Midpoint')),
     PRIMARY KEY(pfid)
 );
 
-INSERT INTO portfolio (capital) VALUES (500000);
+INSERT INTO portfolio (capital, invested, ytdreturn, urpf, rpf, ppp, bsize, btype) VALUES (500000, 0, 0, 0,0, 1, 'dBar', 'Last');
+
+-- DROP TABLE IF EXISTS profithistory CASCADE;
+CREATE TABLE profithistory (
+    pfid          SERIAL,
+    t             TIMESTAMP WITH TIME ZONE,
+	rpf           DECIMAL(12,2) DEFAULT 0,
+	PRIMARY KEY(t)
+);
+
+INSERT INTO profithistory(pfid, t, rpf) VALUES(1, now(), 0);
+
+-- insert values into profit history
+CREATE OR REPLACE FUNCTION profit_history() RETURNS TRIGGER AS $profit_history$
+	BEGIN
+		INSERT INTO profithistory(pfid, t, rpf)
+		VALUES(
+			NEW.pfid,
+			now(),
+			(SELECT rpf FROM profithistory ORDER BY t DESC LIMIT 1) + NEW.rpf
+		);
+
+		RETURN NEW;
+	END;
+$profit_history$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_profit_history
+AFTER UPDATE ON portfolio
+FOR EACH ROW
+EXECUTE PROCEDURE profit_history();
 
 -- DROP TABLE IF EXISTS pfcontrol CASCADE;
 CREATE TABLE pfcontrol (
@@ -124,6 +154,7 @@ CREATE TABLE pfcontrol (
 	maxinvest     DECIMAL(10,2),
     cutloss       DECIMAL(7,4) DEFAULT 5,
 	auto          BOOLEAN,
+	notify		  BOOLEAN DEFAULT false,
     PRIMARY KEY (pfid, "pId"),
     FOREIGN KEY (pfid)    REFERENCES portfolio (pfid)
       ON UPDATE CASCADE
@@ -133,7 +164,7 @@ CREATE TABLE pfcontrol (
       ON DELETE CASCADE
 );
 
-INSERT INTO pfcontrol(pfid, "pId", maxinvest, cutloss, auto) VALUES(1, 'f9aca2d8-2440-4ce3-979d-647ebac91a61', 10000, true);
+INSERT INTO pfcontrol(pfid, "pId", maxinvest, cutloss, auto) VALUES(1, (SELECT "pId" FROM "Users" LIMIT 1), 10000, 4, false);
 
 -- DROP TABLE IF EXISTS exchange CASCADE;
 CREATE TABLE exchange (
@@ -158,6 +189,7 @@ INSERT INTO currency (currency) VALUES ('GBP');
 -- DROP TABLE IF EXISTS series CASCADE;
 CREATE TABLE series (
     symbol        VARCHAR(30),
+	rsssymbol     VARCHAR(30),
     currency      VARCHAR(20),
     ename         VARCHAR(255),
     tradeable     BOOLEAN CONSTRAINT not_null_tradeable CHECK (tradeable IS NOT NULL),
@@ -172,9 +204,9 @@ CREATE TABLE series (
       ON DELETE CASCADE
 );
 
-INSERT INTO series (symbol, currency, ename, tradeable, decision, addinfo) VALUES ('INDU:IND', 'USD', 'NYSE', false, NULL, '');
-INSERT INTO series (symbol, currency, ename, tradeable, decision, addinfo) VALUES ('USD-EUR', 'USD', NULL, false, NULL, '');
-INSERT INTO series (symbol, currency, ename, tradeable, decision, addinfo) VALUES ('AAPL:US', 'USD', 'NASDAQ GS', true, NULL, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('INDU:IND', '^DJI', 'USD', 'NYSE', false, NULL, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('USD-EUR', 'USDEUR=X', 'USD', NULL, false, NULL, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('AAPL:US', 'AAPL', 'USD', 'NASDAQ GS', true, NULL, '');
 
 -- DROP TABLE IF EXISTS stock CASCADE;
 CREATE TABLE stock (
@@ -456,30 +488,11 @@ CREATE TABLE dbar (
 
 INSERT INTO dbar VALUES('AAPL:US',current_date,590,620,590,610,0);
 
--- DROP TABLE IF EXISTS indicatortype CASCADE;
-CREATE TABLE indicatortype (
-    iname         VARCHAR(255),
-    PRIMARY KEY(iname)
-);
-
-INSERT INTO indicatortype (iname) VALUES ('SMA');
-INSERT INTO indicatortype (iname) VALUES ('LWMA');
-INSERT INTO indicatortype (iname) VALUES ('EMA');
-INSERT INTO indicatortype (iname) VALUES ('DEMA');
-INSERT INTO indicatortype (iname) VALUES ('TEMA');
-INSERT INTO indicatortype (iname) VALUES ('RSI');
-INSERT INTO indicatortype (iname) VALUES ('CCI');
-INSERT INTO indicatortype (iname) VALUES ('Aroon Up');
-INSERT INTO indicatortype (iname) VALUES ('Aroon Down');
-
 -- DROP TABLE IF EXISTS indicator CASCADE;
 CREATE TABLE indicator (
     iname         VARCHAR(255),
     ilength       INTERVAL,
-    PRIMARY KEY (iname),
-    FOREIGN KEY (iname)  REFERENCES indicatortype (iname)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
+    PRIMARY KEY (iname)
 );
 
 CREATE TABLE indicatorval (
@@ -806,7 +819,8 @@ CREATE OR REPLACE FUNCTION check_capital() RETURNS TRIGGER AS $check_capital$
 	BEGIN
 		-- not enough capital
 		IF (NEW.capital < (SELECT sum(maxinvest) FROM pfsecurity WHERE pfid=NEW.pfid)) THEN
-			RAISE EXCEPTION 'Portfolio capital too small for sum of maximum investments.';
+			NEW.capital = OLD.capital;
+			--RAISE EXCEPTION 'Portfolio capital too small for sum of maximum investments.';
 		END IF;
 		RETURN NEW;
 	END;
