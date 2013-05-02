@@ -84,5 +84,53 @@ namespace AquilaWeb.App_Code
 
             c.DataBind();
         }
+
+        public static void InitChart(Chart c, Dictionary<DateTime, decimal> s, string title)
+        {
+            Series price = new Series("price");
+            c.Series.Add(price);
+
+            // Set series chart type
+            c.Series["price"].ChartType = SeriesChartType.FastLine;
+
+            // Set point width
+            c.Series["price"]["PointWidth"] = "1.0";
+
+            foreach (DateTime t in s.Keys)
+            {
+                // adding date and value
+                c.Series["price"].Points.AddXY(t, s[t]);
+            }
+
+            c.Series["price"].XValueMember = "Time";
+            c.Series["price"].IsXValueIndexed = true;
+
+            c.Series["price"].YValueMembers = "Profit";
+
+            // Title
+            c.ChartAreas[0].AxisX.Title = title;
+
+            // Scale
+            decimal maxPrice = s.Values.Max();
+            
+            //c.ChartAreas[0].AxisY.Minimum = 0;
+            //c.ChartAreas[0].AxisY.Maximum = Convert.ToDouble(Math.Round(maxPrice + maxPrice / 10));
+
+            // Grid Color
+            c.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            c.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+            // Colors
+            //c.Series["price"].BorderColor = System.Drawing.Color.Black;
+            c.Series["price"].Color = System.Drawing.Color.Black;
+            c.Series["price"].CustomProperties = "PriceDownColor=Green, PriceUpColor=Red";
+            c.Series["price"].XValueType = ChartValueType.Time;
+
+            Series ma = new Series("ma");
+            c.Series.Add(ma);
+            c.Series[1].ChartType = SeriesChartType.FastLine;
+            //Chart1.DataManipulator.FinancialFormula(FinancialFormula.MovingAverage, "2", "price:Y3", "ma");
+
+            c.DataBind();
+        }
     }
 }

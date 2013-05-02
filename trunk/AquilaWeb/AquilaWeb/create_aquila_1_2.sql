@@ -108,35 +108,53 @@ CREATE TABLE portfolio (
 	urpf          DECIMAL(12,2) DEFAULT 0,
 	rpf           DECIMAL(12,2) DEFAULT 0,
 	-- price premium percentage
-	ppp           DECIMAL(5,2),
+	ppp           DECIMAL(5,2) DEFAULT 100,
 	-- bar size (mBar, dBar)
 	bsize         VARCHAR CHECK(bsize IN ('mBar', 'dBar')),
 	-- bar type (Ask, Last/Trades, Bid, Midpoint)
 	btype         VARCHAR CHECK(btype IN ('Ask', 'Last', 'Trades', 'Bid', 'Midpoint')),
+	goodtrades    INT,
+	badtrades     INT,
     PRIMARY KEY(pfid)
 );
 
-INSERT INTO portfolio (capital, invested, ytdreturn, urpf, rpf, ppp, bsize, btype) VALUES (500000, 0, 0, 0,0, 1, 'dBar', 'Last');
+INSERT INTO portfolio (capital, invested, ytdreturn, urpf, rpf, ppp, bsize, btype) VALUES (500000, 0, 0, 0,0, 100, 'dBar', 'Last');
 
 -- DROP TABLE IF EXISTS profithistory CASCADE;
 CREATE TABLE profithistory (
-    pfid          SERIAL,
+    pfid          INT,
     t             TIMESTAMP WITH TIME ZONE,
 	rpf           DECIMAL(12,2) DEFAULT 0,
-	PRIMARY KEY(t)
+	PRIMARY KEY(t),
+	FOREIGN KEY (pfid)    REFERENCES portfolio (pfid)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
 );
 
 INSERT INTO profithistory(pfid, t, rpf) VALUES(1, now(), 0);
 
--- insert values into profit history
 CREATE OR REPLACE FUNCTION profit_history() RETURNS TRIGGER AS $profit_history$
+	DECLARE
+		newrpf DECIMAL;
 	BEGIN
-		INSERT INTO profithistory(pfid, t, rpf)
-		VALUES(
-			NEW.pfid,
-			now(),
-			(SELECT rpf FROM profithistory ORDER BY t DESC LIMIT 1) + NEW.rpf
-		);
+		IF (NEW.rpf != OLD.rpf) THEN
+			SELECT rpf INTO newrpf FROM profithistory ORDER BY t DESC LIMIT 1;
+
+			IF (newrpf > 0) THEN
+				UPDATE portfolio
+				SET goodtrades = goodtrades+1;
+			ELSE
+				UPDATE portfolio
+				SET badtrades = badtrades+1;
+			END IF;
+
+			INSERT INTO profithistory(pfid, t, rpf)
+			VALUES(
+				NEW.pfid,
+				now(),
+				(newrpf) + NEW.rpf
+			);
+		END IF;
 
 		RETURN NEW;
 	END;
@@ -146,6 +164,60 @@ CREATE TRIGGER update_profit_history
 AFTER UPDATE ON portfolio
 FOR EACH ROW
 EXECUTE PROCEDURE profit_history();
+
+-- DROP TABLE IF EXISTS investmenthistory CASCADE;
+CREATE TABLE investmenthistory (
+    pfid          INT,
+    t             TIMESTAMP WITH TIME ZONE,
+	inv           DECIMAL(12,2) DEFAULT 0,
+	PRIMARY KEY(t),
+	FOREIGN KEY (pfid)    REFERENCES portfolio (pfid)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
+);
+
+INSERT INTO investmenthistory(pfid, t, inv) VALUES(1, now(), 0);
+
+-- insert values into profit history
+CREATE OR REPLACE FUNCTION investment_history() RETURNS TRIGGER AS $investment_history$
+	BEGIN
+		IF (NEW.invested IS NOT NULL) THEN
+			IF (NEW.invested != OLD.invested) THEN
+				INSERT INTO investmenthistory(pfid, t, inv)
+				VALUES(
+					NEW.pfid,
+					now(),
+					NEW.invested
+				);
+			END IF;
+		END IF;
+
+		RETURN NEW;
+	END;
+$investment_history$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_investment_history
+AFTER UPDATE ON portfolio
+FOR EACH ROW
+EXECUTE PROCEDURE investment_history();
+
+-- update portfolio roi from investment history
+CREATE OR REPLACE FUNCTION portfolio_roi() RETURNS TRIGGER AS $portfolio_roi$
+	BEGIN
+		UPDATE portfolio
+		SET roi = (
+			SELECT sum(inv)
+			FROM investmenthistory
+		);
+
+		RETURN NEW;
+	END;
+$portfolio_roi$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_portfolio_roi
+AFTER INSERT ON investmenthistory
+FOR EACH ROW
+EXECUTE PROCEDURE investment_history();
 
 -- DROP TABLE IF EXISTS pfcontrol CASCADE;
 CREATE TABLE pfcontrol (
@@ -193,7 +265,7 @@ CREATE TABLE series (
     currency      VARCHAR(20),
     ename         VARCHAR(255),
     tradeable     BOOLEAN CONSTRAINT not_null_tradeable CHECK (tradeable IS NOT NULL),
-	decision      INT,
+	decision      INT DEFAULT 0,
     addinfo       VARCHAR(255),
     PRIMARY KEY (symbol),
     FOREIGN KEY (currency) REFERENCES currency (currency)
@@ -204,9 +276,10 @@ CREATE TABLE series (
       ON DELETE CASCADE
 );
 
-INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('INDU:IND', '^DJI', 'USD', 'NYSE', false, NULL, '');
-INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('USD-EUR', 'USDEUR=X', 'USD', NULL, false, NULL, '');
-INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('AAPL:US', 'AAPL', 'USD', 'NASDAQ GS', true, NULL, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('INDU:IND', '^DJI', 'USD', 'NYSE', false, 0, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('USD-EUR', 'USDEUR=X', 'USD', NULL, false, 0, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('AAPL:US', 'AAPL', 'USD', 'NASDAQ GS', true, 0, '');
+INSERT INTO series (symbol, rsssymbol, currency, ename, tradeable, decision, addinfo) VALUES ('MSFT:US', 'MSFT', 'USD', 'NASDAQ GS', true, 0, '');
 
 -- DROP TABLE IF EXISTS stock CASCADE;
 CREATE TABLE stock (
@@ -453,7 +526,7 @@ CREATE TABLE signaltype (
     PRIMARY KEY (sval)
 );
 
-INSERT INTO signaltype (sval, sname) VALUES (0, 'hold');
+INSERT INTO signaltype (sval, sname) VALUES (0, 'neutral');
 INSERT INTO signaltype (sval, sname) VALUES (1, 'buy');
 INSERT INTO signaltype (sval, sname) VALUES (-1, 'sell');
 
@@ -470,6 +543,22 @@ CREATE TABLE signal (
       ON UPDATE CASCADE
       ON DELETE SET NULL
 );
+
+-- update series decision from signal
+CREATE OR REPLACE FUNCTION series_decision() RETURNS TRIGGER AS $series_decision$
+	BEGIN
+		UPDATE series
+		SET decision = NEW.sval;
+
+		RETURN NEW;
+	END;
+$series_decision$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_series_decision
+AFTER INSERT ON signal
+FOR EACH ROW
+EXECUTE PROCEDURE series_decision();
+
 
 -- DROP TABLE IF EXISTS dbar CASCADE;
 CREATE TABLE dbar (
@@ -488,13 +577,14 @@ CREATE TABLE dbar (
 
 INSERT INTO dbar VALUES('AAPL:US',current_date,590,620,590,610,0);
 
-DROP TABLE IF EXISTS indicator CASCADE;
+-- DROP TABLE IF EXISTS indicator CASCADE;
 CREATE TABLE indicator (
     iname         VARCHAR(255),
     ilength       INTERVAL,
     PRIMARY KEY (iname)
 );
 
+DROP TABLE IF EXISTS indicatorval;
 CREATE TABLE indicatorval (
     symbol        VARCHAR(30),
     iname         VARCHAR(255),

@@ -67,6 +67,8 @@ namespace AquilaWeb.MemberPages
         [WebMethod]
         public static string SetSetting(string symbol, string setting, string value)
         {
+            System.Diagnostics.Debug.WriteLine("SetSetting("+symbol+", "+setting+", "+value+")");
+
             ///////////////
             // DB
             ///////////////
@@ -77,7 +79,7 @@ namespace AquilaWeb.MemberPages
             conn.Connected = true;
 
             // Enable/start transactions
-            conn.StartTransaction();
+            //conn.StartTransaction();
 
             // Start/Stop trading: (WCF PerformAction!)
             if (setting.Equals("StartStop"))
@@ -132,7 +134,7 @@ namespace AquilaWeb.MemberPages
 
             if (!successDB)
             {
-                conn.Rollback();
+                //conn.Rollback();
                 conn.Connected = false;
                 return null;
             }
@@ -150,12 +152,14 @@ namespace AquilaWeb.MemberPages
                 try
                 {
                     successWCF = (value.Equals("true"))
-                        ? client.PerformAction(new object[] { symbol, "Start" })
-                        : client.PerformAction(new object[] { symbol, "Stop" });
+                        //? client.PerformAction(new object[] { symbol, "Start" })
+                        ? client.SetSetting(new object[] { symbol, "IsActive", true })
+                        //: client.PerformAction(new object[] { symbol, "Stop" });
+                        : client.SetSetting(new object[] { symbol, "IsActive", false });
                 }
                 catch (Exception ex)
                 {
-                    conn.Rollback();
+                    //conn.Rollback();
                     successWCF = false;
                     System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
                 }
@@ -169,20 +173,20 @@ namespace AquilaWeb.MemberPages
                 }
                 catch (Exception)
                 {
-                    conn.Rollback();
+                    //conn.Rollback();
                     successWCF = false;
                 }
             }
 
             if (successWCF)
             {
-                conn.Commit();
+                //conn.Commit();
                 // close DB connection
                 conn.Connected = false;
             }
             else
             {
-                conn.Rollback();
+                //conn.Rollback();
                 // close DB connection
                 conn.Connected = false;
                 return null;
@@ -254,7 +258,7 @@ namespace AquilaWeb.MemberPages
                 }
                 else
                 {
-                    TableUtils.addTextCell(tRow, "Hold", "std_cell");
+                    TableUtils.addTextCell(tRow, "Neutral", "std_cell");
                 }
 
                 TableUtils.addTextCell(tRow, asset.Roi + String.Empty, "std_cell");
@@ -323,6 +327,9 @@ namespace AquilaWeb.MemberPages
             Button delBt = (Button)sender;
             if (RemovePortfolioElement(delBt.CommandArgument))
             {
+                // TODO WCF
+                SettingsHandlerClient client = new SettingsHandlerClient();
+                client.PerformAction(new object[] { delBt.CommandArgument, "Delete" });
                 portfolio_table.Rows.RemoveAt(Int32.Parse(delBt.ID.Substring(delBt.ID.Length - 1, 1)));
             }
         }
