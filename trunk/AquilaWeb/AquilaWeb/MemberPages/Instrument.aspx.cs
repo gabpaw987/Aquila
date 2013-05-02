@@ -98,6 +98,14 @@ namespace AquilaWeb.MemberPages
                 ytdLabel.Text = "No ytd-data available!";
                 instrument_charts.Controls.AddAt(2, ytdLabel);
             }
+
+            ///////////////
+            // RSS
+            ///////////////
+            NpgsqlConnector conn = new NpgsqlConnector();
+            string rssSymbol = conn.SelectSingleValue<string>("SELECT rsssymbol FROM series WHERE symbol='" + Request["symbol"]+"'");
+            XmlDataSource1.DataFile = "http://finance.yahoo.com/rss/headline?s=" + rssSymbol + "&region=US&lang=en-US";
+            conn.Connected = false;
         }
 
         protected void AddInstrumentToPortfolio(string symbol)

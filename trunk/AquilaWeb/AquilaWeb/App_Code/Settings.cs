@@ -110,5 +110,55 @@ namespace AquilaWeb.App_Code
             };
             return _conn.SelectSingleValue<bool>("SELECT auto FROM pfcontrol WHERE pfid=:pfid AND \"pId\"=:user", pl);
         }
+
+        public bool SetPortfolioSettings(decimal capital, decimal ppp, string bsize, string btype)
+        {
+            List<DbParam> pl = new List<DbParam>()
+            {
+                new DbParam("capital", NpgsqlDbType.Numeric, capital),
+                new DbParam("ppp", NpgsqlDbType.Numeric, ppp),
+                new DbParam("bsize", NpgsqlDbType.Varchar, bsize),
+                new DbParam("btype", NpgsqlDbType.Varchar, btype),
+                new DbParam("pfid", NpgsqlDbType.Integer, _pfid),
+            };
+            int rows = _conn.ExecuteDMLCommand("UPDATE portfolio SET capital=:capital, ppp=:ppp, bsize=:bsize, btype=:btype WHERE pfid=:pfid", pl);
+            return (rows!=0);
+        }
+
+        public decimal GetPortfolioCapital()
+        {
+            List<DbParam> pl = new List<DbParam>() 
+            { 
+                new DbParam("pfid", NpgsqlDbType.Integer, _pfid),
+            };
+            return _conn.SelectSingleValue<decimal>("SELECT capital FROM portfolio WHERE pfid=:pfid", pl);
+        }
+
+        public decimal GetPortfolioPPP()
+        {
+            List<DbParam> pl = new List<DbParam>() 
+            { 
+                new DbParam("pfid", NpgsqlDbType.Integer, _pfid),
+            };
+            return _conn.SelectSingleValue<decimal>("SELECT ppp FROM portfolio WHERE pfid=:pfid", pl);
+        }
+
+        public string GetPortfolioBarSize()
+        {
+            List<DbParam> pl = new List<DbParam>() 
+            { 
+                new DbParam("pfid", NpgsqlDbType.Integer, _pfid),
+            };
+            return _conn.SelectSingleValue<string>("SELECT bsize FROM portfolio WHERE pfid=:pfid", pl);
+        }
+
+        public string GetPortfolioBarType()
+        {
+            List<DbParam> pl = new List<DbParam>() 
+            { 
+                new DbParam("pfid", NpgsqlDbType.Integer, _pfid),
+            };
+            return _conn.SelectSingleValue<string>("SELECT btype FROM portfolio WHERE pfid=:pfid", pl);
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace AquilaWeb.MemberPages
             }
             catch(FormatException ex)
             {
-                
+                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
         }
     }

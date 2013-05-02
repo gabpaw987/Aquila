@@ -11,6 +11,29 @@ h1{
 	margin: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
+a:link{color:#2c1fd9;}
+a:visited{color:#2c1fd9;}
+a:hover{color:#161265;}
+a:active{color:#3b4af3;}
+
+ul {
+    list-style-type: none;
+    margin:0;
+    padding:0px; 
+}
+
+.settings_ul {
+    padding-left: 20px;
+}
+
+.settings_ul li {
+    margin-top: 20px;
+}
+
 button, input[type="submit"]{
 	background:none;
 	border:0px;
@@ -85,6 +108,14 @@ button, input[type="submit"]{
 #content{
 	border-top: 2px solid gray;
 }
+
+    .rss{
+        float: right;
+        height: 600px;
+        margin-top: -50px;
+        overflow-y: scroll;
+        font-size: small;
+    }
 
 	#performance{
 		

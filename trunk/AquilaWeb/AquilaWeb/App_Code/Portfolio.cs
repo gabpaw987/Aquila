@@ -18,6 +18,8 @@ namespace AquilaWeb.App_Code
         private decimal _invested;
         private decimal _unrealizedPL;
         private decimal _realizedPL;
+        private int _goodTrades;
+        private int _badTrades;
 
         public int Pfid
         {
@@ -51,6 +53,16 @@ namespace AquilaWeb.App_Code
             get { return _realizedPL; }
         }
 
+        public decimal GoodTrades
+        {
+            get { return _goodTrades; }
+        }
+
+        public decimal BadTrades
+        {
+            get { return _badTrades; }
+        }
+
         public Portfolio() : this(Portfolio.PFID)
         {
             
@@ -80,13 +92,12 @@ namespace AquilaWeb.App_Code
                     pfe.Auto     = (!dr.IsDBNull(dr.GetOrdinal("auto")))     ? dr.GetBoolean(dr.GetOrdinal("auto"))      : false;
                     pfe.Active   = (!dr.IsDBNull(dr.GetOrdinal("active")))   ? dr.GetBoolean(dr.GetOrdinal("active"))    : false;
 
-                    string query = "SELECT c FROM mbar WHERE symbol=" + pfe.Symbol + " ORDER BY t DESC LIMIT 1";
-                    //pfe.Close = _conn.SelectSingleValue<decimal>(query);
-                    pfe.Close = 0m;
+                    NpgsqlConnector conn2 = new NpgsqlConnector();
+                    pfe.Close = conn2.SelectSingleValue<decimal>("SELECT * FROM get_latest_bar('" + pfe.Symbol + "')");
+                    //pfe.Close = 0m;
 
-                    query = "SELECT decision FROM series WHERE symbol=" + pfe.Symbol;
-                    //pfe.Decision = _conn.SelectSingleValue<int>(query);
-                    pfe.Decision = 0;
+                    pfe.Decision = conn2.SelectSingleValue<int>("SELECT decision FROM series WHERE symbol='" + pfe.Symbol + "'");
+                    conn2.Connected = false;
 
                     _assets.Add(pfe);
                 }
@@ -100,6 +111,11 @@ namespace AquilaWeb.App_Code
             _unrealizedPL = _conn.SelectSingleValue<decimal>("SELECT urpf FROM portfolio WHERE pfid=" + this._pfid);
             // current realized profit
             _realizedPL = _conn.SelectSingleValue<decimal>("SELECT rpf FROM portfolio WHERE pfid=" + this._pfid);
+            // good trades
+            _goodTrades = _conn.SelectSingleValue<int>("SELECT goodtrades FROM portfolio WHERE pfid=" + this._pfid);
+            // bad trades
+            _badTrades = _conn.SelectSingleValue<int>("SELECT badtrades FROM portfolio WHERE pfid=" + this._pfid);
+            _conn.Connected = false;
         }
 
         public PortfolioElement AddSymbol(string symbol)
@@ -111,7 +127,7 @@ namespace AquilaWeb.App_Code
 
                 List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
 
-                _conn.StartTransaction();
+                //_conn.StartTransaction();
 
                 using (NpgsqlDataReader dr = _conn.Select("INSERT INTO pfsecurity(pfid, symbol) VALUES(" + _pfid + ", :symbol) RETURNING *", pl))
                 {
@@ -161,11 +177,11 @@ namespace AquilaWeb.App_Code
                         symbol, "Create", e.Maxinvest.ToString(), a+"", "true", "0.0", "dBar", "Last" 
                     });
 
-                    _conn.Commit();
+                    //_conn.Commit();
                 }
                 catch (Exception ex)
                 {
-                    _conn.Rollback();
+                    //_conn.Rollback();
                     System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
                 }
 
@@ -191,7 +207,7 @@ namespace AquilaWeb.App_Code
 
                 if (!active)
                 {
-                    _conn.StartTransaction();
+                    //_conn.StartTransaction();
 
                     query = "DELETE FROM pfsecurity WHERE symbol = :symbol";
                     bool dbSuccess = (_conn.ExecuteDMLCommand(query, new List<DbParam> { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) }) > 0) ? true : false;
@@ -205,19 +221,19 @@ namespace AquilaWeb.App_Code
                         try
                         {
                             client.PerformAction(new object[] { symbol, "Delete" });
-                            _conn.Commit();
+                            //_conn.Commit();
                             return true;
                         }
                         catch (Exception ex)
                         {
-                            _conn.Rollback();
                             System.Diagnostics.Debug.WriteLine(ex.Message + ": " + ex.StackTrace);
+                            //_conn.Rollback();
                             return false;
                         }
                     }
                     else
                     {
-                        _conn.Rollback();
+                        //_conn.Rollback();
                     }
                 }
                 // close connection
@@ -228,17 +244,20 @@ namespace AquilaWeb.App_Code
 
         public decimal GetCapital()
         {
+            _conn.CloseAfterQuery = true;
             return _conn.SelectSingleValue<decimal>("SELECT capital FROM portfolio WHERE pfid="+_pfid);
         }
 
         public decimal GetSumMaxInvest()
         {
+            _conn.CloseAfterQuery = true;
             return _conn.SelectSingleValue<decimal>("SELECT sum(maxinvest) FROM pfsecurity WHERE pfid="+_pfid);
         }
 
         public bool IsInPortfolio(string symbol)
         {
             List<DbParam> pl = new List<DbParam>() { new DbParam("symbol", NpgsqlDbType.Varchar, symbol) };
+            _conn.CloseAfterQuery = true;
             return _conn.SelectSingleValue<Int64>("SELECT count(*) FROM pfsecurity WHERE symbol=upper( :symbol ) AND pfid="+this._pfid, pl) == 1;
         }
 
@@ -248,7 +267,24 @@ namespace AquilaWeb.App_Code
             { 
                 new DbParam("pfid", NpgsqlDbType.Integer, pfid)
             };
+            _conn.CloseAfterQuery = true;
             return _conn.SelectSingleValue<Int64>("SELECT count(*) FROM portfolio WHERE pfid=:pfid", pl) == 1;
+        }
+
+        public Dictionary<DateTime, decimal> GetProfitHistory()
+        {
+            Dictionary<DateTime, decimal> profitHistory = new Dictionary<DateTime, decimal>();
+            
+            using (NpgsqlDataReader dr = _conn.Select("SELECT t, rpf FROM profithistory"))
+            {
+                // new data entry
+                while (dr.Read())
+                {
+                    profitHistory.Add(dr.GetDateTime(dr.GetOrdinal("t")), dr.GetDecimal(dr.GetOrdinal("rpf")));
+                }
+            }
+            _conn.Connected = false;
+            return profitHistory;
         }
     }
 }
