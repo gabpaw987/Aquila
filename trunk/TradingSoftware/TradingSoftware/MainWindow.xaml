@@ -1,0 +1,99 @@
+﻿<Window x:Class="TradingSoftware.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TradingSoftware"
+        Title="MainWindow" Height="450" Width="625">
+    <Window.DataContext>
+        <local:MainViewModel x:Name="mainViewModel" />
+    </Window.DataContext>
+    <DockPanel>
+        <TabControl DockPanel.Dock="Top">
+            <TabItem Header="Console">
+                <TextBox Name="ConsoleBox" IsEnabled="False"/>
+            </TabItem>
+            <TabItem Header="Workers">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="5"></RowDefinition>
+                        <RowDefinition Height="150"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <Grid Margin="5" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                    <ColumnDefinition Width="150"></ColumnDefinition>
+                                    <ColumnDefinition Width="50"></ColumnDefinition>
+                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                    <ColumnDefinition Width="150"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Text-Labels -->
+                                <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Symbol:</Label>
+                                <Label Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">Is Active?</Label>
+                                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Amount:</Label>
+                                <Label Grid.Row="1" Grid.Column="3" VerticalAlignment="Center">Barsize:</Label>
+                                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Data type:</Label>
+                                <Label Grid.Row="2" Grid.Column="3" VerticalAlignment="Center">Price premium:</Label>
+                                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Cut Loss:</Label>
+
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="1">
+                                    <TextBox Width="130" Text="{Binding Path=CreationSymbol}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="4">
+                                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=CreationIsActive}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="1" Grid.Column="1">
+                                    <TextBox Width="50" Text="{Binding Path=CreationAmount}" PreviewTextInput="NumericOnly_WithDecimalPlace" />
+                                    <Label Content="&#164;"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="1" Grid.Column="4">
+                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationBarSize}">
+                                        <ComboBoxItem IsSelected="True">Minute</ComboBoxItem>
+                                        <ComboBoxItem>Daily</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="2" Grid.Column="1">
+                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationDataType}">
+                                        <ComboBoxItem>Bid</ComboBoxItem>
+                                        <ComboBoxItem>Ask</ComboBoxItem>
+                                        <ComboBoxItem IsSelected="True">Last</ComboBoxItem>
+                                        <ComboBoxItem>Midpoint</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="2" Grid.Column="4">
+                                    <TextBox Width="50" Text="{Binding Path=CreationPricePremiumPercentage}" />
+                                    <Label Content="%"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="3" Grid.Column="1">
+                                    <TextBox Width="50" Text="{Binding Path=CreationCutLoss}" />
+                                    <Label Content="!?!?!"/>
+                                </StackPanel>
+
+                                <Button Click="CreateButton_Click" Height="24" Width="100" Grid.Row="4" Grid.Column="4"
+                                        Content="Create Worker"/>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3"/>
+                    <DataGrid Name="workersGrid" Grid.Row="3" Grid.Column="0" Margin="0" ItemsSource="{Binding}"
+                              HorizontalAlignment="Stretch" CanUserReorderColumns="True" CanUserResizeColumns="True"
+                              IsReadOnly="False" AutoGeneratingColumn="OnAutoGeneratingColumn"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
