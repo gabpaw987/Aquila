@@ -291,51 +291,26 @@ namespace TradingSoftware
             while (realTimeDataClient.RealTimeBarList.Count <= 1)
             {
                 System.Threading.Thread.Sleep(100);
-                if (!this.IsCalculating)
-                {
-                    break;
-                }
             }
 
             //wait until minute is full
-            if (this.IsCalculating)
+            if (_barsize.Equals(BarSize.OneMinute))
             {
-                if (_barsize.Equals(BarSize.OneMinute))
-                {
-                    while (realTimeDataClient.RealTimeBarList.Count != 0)
-                    {
-                        System.Threading.Thread.Sleep(100);
-                        if (!this.IsCalculating)
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (this.IsCalculating)
-            {
-                historicalDataClient.Connect();
-            }
-
-            if (this.IsCalculating)
-            {
-                //request historical data bars
-                Console.WriteLine("Please wait... Historical minute bars are getting fetched!");
-                historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
-            }
-
-            if (this.IsCalculating)
-            {
-                while (this.Bars.Count < historicalDataClient.totalHistoricalBars ||
-                       historicalDataClient.totalHistoricalBars == 0)
+                while (realTimeDataClient.RealTimeBarList.Count != 0)
                 {
                     System.Threading.Thread.Sleep(100);
-                    if (!this.IsCalculating)
-                    {
-                        break;
-                    }
                 }
+            }
+            historicalDataClient.Connect();
+
+            //request historical data bars
+            Console.WriteLine("Please wait... Historical minute bars are getting fetched!");
+            historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
+
+            while (this.Bars.Count < historicalDataClient.totalHistoricalBars ||
+                   historicalDataClient.totalHistoricalBars == 0)
+            {
+                System.Threading.Thread.Sleep(100);
             }
 
             historicalDataClient.Disconnect();

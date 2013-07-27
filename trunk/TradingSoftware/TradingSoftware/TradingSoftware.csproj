@@ -36,14 +36,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Algorithms">
+      <HintPath>lib\Algorithm\Algorithms.dll</HintPath>
+    </Reference>
     <Reference Include="Krs.Ats.IBNet">
       <HintPath>lib\Krs.Ats.IBNet.dll</HintPath>
     </Reference>
     <Reference Include="MoreLinq">
       <HintPath>lib\MoreLinq.dll</HintPath>
-    </Reference>
-    <Reference Include="smaMit-3und3simple">
-      <HintPath>lib\Algorithm\smaMit-3und3simple.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

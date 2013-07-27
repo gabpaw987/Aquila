@@ -38,6 +38,7 @@ namespace TradingSoftware
                                        "Trades",
                                        100,
                                        1000);
+            worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
             this.workersGrid.DataContext = this.mainViewModel.Workers;
@@ -69,6 +70,7 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
                                        this.mainViewModel.CreationCutLoss);
+            worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
             this.workersGrid.Items.Refresh();
