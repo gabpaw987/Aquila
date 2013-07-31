@@ -9,7 +9,9 @@
     <DockPanel>
         <TabControl DockPanel.Dock="Top">
             <TabItem Header="Console">
-                <TextBox Name="ConsoleBox" IsEnabled="False"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <TextBox Name="ConsoleBox" IsEnabled="False"/>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="Workers">
                 <Grid>
