@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using Krs.Ats.IBNet;
 using Krs.Ats.IBNet.Contracts;
@@ -130,8 +131,12 @@ namespace TradingSoftware
         // to stop the thread from the main method
         public bool RunThread = true;
 
+        private bool didFirst;
+
+        private int roundLotSize;
+
         public Worker(Equity equity, bool isActive, decimal amount, string barsize,
-                      string dataType, decimal pricePremiumPercentage, decimal cutLoss)
+                      string dataType, decimal pricePremiumPercentage, decimal cutLoss, int roundLotSize)
         {
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
@@ -145,13 +150,16 @@ namespace TradingSoftware
             this.DataType = dataType;
             this.PricePremiumPercentage = pricePremiumPercentage;
             this.CutLoss = cutLoss;
+            this.roundLotSize = roundLotSize;
+
+            this.didFirst = false;
 
             this.Thread = new Thread(this.Run);
         }
 
         public void Run()
         {
-            this.loadHistoricalData();
+            loadHistoricalData();
             var length = 0;
 
             while (RunThread)
@@ -171,16 +179,21 @@ namespace TradingSoftware
                     //Calculate the decision
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals);
 
+                    Console.WriteLine("Current Signal: " + Signals.Last());
+
                     length = this.Bars.Count;
                 }
                 if (IsCalculating)
                 {
-                    //DONE: remove this
-                    //Signals.Add(3);
-                    //Signals.Add(1);
-                    if (Signals[Signals.Count - 1] != Signals[Signals.Count - 2])
+                    if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst)
                     {
-                        int oldSignal = Signals[Signals.Count - 2];
+                        int oldSignal = 0;
+
+                        if (this.didFirst)
+                        {
+                            oldSignal = Signals[Signals.Count - 2];
+                        }
+
                         int newSignal = Signals[Signals.Count - 1];
                         bool isBuy = false;
                         int toZero = 0;
@@ -221,11 +234,11 @@ namespace TradingSoftware
                         //DONE: peer wegen pricepremium
                         if (isBuy)
                         {
-                            roundLotPrice = this.IBOutput.currentAskPrice * 100;
+                            roundLotPrice = this.IBOutput.currentAskPrice * this.roundLotSize;
                         }
                         else
                         {
-                            roundLotPrice = this.IBOutput.currentBidPrice * 100;
+                            roundLotPrice = this.IBOutput.currentBidPrice * this.roundLotSize;
                         }
 
                         int one = (int)((this.Amount / roundLotPrice) / 3m);
@@ -259,9 +272,9 @@ namespace TradingSoftware
                         {
                             // iboutput place and execute
                             if (isBuy)
-                                this.IBOutput.placeOrder(ActionSide.Buy, amountToZero + amountFromZero);
+                                this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * this.roundLotSize);
                             else if (!isBuy)
-                                this.IBOutput.placeOrder(ActionSide.Sell, amountToZero + amountFromZero);
+                                this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.roundLotSize);
 
                             if (IsActive)
                             {
@@ -319,17 +332,6 @@ namespace TradingSoftware
         public void Start()
         {
             this.Thread.Start();
-        }
-
-        public bool executeOrder()
-        {
-            this.IBOutput.executeOrder(PricePremiumPercentage);
-            return true;
-        }
-
-        public bool dismissOrder()
-        {
-            return false;
         }
     }
 }

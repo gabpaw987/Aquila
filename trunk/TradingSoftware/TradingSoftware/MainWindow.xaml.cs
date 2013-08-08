@@ -31,13 +31,14 @@ namespace TradingSoftware
 
             this.mainViewModel.Workers = new List<Worker>();
 
-            Worker worker = new Worker(new Equity("AAPL"),
+            Worker worker = new Worker(new Equity("GOOG"),
                                        true,
                                        100000,
                                        "mBar",
                                        "Trades",
                                        100,
-                                       1000);
+                                       1000,
+                                       100);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
@@ -61,6 +62,12 @@ namespace TradingSoftware
             e.Handled = reg.IsMatch(e.Text);
         }
 
+        private void ScrollToEnd_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
+            ((TextBox)sender).ScrollToEnd();
+        }
+
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             Worker worker = new Worker(new Equity(this.mainViewModel.CreationSymbol),
@@ -69,7 +76,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
-                                       this.mainViewModel.CreationCutLoss);
+                                       this.mainViewModel.CreationCutLoss,
+                                       100);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 

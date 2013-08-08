@@ -185,6 +185,7 @@ namespace TradingSoftware
         /// <remarks></remarks>
         private void client_HistoricalData(object sender, HistoricalDataEventArgs e)
         {
+            Console.WriteLine(this.IsConnected);
             if (this.IsConnected)
             {
                 //Saves how many bars were requested in total to the attribute

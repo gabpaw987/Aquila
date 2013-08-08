@@ -10,7 +10,7 @@
         <TabControl DockPanel.Dock="Top">
             <TabItem Header="Console">
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <TextBox Name="ConsoleBox" IsEnabled="False"/>
+                    <TextBox Name="ConsoleBox" IsEnabled="False" TextChanged="ScrollToEnd_TextChanged"/>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Workers">
