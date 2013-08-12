@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace TradingSoftware
 {
-    internal class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,6 +22,44 @@ namespace TradingSoftware
                     _workers = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("Workers"));
+                }
+            }
+        }
+
+        private string _consoleText;
+
+        public string ConsoleText
+        {
+            get
+            {
+                return _consoleText;
+            }
+            set
+            {
+                if (value != _consoleText)
+                {
+                    _consoleText = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("ConsoleText"));
+                }
+            }
+        }
+
+        private string _signalText;
+
+        public string SignalText
+        {
+            get
+            {
+                return _signalText;
+            }
+            set
+            {
+                if (value != _signalText)
+                {
+                    _signalText = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("SignalText"));
                 }
             }
         }
@@ -45,21 +83,21 @@ namespace TradingSoftware
             }
         }
 
-        private bool _creationIsActive;
+        private bool _creationIsTrading;
 
-        public bool CreationIsActive
+        public bool CreationIsTrading
         {
             get
             {
-                return _creationIsActive;
+                return _creationIsTrading;
             }
             set
             {
-                if (value != _creationIsActive)
+                if (value != _creationIsTrading)
                 {
-                    _creationIsActive = value;
+                    _creationIsTrading = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("CreationIsActive"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationIsTrading"));
                 }
             }
         }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,15 +12,15 @@ namespace TradingSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
-        TextWriter _consoleTextWriter;
+        //TextWriter _consoleTextWriter;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _consoleTextWriter = new TextBoxStreamWriter(this.ConsoleBox);
+            //_consoleTextWriter = new TextBoxStreamWriter(this.ConsoleBox);
             // Redirect the out Console stream
-            Console.SetOut(_consoleTextWriter);
+            //Console.SetOut(_consoleTextWriter);
 
             // Undo it again:
             // StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
@@ -31,7 +29,8 @@ namespace TradingSoftware
 
             this.mainViewModel.Workers = new List<Worker>();
 
-            Worker worker = new Worker(new Equity("GOOG"),
+            Worker worker = new Worker(this.mainViewModel,
+                                       new Equity("GOOG"),
                                        true,
                                        100000,
                                        "mBar",
@@ -40,6 +39,7 @@ namespace TradingSoftware
                                        1000,
                                        100);
             worker.Start();
+
             this.mainViewModel.Workers.Add(worker);
 
             this.workersGrid.DataContext = this.mainViewModel.Workers;
@@ -64,14 +64,15 @@ namespace TradingSoftware
 
         private void ScrollToEnd_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
-            ((TextBox)sender).ScrollToEnd();
+            ConsoleBoxScrollViewer.ScrollToEnd();
+            SignalBoxScrollViewer.ScrollToEnd();
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            Worker worker = new Worker(new Equity(this.mainViewModel.CreationSymbol),
-                                       this.mainViewModel.CreationIsActive,
+            Worker worker = new Worker(this.mainViewModel,
+                                       new Equity(this.mainViewModel.CreationSymbol),
+                                       this.mainViewModel.CreationIsTrading,
                                        this.mainViewModel.CreationAmount,
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,

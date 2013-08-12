@@ -11,13 +11,13 @@ namespace TradingSoftware
     [Serializable()]
     public class Worker
     {
-        public bool _isCalculating;
+        public bool _isTrading;
 
-        [DisplayName("Is calculating?")]
-        public bool IsCalculating
+        [DisplayName("Is trading?")]
+        public bool IsTrading
         {
-            get { return _isCalculating; }
-            set { _isCalculating = value; }
+            get { return _isTrading; }
+            set { _isTrading = value; }
         }
 
         private Equity _equity;
@@ -27,15 +27,6 @@ namespace TradingSoftware
         {
             get { return _equity.Symbol; }
             set { _equity = new Equity(value); }
-        }
-
-        private bool _isActive;
-
-        [DisplayName("Is active?")]
-        public bool IsActive
-        {
-            get { return _isActive; }
-            set { _isActive = value; }
         }
 
         private decimal _amount;
@@ -122,6 +113,8 @@ namespace TradingSoftware
             set { _cutLoss = value; }
         }
 
+        private MainViewModel mainViewModel;
+
         private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
         private List<int> Signals;
         private Thread Thread;
@@ -135,16 +128,17 @@ namespace TradingSoftware
 
         private int roundLotSize;
 
-        public Worker(Equity equity, bool isActive, decimal amount, string barsize,
+        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize,
                       string dataType, decimal pricePremiumPercentage, decimal cutLoss, int roundLotSize)
         {
+            this.mainViewModel = mainViewModel;
+
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
 
-            this.IsCalculating = false;
+            this.IsTrading = isTrading;
 
             this._equity = equity;
-            this.IsActive = isActive;
             this.Amount = amount;
             this.Barsize = barsize;
             this.DataType = dataType;
@@ -160,6 +154,7 @@ namespace TradingSoftware
         public void Run()
         {
             loadHistoricalData();
+
             var length = 0;
 
             while (RunThread)
@@ -170,20 +165,16 @@ namespace TradingSoftware
                     while (length == this.Bars.Count)
                     {
                         Thread.Sleep(1000);
-                        if (!this.IsCalculating)
-                        {
-                            break;
-                        }
                     }
 
                     //Calculate the decision
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals);
 
-                    Console.WriteLine("Current Signal: " + Signals.Last());
+                    this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
                     length = this.Bars.Count;
                 }
-                if (IsCalculating)
+                if (IsTrading)
                 {
                     if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst)
                     {
@@ -225,7 +216,7 @@ namespace TradingSoftware
                             isBuy = true;
                         }
 
-                        this.IBOutput = new IBOutput(this._equity);
+                        this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
 
                         this.IBOutput.RequestTickPrice();
 
@@ -268,7 +259,7 @@ namespace TradingSoftware
                                 case -3: { amountFromZero = three; break; }
                             }
                         }
-                        if (amountToZero != 0 && IsCalculating)
+                        if (amountToZero != 0 && IsTrading)
                         {
                             // iboutput place and execute
                             if (isBuy)
@@ -276,14 +267,7 @@ namespace TradingSoftware
                             else if (!isBuy)
                                 this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.roundLotSize);
 
-                            if (IsActive)
-                            {
-                                this.IBOutput.executeOrder(PricePremiumPercentage);
-                            }
-                            else
-                            {
-                                //TODO: do something if not worker active
-                            }
+                            this.IBOutput.executeOrder(PricePremiumPercentage);
                         }
                     }
                 }
@@ -292,12 +276,11 @@ namespace TradingSoftware
 
         public void loadHistoricalData()
         {
-            var realTimeDataClient = new IBInput(this.Bars, this._equity, BarSize.OneMinute);
-            var historicalDataClient = new IBInput(this.Bars, this._equity, BarSize.OneMinute);
+            var realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
 
             realTimeDataClient.Connect();
 
-            Console.WriteLine("Start receiving realtime bars");
+            this.mainViewModel.ConsoleText += "Start receiving realtime bars...\n";
             realTimeDataClient.SubscribeForRealTimeBars();
 
             //Wait for first 5sec bar
@@ -314,10 +297,12 @@ namespace TradingSoftware
                     System.Threading.Thread.Sleep(100);
                 }
             }
+
+            var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
             historicalDataClient.Connect();
 
             //request historical data bars
-            Console.WriteLine("Please wait... Historical minute bars are getting fetched!");
+            this.mainViewModel.ConsoleText += "Please wait... Historical minute bars are getting fetched!\n";
             historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
 
             while (this.Bars.Count < historicalDataClient.totalHistoricalBars ||

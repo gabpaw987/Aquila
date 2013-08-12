@@ -56,14 +56,18 @@ namespace TradingSoftware
         /// </summary>
         private Boolean isCurrentAskSet = false;
 
+        private MainViewModel mainViewModel;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IBOutput"/> class. It sets the equity from the parameters, initialises a new outputClient and adds the<br/>
         /// inportant eventhandler to it.
         /// </summary>
         /// <param name="equity">The equity used throughout the whole object.</param>
         /// <remarks></remarks>
-        public IBOutput(Equity equity)
+        public IBOutput(MainViewModel mainViewModel, Equity equity)
         {
+            this.mainViewModel = mainViewModel;
+
             this.Equity = equity;
 
             outputClient = new IBClient();
@@ -113,13 +117,13 @@ namespace TradingSoftware
                 //outputClient.Disconnect();
 
                 //Writes what happened to the Console and the log file
-                Console.WriteLine("Order Placed with Order ID: " + (IBID.OrderID) + "!");
+                this.mainViewModel.ConsoleText += "Order Placed with Order ID: " + (IBID.OrderID) + "!\n";
                 LogFileManager.WriteToLog("Order Placed with Order ID: " + (IBID.OrderID) + "!");
                 return IBID.OrderID++;
             }
             catch (Exception)
             {
-                Console.WriteLine("An error occured while placing the order!");
+                this.mainViewModel.ConsoleText += "An error occured while placing the order!\n";
             }
             return 0;
         }
@@ -157,12 +161,12 @@ namespace TradingSoftware
                 outputClient.Disconnect();
 
                 //Writes what happened to the Console and the log file
-                Console.WriteLine("Order Executed with Order ID: " + (IBID.OrderID) + "!");
+                this.mainViewModel.ConsoleText += "Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
                 LogFileManager.WriteToLog("Order Executed with Request ID: " + (IBID.OrderID) + "!");
             }
             catch (Exception)
             {
-                Console.WriteLine("An error occured while placing the order!");
+                this.mainViewModel.ConsoleText += "An error occured while placing the order!\n";
             }
         }
 

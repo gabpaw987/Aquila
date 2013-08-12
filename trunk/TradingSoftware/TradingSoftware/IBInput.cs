@@ -53,6 +53,8 @@ namespace TradingSoftware
 
         public bool hadFirst { get; set; }
 
+        private MainViewModel mainViewModel;
+
         /// <summary>
         /// When this method is called, the HistrocialData bars are requested. After the request the client_HistoricalData event is called every time a bar<br/>
         /// arrives.
@@ -106,8 +108,10 @@ namespace TradingSoftware
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Equity equity, BarSize barsize)
+        public IBInput(MainViewModel mainViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Equity equity, BarSize barsize)
         {
+            this.mainViewModel = mainViewModel;
+
             ListOfBars = LOB;
 
             this.Barsize = barsize;
@@ -150,7 +154,7 @@ namespace TradingSoftware
                     {
                         b = AggregateBar();
                         RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
-                        Console.WriteLine("Received Real Time Minute-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5);
+                        this.mainViewModel.ConsoleText += "Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
                         ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
                     }
                 }
@@ -185,12 +189,12 @@ namespace TradingSoftware
         /// <remarks></remarks>
         private void client_HistoricalData(object sender, HistoricalDataEventArgs e)
         {
-            Console.WriteLine(this.IsConnected);
+            System.Diagnostics.Debug.WriteLine(this.IsConnected);
             if (this.IsConnected)
             {
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
-                Console.WriteLine("Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close);
+                this.mainViewModel.ConsoleText += "Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
                 //parses the received bar to one of my bars
                 ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
             }
@@ -212,9 +216,9 @@ namespace TradingSoftware
             //establishing a connection
             try
             {
-                Console.WriteLine("Connecting to IB.");
+                this.mainViewModel.ConsoleText += "Connecting to IB.\n";
                 inputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
-                Console.WriteLine("Successfully connected.");
+                this.mainViewModel.ConsoleText += "Successfully connected.\n";
 
                 //Add our event-handling methods to the inputClient.
                 //After this, the inputClient knows, which methods it should call when a Historical or a realtime bar arrives.
