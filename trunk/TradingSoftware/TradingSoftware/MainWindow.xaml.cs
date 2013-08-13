@@ -31,7 +31,7 @@ namespace TradingSoftware
 
             Worker worker = new Worker(this.mainViewModel,
                                        new Equity("GOOG"),
-                                       false,
+                                       true,
                                        100000,
                                        "mBar",
                                        "Trades",

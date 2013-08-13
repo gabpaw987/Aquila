@@ -181,7 +181,7 @@ namespace TradingSoftware
                 //DONE: wait till new bar is ready
                 if (_barsize.Equals(BarSize.OneMinute))
                 {
-                    while (length == this.Bars.Count)
+                    while (length == this.Bars.Count && this.RunThread)
                     {
                         Thread.Sleep(1000);
                     }
@@ -222,15 +222,10 @@ namespace TradingSoftware
                                     toZero = 0 - oldSignal;
                                     fromZero = newSignal;
                                 }
-                                else if (newSignal > oldSignal)
+                                else if (newSignal != 0)
                                 {
-                                    //kaufen newSignal - oldSignal
+                                    //kaufen und verkaufen newSignal - oldSignal
                                     toZero = newSignal - oldSignal;
-                                }
-                                else if (newSignal < oldSignal)
-                                {
-                                    //verkaufen newSignal - oldSignal
-                                    toZero = -(newSignal - oldSignal);
                                 }
                                 else if (newSignal == 0)
                                 {
