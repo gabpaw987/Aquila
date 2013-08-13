@@ -63,9 +63,9 @@ namespace TradingSoftware
         public void GetHistoricalDataBars(TimeSpan timeSpan)
         {
             if (this.Barsize == BarSize.OneMinute)
-                inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
+                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
             else if (this.Barsize == BarSize.OneDay)
-                inputClient.RequestHistoricalData(17, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
+                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public void SubscribeForRealTimeBars()
         {
-            inputClient.RequestRealTimeBars(16, this.Equity, 5, RealTimeBarType.Trades, true);
+            inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, true);
         }
 
         /// <summary>

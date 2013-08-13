@@ -178,21 +178,21 @@ namespace TradingSoftware
             }
         }
 
-        private decimal _creationCutLoss;
+        private int _creationRoundLotSize;
 
-        public decimal CreationCutLoss
+        public int CreationRoundLotSize
         {
             get
             {
-                return _creationCutLoss;
+                return _creationRoundLotSize;
             }
             set
             {
-                if (value != _creationCutLoss)
+                if (value != _creationRoundLotSize)
                 {
-                    _creationCutLoss = value;
+                    _creationRoundLotSize = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("CreationCutLoss"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationRoundLotSize"));
                 }
             }
         }

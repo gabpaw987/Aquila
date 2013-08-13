@@ -31,12 +31,11 @@ namespace TradingSoftware
 
             Worker worker = new Worker(this.mainViewModel,
                                        new Equity("GOOG"),
-                                       true,
+                                       false,
                                        100000,
                                        "mBar",
                                        "Trades",
                                        100,
-                                       1000,
                                        100);
             worker.Start();
 
@@ -77,12 +76,19 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
-                                       this.mainViewModel.CreationCutLoss,
-                                       100);
+                                       this.mainViewModel.CreationRoundLotSize);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
             this.workersGrid.Items.Refresh();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                worker.Stop();
+            }
         }
     }
 }

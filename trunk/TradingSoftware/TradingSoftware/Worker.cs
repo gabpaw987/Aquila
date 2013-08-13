@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using Krs.Ats.IBNet;
 using Krs.Ats.IBNet.Contracts;
 
@@ -104,13 +105,22 @@ namespace TradingSoftware
             set { _pricePremiumPercentage = value; }
         }
 
-        public decimal _cutLoss;
+        public int _roundLotSize;
 
-        [DisplayName("CutLoss")]
-        public decimal CutLoss
+        [DisplayName("Round lot size")]
+        public int RoundLotSize
         {
-            get { return _cutLoss; }
-            set { _cutLoss = value; }
+            get { return _roundLotSize; }
+            set { _roundLotSize = value; }
+        }
+
+        public int _currentPosition;
+
+        [DisplayName("Cur. Position")]
+        public int CurrentPosition
+        {
+            get { return _currentPosition; }
+            set { _currentPosition = value; }
         }
 
         private MainViewModel mainViewModel;
@@ -126,10 +136,10 @@ namespace TradingSoftware
 
         private bool didFirst;
 
-        private int roundLotSize;
+        private IBInput realTimeDataClient;
 
-        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize,
-                      string dataType, decimal pricePremiumPercentage, decimal cutLoss, int roundLotSize)
+        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount,
+                      string barsize, string dataType, decimal pricePremiumPercentage, int roundLotSize)
         {
             this.mainViewModel = mainViewModel;
 
@@ -143,12 +153,21 @@ namespace TradingSoftware
             this.Barsize = barsize;
             this.DataType = dataType;
             this.PricePremiumPercentage = pricePremiumPercentage;
-            this.CutLoss = cutLoss;
-            this.roundLotSize = roundLotSize;
+            this.RoundLotSize = roundLotSize;
 
             this.didFirst = false;
+            this._currentPosition = 0;
 
             this.Thread = new Thread(this.Run);
+        }
+
+        public void Stop()
+        {
+            this.RunThread = false;
+            if (this.realTimeDataClient != null)
+            {
+                this.realTimeDataClient.Disconnect();
+            }
         }
 
         public void Run()
@@ -182,92 +201,105 @@ namespace TradingSoftware
 
                         if (this.didFirst)
                         {
-                            oldSignal = Signals[Signals.Count - 2];
+                            oldSignal = _currentPosition;
                         }
 
                         int newSignal = Signals[Signals.Count - 1];
-                        bool isBuy = false;
-                        int toZero = 0;
-                        int fromZero = 0;
 
-                        if ((newSignal > 0 && oldSignal < 0) ||
-                            (newSignal < 0 && oldSignal > 0))
+                        MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                        if (dialogResult == MessageBoxResult.Cancel)
                         {
-                            toZero = 0 - oldSignal;
-                            fromZero = newSignal;
-                        }
-                        else if (newSignal > oldSignal)
-                        {
-                            //kaufen newSignal - oldSignal
-                            toZero = newSignal - oldSignal;
-                        }
-                        else if (newSignal < oldSignal)
-                        {
-                            //verkaufen newSignal - oldSignal
-                            toZero = -(newSignal - oldSignal);
-                        }
-                        else if (newSignal == 0)
-                        {
-                            toZero = 0 - oldSignal;
-                        }
-
-                        if (Math.Sign(toZero) == 1)
-                        {
-                            isBuy = true;
-                        }
-
-                        this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
-
-                        this.IBOutput.RequestTickPrice();
-
-                        decimal roundLotPrice = 0m;
-
-                        //DONE: peer wegen pricepremium
-                        if (isBuy)
-                        {
-                            roundLotPrice = this.IBOutput.currentAskPrice * this.roundLotSize;
-                        }
-                        else
-                        {
-                            roundLotPrice = this.IBOutput.currentBidPrice * this.roundLotSize;
-                        }
-
-                        int one = (int)((this.Amount / roundLotPrice) / 3m);
-                        int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
-                        int three = (int)(this.Amount / roundLotPrice);
-
-                        int amountToZero = 0;
-                        switch (toZero)
-                        {
-                            case 1:
-                            case -1: { amountToZero = one; break; }
-                            case 2:
-                            case -2: { amountToZero = two; break; }
-                            case 3:
-                            case -3: { amountToZero = three; break; }
-                        }
-                        int amountFromZero = 0;
-                        if (fromZero != 0)
-                        {
-                            switch (fromZero)
+                            if (_currentPosition != newSignal)
                             {
-                                case 1:
-                                case -1: { amountFromZero = one; break; }
-                                case 2:
-                                case -2: { amountFromZero = two; break; }
-                                case 3:
-                                case -3: { amountFromZero = three; break; }
-                            }
-                        }
-                        if (amountToZero != 0 && IsTrading)
-                        {
-                            // iboutput place and execute
-                            if (isBuy)
-                                this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * this.roundLotSize);
-                            else if (!isBuy)
-                                this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.roundLotSize);
+                                bool isBuy = false;
+                                int toZero = 0;
+                                int fromZero = 0;
 
-                            this.IBOutput.executeOrder(PricePremiumPercentage);
+                                if ((newSignal > 0 && oldSignal < 0) ||
+                                    (newSignal < 0 && oldSignal > 0))
+                                {
+                                    toZero = 0 - oldSignal;
+                                    fromZero = newSignal;
+                                }
+                                else if (newSignal > oldSignal)
+                                {
+                                    //kaufen newSignal - oldSignal
+                                    toZero = newSignal - oldSignal;
+                                }
+                                else if (newSignal < oldSignal)
+                                {
+                                    //verkaufen newSignal - oldSignal
+                                    toZero = -(newSignal - oldSignal);
+                                }
+                                else if (newSignal == 0)
+                                {
+                                    toZero = 0 - oldSignal;
+                                }
+
+                                if (Math.Sign(toZero) == 1)
+                                {
+                                    isBuy = true;
+                                }
+
+                                this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
+                                this.IBOutput.Connect();
+
+                                this.IBOutput.RequestTickPrice();
+
+                                decimal roundLotPrice = 0m;
+
+                                if (isBuy)
+                                {
+                                    roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
+                                }
+                                else
+                                {
+                                    roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
+                                }
+
+                                int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
+                                //Not used at the moment
+                                int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
+                                int three = (int)(this.Amount / roundLotPrice);
+
+                                int amountToZero = 0;
+                                switch (toZero)
+                                {
+                                    case 1:
+                                    case -1: { amountToZero = one; break; }
+                                    //Not used at the moment
+                                    case 2:
+                                    case -2: { amountToZero = two; break; }
+                                    case 3:
+                                    case -3: { amountToZero = three; break; }
+                                }
+                                int amountFromZero = 0;
+                                if (fromZero != 0)
+                                {
+                                    switch (fromZero)
+                                    {
+                                        case 1:
+                                        case -1: { amountFromZero = one; break; }
+                                        //Not used at the moment
+                                        case 2:
+                                        case -2: { amountFromZero = two; break; }
+                                        case 3:
+                                        case -3: { amountFromZero = three; break; }
+                                    }
+                                }
+
+                                if (amountToZero != 0 && IsTrading)
+                                {
+                                    // iboutput place and execute
+                                    if (isBuy)
+                                        this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * this.RoundLotSize, PricePremiumPercentage);
+                                    else if (!isBuy)
+                                        this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.RoundLotSize, PricePremiumPercentage);
+
+                                    this._currentPosition = newSignal;
+                                    this.IBOutput.Disconnect();
+                                }
+                            }
                         }
                     }
                 }
@@ -276,15 +308,15 @@ namespace TradingSoftware
 
         public void loadHistoricalData()
         {
-            var realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
+            this.realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
 
-            realTimeDataClient.Connect();
+            this.realTimeDataClient.Connect();
 
             this.mainViewModel.ConsoleText += "Start receiving realtime bars...\n";
-            realTimeDataClient.SubscribeForRealTimeBars();
+            this.realTimeDataClient.SubscribeForRealTimeBars();
 
             //Wait for first 5sec bar
-            while (realTimeDataClient.RealTimeBarList.Count <= 1)
+            while (this.realTimeDataClient.RealTimeBarList.Count <= 1 && this.RunThread)
             {
                 System.Threading.Thread.Sleep(100);
             }
@@ -292,26 +324,29 @@ namespace TradingSoftware
             //wait until minute is full
             if (_barsize.Equals(BarSize.OneMinute))
             {
-                while (realTimeDataClient.RealTimeBarList.Count != 0)
+                while (this.realTimeDataClient.RealTimeBarList.Count != 0 && this.RunThread)
                 {
                     System.Threading.Thread.Sleep(100);
                 }
             }
 
-            var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
-            historicalDataClient.Connect();
-
-            //request historical data bars
-            this.mainViewModel.ConsoleText += "Please wait... Historical minute bars are getting fetched!\n";
-            historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
-
-            while (this.Bars.Count < historicalDataClient.totalHistoricalBars ||
-                   historicalDataClient.totalHistoricalBars == 0)
+            if (RunThread)
             {
-                System.Threading.Thread.Sleep(100);
-            }
+                var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
+                historicalDataClient.Connect();
 
-            historicalDataClient.Disconnect();
+                //request historical data bars
+                this.mainViewModel.ConsoleText += "Please wait... Historical minute bars are getting fetched!\n";
+                historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
+
+                while ((this.Bars.Count < historicalDataClient.totalHistoricalBars ||
+                       historicalDataClient.totalHistoricalBars == 0) && this.RunThread)
+                {
+                    System.Threading.Thread.Sleep(100);
+                }
+
+                historicalDataClient.Disconnect();
+            }
         }
 
         public void Start()
