@@ -36,7 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Algorithms">
+    <Reference Include="Algorithms, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>lib\Algorithm\Algorithms.dll</HintPath>
     </Reference>
     <Reference Include="Krs.Ats.IBNet">
@@ -64,12 +64,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoClosingMessageBox.cs" />
     <Compile Include="IBID.cs" />
     <Compile Include="IBInput.cs" />
     <Compile Include="IBOutput.cs" />
     <Compile Include="LogFileManager.cs" />
     <Compile Include="MainViewModel.cs" />
-    <Compile Include="TextBoxStreamWriter.cs" />
     <Compile Include="Worker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
