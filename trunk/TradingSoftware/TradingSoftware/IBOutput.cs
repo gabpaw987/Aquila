@@ -119,7 +119,6 @@ namespace TradingSoftware
 
                 //Writes what happened to the Console and the log file
                 this.mainViewModel.ConsoleText += "Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
-                LogFileManager.WriteToLog("Order Executed with Request ID: " + (IBID.OrderID) + "!");
 
                 return IBID.OrderID++;
             }

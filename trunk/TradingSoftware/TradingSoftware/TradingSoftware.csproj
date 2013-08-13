@@ -68,7 +68,6 @@
     <Compile Include="IBID.cs" />
     <Compile Include="IBInput.cs" />
     <Compile Include="IBOutput.cs" />
-    <Compile Include="LogFileManager.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Worker.cs" />
     <Page Include="MainWindow.xaml">
