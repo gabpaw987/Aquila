@@ -197,6 +197,7 @@ namespace TradingSoftware
                 {
                     if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst)
                     {
+                        this.didFirst = true;
                         int oldSignal = 0;
 
                         if (this.didFirst)
@@ -258,6 +259,7 @@ namespace TradingSoftware
                                 }
 
                                 int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
+
                                 //Not used at the moment
                                 int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
                                 int three = (int)(this.Amount / roundLotPrice);
@@ -267,6 +269,7 @@ namespace TradingSoftware
                                 {
                                     case 1:
                                     case -1: { amountToZero = one; break; }
+
                                     //Not used at the moment
                                     case 2:
                                     case -2: { amountToZero = two; break; }
@@ -280,6 +283,7 @@ namespace TradingSoftware
                                     {
                                         case 1:
                                         case -1: { amountFromZero = one; break; }
+
                                         //Not used at the moment
                                         case 2:
                                         case -2: { amountFromZero = two; break; }
