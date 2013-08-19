@@ -190,8 +190,9 @@ namespace TradingSoftware
                     //Calculate the decision
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals);
 
-                    this.Signals[this.Signals.Count - 2] = 0;
-                    this.Signals[this.Signals.Count - 1] = -1;
+                    //For testing purposes
+                    /*this.Signals[this.Signals.Count - 2] = 0;
+                    this.Signals[this.Signals.Count - 1] = -1;*/
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
