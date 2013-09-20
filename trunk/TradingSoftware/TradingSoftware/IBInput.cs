@@ -30,6 +30,8 @@ namespace TradingSoftware
         /// </summary>
         private IBClient inputClient;
 
+        private bool IsFuture;
+
         /// <summary>
         /// Gets the total number of historical data bars.
         /// </summary>
@@ -40,7 +42,7 @@ namespace TradingSoftware
         /// Gets the equity. This is the Equity the whole IBInput class is getting the data for.
         /// </summary>
         /// <remarks></remarks>
-        public Equity Equity { get; private set; }
+        public Contract Equity { get; private set; }
 
         /// <summary>
         /// In this list the received realtime bars are saved. Whenever a new one is received, it a method checks if there are already 12 bars in the list.<br/>
@@ -62,6 +64,7 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public void GetHistoricalDataBars(TimeSpan timeSpan)
         {
+            //inputClient.RequestHistoricalData(IBID.TickerID++,this.Equity, DateTime.Now, timeSpan,Barsize, HistoricalDataType.Trades,1)
             if (this.Barsize == BarSize.OneMinute)
                 inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
             else if (this.Barsize == BarSize.OneDay)
@@ -75,7 +78,7 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public void SubscribeForRealTimeBars()
         {
-            inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, true);
+            inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, (this.IsFuture) ? false : true);
         }
 
         /// <summary>
@@ -88,10 +91,13 @@ namespace TradingSoftware
         {
             //First open value in the list
             decimal open = RealTimeBarList[0].Item2;
+
             //The highest "high" value in the RealTimeBarList
             decimal high = RealTimeBarList.MaxBy(x => x.Item3).Item3;
+
             //The lowest "low" value in the RealTimeBarList
             decimal low = RealTimeBarList.MinBy(x => x.Item4).Item4;
+
             //The Last close value in the list
             decimal close = RealTimeBarList[RealTimeBarList.ToArray().Length - 1].Item5;
 
@@ -108,7 +114,7 @@ namespace TradingSoftware
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(MainViewModel mainViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Equity equity, BarSize barsize)
+        public IBInput(MainViewModel mainViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Contract equity, BarSize barsize, bool isFuture)
         {
             this.mainViewModel = mainViewModel;
 
@@ -121,11 +127,10 @@ namespace TradingSoftware
             inputClient.ThrowExceptions = true;
 
             RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
-
             this.Equity = equity;
-
             this.hadFirst = false;
             this.IsConnected = false;
+            this.IsFuture = isFuture;
         }
 
         /// <summary>
@@ -195,6 +200,7 @@ namespace TradingSoftware
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
                 this.mainViewModel.ConsoleText += "Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+
                 //parses the received bar to one of my bars
                 ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
             }

@@ -36,7 +36,8 @@ namespace TradingSoftware
                                        "mBar",
                                        "Trades",
                                        100,
-                                       100);
+                                       100,
+                                       false);
             worker.Start();
 
             this.mainViewModel.Workers.Add(worker);
@@ -69,6 +70,7 @@ namespace TradingSoftware
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
+            // TODO: add GUI Component
             Worker worker = new Worker(this.mainViewModel,
                                        new Equity(this.mainViewModel.CreationSymbol),
                                        this.mainViewModel.CreationIsTrading,
@@ -76,7 +78,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
-                                       this.mainViewModel.CreationRoundLotSize);
+                                       this.mainViewModel.CreationRoundLotSize,
+                                       false);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
