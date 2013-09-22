@@ -30,7 +30,7 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
 
             Worker worker = new Worker(this.mainViewModel,
-                                       new Equity("GOOG"),
+                                       new Equity("AAPL"),
                                        true,
                                        100000,
                                        "mBar",
@@ -89,6 +89,12 @@ namespace TradingSoftware
             {
                 worker.Stop();
             }
+        }
+
+        private void ReenterButton_Click(object sender, RoutedEventArgs e)
+        {
+            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
+            worker.shallReenter = true;
         }
     }
 }

@@ -136,6 +136,7 @@ namespace TradingSoftware
         public bool RunThread = true;
 
         private bool didFirst;
+        public bool shallReenter;
 
         private IBInput realTimeDataClient;
 
@@ -188,7 +189,7 @@ namespace TradingSoftware
                     }
 
                     //Calculate the decision
-                    Algorithm.DecisionCalculator.startCalculation(Bars, Signals);
+                    Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>());
 
                     //For testing purposes
                     /*this.Signals[this.Signals.Count - 2] = 0;
@@ -200,7 +201,7 @@ namespace TradingSoftware
                 }
                 if (IsTrading)
                 {
-                    if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst)
+                    if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst || this.shallReenter)
                     {
                         if (!(this.Signals[this.Signals.Count - 1] == 0 && !this.didFirst))
                         {
@@ -305,7 +306,7 @@ namespace TradingSoftware
                                         else if (!isBuy)
                                             this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.RoundLotSize, PricePremiumPercentage);
 
-                                        this._currentPosition = newSignal;
+                                        this.CurrentPosition = newSignal;
                                         this.IBOutput.Disconnect();
                                     }
                                 }
