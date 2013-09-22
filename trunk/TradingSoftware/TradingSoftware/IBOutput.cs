@@ -24,7 +24,7 @@ namespace TradingSoftware
         /// Gets the equity. This is the equity that is used for each order placed through the current IBOutput object.
         /// </summary>
         /// <remarks></remarks>
-        public Equity Equity { get; private set; }
+        public Contract Equity { get; private set; }
 
         /// <summary>
         /// This orderId is the orderId that is handed over to every placeOrder-call in this class. An order can only be placed ONE time with the same ID.<br/>
@@ -69,7 +69,7 @@ namespace TradingSoftware
         /// </summary>
         /// <param name="equity">The equity used throughout the whole object.</param>
         /// <remarks></remarks>
-        public IBOutput(MainViewModel mainViewModel, Equity equity)
+        public IBOutput(MainViewModel mainViewModel, Contract equity)
         {
             this.mainViewModel = mainViewModel;
 

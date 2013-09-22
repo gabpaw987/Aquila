@@ -22,13 +22,14 @@ namespace TradingSoftware
             set { _isTrading = value; }
         }
 
-        private Equity _equity;
+        private Contract _equity;
 
         [DisplayName("Symbol")]
         public string Equity
         {
             get { return _equity.Symbol; }
-            set { _equity = new Equity(value); }
+
+            //set { _equity = new Equity(value); }
         }
 
         private decimal _amount;
@@ -124,6 +125,15 @@ namespace TradingSoftware
             set { _currentPosition = value; }
         }
 
+        public bool _isFutureTrading;
+
+        [DisplayName("FutureTrading")]
+        public bool IsFutureTrading
+        {
+            get { return _isFutureTrading; }
+            set { _isFutureTrading = value; }
+        }
+
         private MainViewModel mainViewModel;
 
         private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
@@ -141,7 +151,7 @@ namespace TradingSoftware
         private IBInput realTimeDataClient;
 
         public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount,
-                      string barsize, string dataType, decimal pricePremiumPercentage, int roundLotSize)
+                      string barsize, string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading)
         {
             this.mainViewModel = mainViewModel;
 
@@ -151,6 +161,10 @@ namespace TradingSoftware
             this.IsTrading = isTrading;
 
             this._equity = equity;
+            if (isFutureTrading)
+            {
+                this._equity = ConvertToFutures(equity.Symbol);
+            }
             this.Amount = amount;
             this.Barsize = barsize;
             this.DataType = dataType;
@@ -159,8 +173,38 @@ namespace TradingSoftware
 
             this.didFirst = false;
             this._currentPosition = 0;
+            this._isFutureTrading = isFutureTrading;
 
             this.Thread = new Thread(this.Run);
+        }
+
+        public Future ConvertToFutures(string input)
+        {
+            string expiry = "201" + input.ElementAt(3);
+            switch ((input.ElementAt(2) + "").ToUpper())
+            {
+                case ("Z"):
+                    expiry += "12";
+                    break;
+
+                case ("Q"):
+                    expiry += "09";
+                    break;
+
+                case ("H"):
+                    expiry += "03";
+                    break;
+
+                case ("M"):
+                    expiry += "06";
+                    break;
+
+                default:
+                    break;
+            }
+
+            //
+            return new Future(input.ElementAt(0) + "" + input.ElementAt(1), "GLOBEX", expiry);
         }
 
         public void Stop()
@@ -192,8 +236,8 @@ namespace TradingSoftware
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>());
 
                     //For testing purposes
-                    /*this.Signals[this.Signals.Count - 2] = 0;
-                    this.Signals[this.Signals.Count - 1] = -1;*/
+                    this.Signals[this.Signals.Count - 2] = 0;
+                    this.Signals[this.Signals.Count - 1] = 1;
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
@@ -248,6 +292,7 @@ namespace TradingSoftware
                                         isBuy = true;
                                     }
 
+                                    // TODO: Wrong with Futures
                                     this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
                                     this.IBOutput.Connect();
 
@@ -302,9 +347,9 @@ namespace TradingSoftware
                                     {
                                         // iboutput place and execute
                                         if (isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * this.RoundLotSize, PricePremiumPercentage);
+                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
                                         else if (!isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * this.RoundLotSize, PricePremiumPercentage);
+                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
 
                                         this.CurrentPosition = newSignal;
                                         this.IBOutput.Disconnect();
@@ -319,7 +364,7 @@ namespace TradingSoftware
 
         public void loadHistoricalData()
         {
-            this.realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
+            this.realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute, _isFutureTrading);
 
             this.realTimeDataClient.Connect();
 
@@ -343,7 +388,7 @@ namespace TradingSoftware
 
             if (RunThread)
             {
-                var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute);
+                var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute, _isFutureTrading);
                 historicalDataClient.Connect();
 
                 //request historical data bars
