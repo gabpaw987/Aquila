@@ -30,14 +30,14 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
 
             Worker worker = new Worker(this.mainViewModel,
-                                       new Equity("AAPL"),
+                                       new Equity("NQH4"),
                                        true,
-                                       100000,
+                                       250000,
                                        "mBar",
                                        "Trades",
                                        100,
                                        100,
-                                       false);
+                                       true);
             worker.Start();
 
             this.mainViewModel.Workers.Add(worker);
