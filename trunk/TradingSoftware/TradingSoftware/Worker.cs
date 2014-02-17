@@ -49,11 +49,11 @@ namespace TradingSoftware
             get { return _barsize.ToString(); }
             set
             {
-                if (value.Equals("mBar"))
+                if (value.Equals("mBar") || value.Equals("Minute"))
                 {
                     _barsize = BarSize.OneMinute;
                 }
-                else if (value.Equals("dBar"))
+                else if (value.Equals("dBar") || value.Equals("Daily"))
                 {
                     _barsize = BarSize.OneDay;
                 }
@@ -150,8 +150,8 @@ namespace TradingSoftware
 
         private IBInput realTimeDataClient;
 
-        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount,
-                      string barsize, string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading)
+        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize, string dataType,
+                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition)
         {
             this.mainViewModel = mainViewModel;
 
@@ -172,7 +172,7 @@ namespace TradingSoftware
             this.RoundLotSize = roundLotSize;
 
             this.didFirst = false;
-            this._currentPosition = 0;
+            this._currentPosition = currentPosition;
             this._isFutureTrading = isFutureTrading;
 
             this.Thread = new Thread(this.Run);
@@ -247,117 +247,110 @@ namespace TradingSoftware
                 }
                 if (IsTrading)
                 {
-                    if ((Signals[Signals.Count - 1] != Signals[Signals.Count - 2]) || !this.didFirst || this.shallReenter)
+                    if ((this.Signals[this.Signals.Count - 1] != this._currentPosition) || this.shallReenter)
                     {
-                        if (!(this.Signals[this.Signals.Count - 1] == 0 && !this.didFirst))
+                        int oldSignal = _currentPosition;
+
+                        int newSignal = Signals[Signals.Count - 1];
+
+                        SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
+                        sound.Play();
+
+                        MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                        if (dialogResult == MessageBoxResult.Cancel)
                         {
-                            this.didFirst = true;
-                            int oldSignal = 0;
-
-                            if (this.didFirst)
+                            if (_currentPosition != newSignal)
                             {
-                                oldSignal = _currentPosition;
-                            }
+                                bool isBuy = false;
+                                int toZero = 0;
+                                int fromZero = 0;
 
-                            int newSignal = Signals[Signals.Count - 1];
-
-                            SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
-                            sound.Play();
-
-                            MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
-                            if (dialogResult == MessageBoxResult.Cancel)
-                            {
-                                if (_currentPosition != newSignal)
+                                if ((newSignal > 0 && oldSignal < 0) ||
+                                    (newSignal < 0 && oldSignal > 0))
                                 {
-                                    bool isBuy = false;
-                                    int toZero = 0;
-                                    int fromZero = 0;
+                                    toZero = 0 - oldSignal;
+                                    fromZero = newSignal;
+                                }
+                                else if (newSignal != 0)
+                                {
+                                    //kaufen und verkaufen newSignal - oldSignal
+                                    toZero = newSignal - oldSignal;
+                                }
+                                else if (newSignal == 0)
+                                {
+                                    toZero = 0 - oldSignal;
+                                }
 
-                                    if ((newSignal > 0 && oldSignal < 0) ||
-                                        (newSignal < 0 && oldSignal > 0))
-                                    {
-                                        toZero = 0 - oldSignal;
-                                        fromZero = newSignal;
-                                    }
-                                    else if (newSignal != 0)
-                                    {
-                                        //kaufen und verkaufen newSignal - oldSignal
-                                        toZero = newSignal - oldSignal;
-                                    }
-                                    else if (newSignal == 0)
-                                    {
-                                        toZero = 0 - oldSignal;
-                                    }
+                                if (Math.Sign(toZero) == 1)
+                                {
+                                    isBuy = true;
+                                }
 
-                                    if (Math.Sign(toZero) == 1)
-                                    {
-                                        isBuy = true;
-                                    }
+                                // TODO: Wrong with Futures
+                                this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
+                                this.IBOutput.Connect();
 
-                                    // TODO: Wrong with Futures
-                                    this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
-                                    this.IBOutput.Connect();
+                                this.IBOutput.RequestTickPrice();
 
-                                    this.IBOutput.RequestTickPrice();
+                                decimal roundLotPrice = 0m;
 
-                                    decimal roundLotPrice = 0m;
+                                if (isBuy)
+                                {
+                                    roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
+                                }
+                                else
+                                {
+                                    roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
+                                }
 
-                                    if (isBuy)
-                                    {
-                                        roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
-                                    }
-                                    else
-                                    {
-                                        roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
-                                    }
+                                int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
 
-                                    int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
+                                //Not used at the moment
+                                /*int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
+                                int three = (int)(this.Amount / roundLotPrice);*/
+
+                                int amountToZero = 0;
+                                switch (toZero)
+                                {
+                                    case 1:
+                                    case -1: { amountToZero = one; break; }
 
                                     //Not used at the moment
-                                    /*int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
-                                    int three = (int)(this.Amount / roundLotPrice);*/
-
-                                    int amountToZero = 0;
-                                    switch (toZero)
+                                    /*case 2:
+                                    case -2: { amountToZero = two; break; }
+                                    case 3:
+                                    case -3: { amountToZero = three; break; }*/
+                                }
+                                int amountFromZero = 0;
+                                if (fromZero != 0)
+                                {
+                                    switch (fromZero)
                                     {
                                         case 1:
-                                        case -1: { amountToZero = one; break; }
+                                        case -1: { amountFromZero = one; break; }
 
                                         //Not used at the moment
                                         /*case 2:
-                                        case -2: { amountToZero = two; break; }
+                                        case -2: { amountFromZero = two; break; }
                                         case 3:
-                                        case -3: { amountToZero = three; break; }*/
-                                    }
-                                    int amountFromZero = 0;
-                                    if (fromZero != 0)
-                                    {
-                                        switch (fromZero)
-                                        {
-                                            case 1:
-                                            case -1: { amountFromZero = one; break; }
-
-                                            //Not used at the moment
-                                            /*case 2:
-                                            case -2: { amountFromZero = two; break; }
-                                            case 3:
-                                            case -3: { amountFromZero = three; break; }*/
-                                        }
-                                    }
-
-                                    if (amountToZero != 0 && IsTrading)
-                                    {
-                                        // iboutput place and execute
-                                        if (isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
-                                        else if (!isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
-
-                                        this.CurrentPosition = newSignal;
-                                        this.IBOutput.Disconnect();
+                                        case -3: { amountFromZero = three; break; }*/
                                     }
                                 }
+
+                                if (amountToZero != 0 && IsTrading)
+                                {
+                                    // iboutput place and execute
+                                    if (isBuy)
+                                        this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+                                    else if (!isBuy)
+                                        this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+
+                                    this.CurrentPosition = newSignal;
+                                    this.IBOutput.Disconnect();
+                                }
                             }
+
+                            this.didFirst = true;
                         }
                     }
                 }

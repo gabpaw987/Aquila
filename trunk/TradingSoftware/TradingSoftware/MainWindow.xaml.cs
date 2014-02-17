@@ -30,14 +30,15 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
 
             Worker worker = new Worker(this.mainViewModel,
-                                       new Equity("NQH4"),
-                                       true,
-                                       250000,
-                                       "mBar",
-                                       "Trades",
-                                       100,
-                                       100,
-                                       true);
+                                        new Equity("NQH4"),
+                                        true,
+                                        250000,
+                                        "mBar",
+                                        "Trades",
+                                        100,
+                                        100,
+                                        true,
+                                        0);
             worker.Start();
 
             this.mainViewModel.Workers.Add(worker);
@@ -79,7 +80,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
                                        this.mainViewModel.CreationRoundLotSize,
-                                       false);
+                                       this.mainViewModel.CreationIsFuture,
+                                       this.mainViewModel.CreationCurrentPosition);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 

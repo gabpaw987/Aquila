@@ -196,5 +196,43 @@ namespace TradingSoftware
                 }
             }
         }
+
+        private int _creationCurrentPosition;
+
+        public int CreationCurrentPosition
+        {
+            get
+            {
+                return _creationCurrentPosition;
+            }
+            set
+            {
+                if (value != _creationCurrentPosition)
+                {
+                    _creationCurrentPosition = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationCurrentPosition"));
+                }
+            }
+        }
+
+        private bool _creationIsFuture;
+
+        public bool CreationIsFuture
+        {
+            get
+            {
+                return _creationIsFuture;
+            }
+            set
+            {
+                if (value != _creationIsFuture)
+                {
+                    _creationIsFuture = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationIsFuture"));
+                }
+            }
+        }
     }
 }

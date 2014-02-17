@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krs.Ats.IBNet;
-using Krs.Ats.IBNet.Contracts;
 using MoreLinq;
 
 namespace TradingSoftware
@@ -66,9 +65,9 @@ namespace TradingSoftware
         {
             //inputClient.RequestHistoricalData(IBID.TickerID++,this.Equity, DateTime.Now, timeSpan,Barsize, HistoricalDataType.Trades,1)
             if (this.Barsize == BarSize.OneMinute)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
+                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
             else if (this.Barsize == BarSize.OneDay)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, 1);
+                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
         }
 
         /// <summary>
