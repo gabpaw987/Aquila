@@ -237,9 +237,9 @@ namespace TradingSoftware
 
                     //For testing purposes
                     //this.Signals[this.Signals.Count - 2] = 0;
-                    //this.Signals[this.Signals.Count - 1] = 1;
+                    //this.Signals[this.Signals.Count - 1] = 0;
                     //if (this.didFirst)
-                    //    this.Signals[this.Signals.Count - 1] = -1;
+                    //    this.Signals[this.Signals.Count - 1] = -2;
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
@@ -259,7 +259,7 @@ namespace TradingSoftware
                         MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
                         if (dialogResult == MessageBoxResult.Cancel)
                         {
-                            if (_currentPosition != newSignal)
+                            if (oldSignal != newSignal)
                             {
                                 bool isBuy = false;
                                 int toZero = 0;
@@ -286,7 +286,7 @@ namespace TradingSoftware
                                     isBuy = true;
                                 }
 
-                                // TODO: Wrong with Futures
+                                // ???TODO: Wrong with Futures???
                                 this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
                                 this.IBOutput.Connect();
 
@@ -304,22 +304,18 @@ namespace TradingSoftware
                                 }
 
                                 int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
-
-                                //Not used at the moment
-                                /*int two = (int)(((this.Amount / roundLotPrice) * 2m) / 3m);
-                                int three = (int)(this.Amount / roundLotPrice);*/
+                                int two = 2; //(int)(((this.Amount / roundLotPrice) * 2m) / 3m);
+                                int three = 3; //(int)(this.Amount / roundLotPrice);
 
                                 int amountToZero = 0;
                                 switch (toZero)
                                 {
                                     case 1:
                                     case -1: { amountToZero = one; break; }
-
-                                    //Not used at the moment
-                                    /*case 2:
+                                    case 2:
                                     case -2: { amountToZero = two; break; }
                                     case 3:
-                                    case -3: { amountToZero = three; break; }*/
+                                    case -3: { amountToZero = three; break; }
                                 }
                                 int amountFromZero = 0;
                                 if (fromZero != 0)
@@ -328,12 +324,10 @@ namespace TradingSoftware
                                     {
                                         case 1:
                                         case -1: { amountFromZero = one; break; }
-
-                                        //Not used at the moment
-                                        /*case 2:
+                                        case 2:
                                         case -2: { amountFromZero = two; break; }
                                         case 3:
-                                        case -3: { amountFromZero = three; break; }*/
+                                        case -3: { amountFromZero = three; break; }
                                     }
                                 }
 

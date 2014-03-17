@@ -105,9 +105,13 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="4" Grid.Column="1">
                                     <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationCurrentPosition}">
+                                        <ComboBoxItem>-3</ComboBoxItem>
+                                        <ComboBoxItem>-2</ComboBoxItem>
                                         <ComboBoxItem>-1</ComboBoxItem>
                                         <ComboBoxItem IsSelected="True">0</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
+                                        <ComboBoxItem>2</ComboBoxItem>
+                                        <ComboBoxItem>3</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
 
