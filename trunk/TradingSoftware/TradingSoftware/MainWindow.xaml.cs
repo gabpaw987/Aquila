@@ -38,7 +38,8 @@ namespace TradingSoftware
                                         100,
                                         100,
                                         true,
-                                        0);
+                                        0,
+                                        false);
             worker.Start();
 
             this.mainViewModel.Workers.Add(worker);
@@ -71,7 +72,7 @@ namespace TradingSoftware
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: add GUI Component
+            // TODO: block creation if something is not filled out
             Worker worker = new Worker(this.mainViewModel,
                                        new Equity(this.mainViewModel.CreationSymbol),
                                        this.mainViewModel.CreationIsTrading,
@@ -81,7 +82,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationPricePremiumPercentage,
                                        this.mainViewModel.CreationRoundLotSize,
                                        this.mainViewModel.CreationIsFuture,
-                                       this.mainViewModel.CreationCurrentPosition);
+                                       this.mainViewModel.CreationCurrentPosition,
+                                       this.mainViewModel.CreationShallIgnoreFirstSignal);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 

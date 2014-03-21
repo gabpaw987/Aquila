@@ -57,14 +57,16 @@
 
                                 <!-- Text-Labels -->
                                 <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Symbol:</Label>
-                                <Label Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">Is Trading?</Label>
+                                <Label Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">Is trading?</Label>
                                 <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Amount:</Label>
                                 <Label Grid.Row="1" Grid.Column="3" VerticalAlignment="Center">Barsize:</Label>
                                 <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Data type:</Label>
                                 <Label Grid.Row="2" Grid.Column="3" VerticalAlignment="Center">Price premium:</Label>
                                 <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Round lot size:</Label>
-                                <Label Grid.Row="3" Grid.Column="3" VerticalAlignment="Center">Is Future?</Label>
+                                <Label Grid.Row="3" Grid.Column="3" VerticalAlignment="Center">Is future?</Label>
                                 <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Current Position:</Label>
+                                <Label Grid.Row="4" Grid.Column="3" VerticalAlignment="Center">Shall ignore first signal?</Label>
+
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="1">
                                     <TextBox Width="130" Text="{Binding Path=CreationSymbol}" />
                                 </StackPanel>
@@ -113,6 +115,9 @@
                                         <ComboBoxItem>2</ComboBoxItem>
                                         <ComboBoxItem>3</ComboBoxItem>
                                     </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="4" Grid.Column="4">
+                                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=CreationShallIgnoreFirstSignal}"/>
                                 </StackPanel>
 
                                 <Button Click="CreateButton_Click" Height="24" Width="100" Grid.Row="5" Grid.Column="4"

@@ -234,5 +234,24 @@ namespace TradingSoftware
                 }
             }
         }
+
+        private bool _creationShallIgnoreFirstSignal;
+
+        public bool CreationShallIgnoreFirstSignal
+        {
+            get
+            {
+                return _creationShallIgnoreFirstSignal;
+            }
+            set
+            {
+                if (value != _creationShallIgnoreFirstSignal)
+                {
+                    _creationShallIgnoreFirstSignal = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationShallIgnoreFirstSignal"));
+                }
+            }
+        }
     }
 }

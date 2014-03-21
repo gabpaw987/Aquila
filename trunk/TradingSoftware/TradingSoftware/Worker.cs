@@ -134,6 +134,15 @@ namespace TradingSoftware
             set { _isFutureTrading = value; }
         }
 
+        public bool _shallIgnoreFirstSignal;
+
+        [DisplayName("Shall Ignore First Signal")]
+        public bool ShallIgnoreFirstSignal
+        {
+            get { return _shallIgnoreFirstSignal; }
+            set { _shallIgnoreFirstSignal = value; }
+        }
+
         private MainViewModel mainViewModel;
 
         private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
@@ -147,11 +156,12 @@ namespace TradingSoftware
 
         private bool didFirst;
         public bool shallReenter;
+        public bool hasFirstSignalPassed;
 
         private IBInput realTimeDataClient;
 
         public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize, string dataType,
-                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition)
+                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition, bool shallIgnoreFirstSignal)
         {
             this.mainViewModel = mainViewModel;
 
@@ -160,11 +170,15 @@ namespace TradingSoftware
 
             this.IsTrading = isTrading;
 
-            this._equity = equity;
             if (isFutureTrading)
             {
                 this._equity = ConvertToFutures(equity.Symbol);
             }
+            else
+            {
+                this._equity = equity;
+            }
+
             this.Amount = amount;
             this.Barsize = barsize;
             this.DataType = dataType;
@@ -172,8 +186,10 @@ namespace TradingSoftware
             this.RoundLotSize = roundLotSize;
 
             this.didFirst = false;
-            this._currentPosition = currentPosition;
-            this._isFutureTrading = isFutureTrading;
+            this.hasFirstSignalPassed = false;
+            this.CurrentPosition = currentPosition;
+            this.IsFutureTrading = isFutureTrading;
+            this.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
 
             this.Thread = new Thread(this.Run);
         }
@@ -236,10 +252,10 @@ namespace TradingSoftware
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>());
 
                     //For testing purposes
-                    //this.Signals[this.Signals.Count - 2] = 0;
-                    //this.Signals[this.Signals.Count - 1] = 0;
-                    //if (this.didFirst)
-                    //    this.Signals[this.Signals.Count - 1] = -2;
+                    this.Signals[this.Signals.Count - 2] = 0;
+                    this.Signals[this.Signals.Count - 1] = 1;
+                    if (this.didFirst)
+                        this.Signals[this.Signals.Count - 1] = 3;
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
@@ -249,101 +265,113 @@ namespace TradingSoftware
                 {
                     if ((this.Signals[this.Signals.Count - 1] != this._currentPosition) || this.shallReenter)
                     {
-                        int oldSignal = _currentPosition;
-
-                        int newSignal = Signals[Signals.Count - 1];
-
-                        SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
-                        sound.Play();
-
-                        MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
-                        if (dialogResult == MessageBoxResult.Cancel)
+                        if ((this.didFirst && this.ShallIgnoreFirstSignal && (this.Signals[this.Signals.Count - 1] != this.Signals[this.Signals.Count - 2])))
                         {
-                            if (oldSignal != newSignal)
+                            this.hasFirstSignalPassed = true;
+                        }
+
+                        if (this.hasFirstSignalPassed || !this.ShallIgnoreFirstSignal)
+                        {
+                            int oldSignal = _currentPosition;
+
+                            int newSignal = Signals[Signals.Count - 1];
+
+                            SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
+                            sound.Play();
+
+                            MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                            if (dialogResult == MessageBoxResult.Cancel)
                             {
-                                bool isBuy = false;
-                                int toZero = 0;
-                                int fromZero = 0;
-
-                                if ((newSignal > 0 && oldSignal < 0) ||
-                                    (newSignal < 0 && oldSignal > 0))
+                                if (oldSignal != newSignal)
                                 {
-                                    toZero = 0 - oldSignal;
-                                    fromZero = newSignal;
-                                }
-                                else if (newSignal != 0)
-                                {
-                                    //kaufen und verkaufen newSignal - oldSignal
-                                    toZero = newSignal - oldSignal;
-                                }
-                                else if (newSignal == 0)
-                                {
-                                    toZero = 0 - oldSignal;
-                                }
+                                    bool isBuy = false;
+                                    int toZero = 0;
+                                    int fromZero = 0;
 
-                                if (Math.Sign(toZero) == 1)
-                                {
-                                    isBuy = true;
-                                }
+                                    if ((newSignal > 0 && oldSignal < 0) ||
+                                        (newSignal < 0 && oldSignal > 0))
+                                    {
+                                        toZero = 0 - oldSignal;
+                                        fromZero = newSignal;
+                                    }
+                                    else if (newSignal != 0)
+                                    {
+                                        //kaufen und verkaufen newSignal - oldSignal
+                                        toZero = newSignal - oldSignal;
+                                    }
+                                    else if (newSignal == 0)
+                                    {
+                                        toZero = 0 - oldSignal;
+                                    }
 
-                                // ???TODO: Wrong with Futures???
-                                this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
-                                this.IBOutput.Connect();
+                                    if (Math.Sign(toZero) == 1)
+                                    {
+                                        isBuy = true;
+                                    }
 
-                                this.IBOutput.RequestTickPrice();
+                                    // ???TODO: Wrong with Futures???
+                                    this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
+                                    this.IBOutput.Connect();
 
-                                decimal roundLotPrice = 0m;
+                                    this.IBOutput.RequestTickPrice();
 
-                                if (isBuy)
-                                {
-                                    roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
-                                }
-                                else
-                                {
-                                    roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
-                                }
+                                    decimal roundLotPrice = 0m;
 
-                                int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
-                                int two = 2; //(int)(((this.Amount / roundLotPrice) * 2m) / 3m);
-                                int three = 3; //(int)(this.Amount / roundLotPrice);
+                                    if (isBuy)
+                                    {
+                                        roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
+                                    }
+                                    else
+                                    {
+                                        roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
+                                    }
 
-                                int amountToZero = 0;
-                                switch (toZero)
-                                {
-                                    case 1:
-                                    case -1: { amountToZero = one; break; }
-                                    case 2:
-                                    case -2: { amountToZero = two; break; }
-                                    case 3:
-                                    case -3: { amountToZero = three; break; }
-                                }
-                                int amountFromZero = 0;
-                                if (fromZero != 0)
-                                {
-                                    switch (fromZero)
+                                    int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
+                                    int two = 2; //(int)(((this.Amount / roundLotPrice) * 2m) / 3m);
+                                    int three = 3; //(int)(this.Amount / roundLotPrice);
+
+                                    int amountToZero = 0;
+                                    switch (toZero)
                                     {
                                         case 1:
-                                        case -1: { amountFromZero = one; break; }
+                                        case -1: { amountToZero = one; break; }
                                         case 2:
-                                        case -2: { amountFromZero = two; break; }
+                                        case -2: { amountToZero = two; break; }
                                         case 3:
-                                        case -3: { amountFromZero = three; break; }
+                                        case -3: { amountToZero = three; break; }
+                                    }
+                                    int amountFromZero = 0;
+                                    if (fromZero != 0)
+                                    {
+                                        switch (fromZero)
+                                        {
+                                            case 1:
+                                            case -1: { amountFromZero = one; break; }
+                                            case 2:
+                                            case -2: { amountFromZero = two; break; }
+                                            case 3:
+                                            case -3: { amountFromZero = three; break; }
+                                        }
+                                    }
+
+                                    if (amountToZero != 0 && IsTrading)
+                                    {
+                                        // iboutput place and execute
+                                        if (isBuy)
+                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+                                        else if (!isBuy)
+                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+
+                                        this.CurrentPosition = newSignal;
+                                        this.IBOutput.Disconnect();
                                     }
                                 }
 
-                                if (amountToZero != 0 && IsTrading)
-                                {
-                                    // iboutput place and execute
-                                    if (isBuy)
-                                        this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
-                                    else if (!isBuy)
-                                        this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
-
-                                    this.CurrentPosition = newSignal;
-                                    this.IBOutput.Disconnect();
-                                }
+                                this.didFirst = true;
                             }
-
+                        }
+                        else
+                        {
                             this.didFirst = true;
                         }
                     }
