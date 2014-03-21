@@ -252,10 +252,10 @@ namespace TradingSoftware
                     Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>());
 
                     //For testing purposes
-                    this.Signals[this.Signals.Count - 2] = 0;
-                    this.Signals[this.Signals.Count - 1] = 1;
-                    if (this.didFirst)
-                        this.Signals[this.Signals.Count - 1] = 3;
+                    //this.Signals[this.Signals.Count - 2] = 0;
+                    //this.Signals[this.Signals.Count - 1] = 1;
+                    //if (this.didFirst)
+                    //    this.Signals[this.Signals.Count - 1] = 3;
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
