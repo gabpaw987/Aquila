@@ -11,15 +11,22 @@ using Krs.Ats.IBNet.Contracts;
 namespace TradingSoftware
 {
     [Serializable()]
-    public class Worker
+    public class Worker : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public bool _isTrading;
 
         [DisplayName("Is trading?")]
         public bool IsTrading
         {
             get { return _isTrading; }
-            set { _isTrading = value; }
+            set
+            {
+                _isTrading = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsTrading"));
+            }
         }
 
         private Contract _equity;
@@ -29,7 +36,12 @@ namespace TradingSoftware
         {
             get { return _equity.Symbol; }
 
-            //set { _equity = new Equity(value); }
+            //set
+            //{
+            //    _equity = new Equity(value);
+            //    if (PropertyChanged != null)
+            //        PropertyChanged(this, new PropertyChangedEventArgs("Equity"));
+            //}
         }
 
         private decimal _amount;
@@ -38,7 +50,12 @@ namespace TradingSoftware
         public decimal Amount
         {
             get { return _amount; }
-            set { _amount = value; }
+            set
+            {
+                _amount = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Amount"));
+            }
         }
 
         private BarSize _barsize;
@@ -57,6 +74,9 @@ namespace TradingSoftware
                 {
                     _barsize = BarSize.OneDay;
                 }
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Barsize"));
             }
         }
 
@@ -95,6 +115,9 @@ namespace TradingSoftware
                     _historicalType = HistoricalDataType.Midpoint;
                     _realtimeType = RealTimeBarType.Midpoint;
                 }
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataType"));
             }
         }
 
@@ -104,7 +127,12 @@ namespace TradingSoftware
         public decimal PricePremiumPercentage
         {
             get { return _pricePremiumPercentage; }
-            set { _pricePremiumPercentage = value; }
+            set
+            {
+                _pricePremiumPercentage = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("PricePremiumPercentage"));
+            }
         }
 
         public int _roundLotSize;
@@ -113,7 +141,12 @@ namespace TradingSoftware
         public int RoundLotSize
         {
             get { return _roundLotSize; }
-            set { _roundLotSize = value; }
+            set
+            {
+                _roundLotSize = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("RoundLotSize"));
+            }
         }
 
         public int _currentPosition;
@@ -122,7 +155,12 @@ namespace TradingSoftware
         public int CurrentPosition
         {
             get { return _currentPosition; }
-            set { _currentPosition = value; }
+            set
+            {
+                _currentPosition = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentPosition"));
+            }
         }
 
         public bool _isFutureTrading;
@@ -131,7 +169,12 @@ namespace TradingSoftware
         public bool IsFutureTrading
         {
             get { return _isFutureTrading; }
-            set { _isFutureTrading = value; }
+            set
+            {
+                _isFutureTrading = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsFutureTrading"));
+            }
         }
 
         public bool _shallIgnoreFirstSignal;
@@ -140,7 +183,12 @@ namespace TradingSoftware
         public bool ShallIgnoreFirstSignal
         {
             get { return _shallIgnoreFirstSignal; }
-            set { _shallIgnoreFirstSignal = value; }
+            set
+            {
+                _shallIgnoreFirstSignal = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("ShallIgnoreFirstSignal"));
+            }
         }
 
         private MainViewModel mainViewModel;
@@ -154,9 +202,17 @@ namespace TradingSoftware
         // to stop the thread from the main method
         public bool RunThread = true;
 
+        //To stop the trading and close all current positions
+        private bool isStopTrading = false;
+        //To let the current signal run through and stop trading after that
+        private bool isStopTradingAfterSignal = false;
+
         private bool didFirst;
         public bool shallReenter;
         public bool hasFirstSignalPassed;
+
+        //is -100 if no signal was ignored recently
+        public int lastIgnoredSignal;
 
         private IBInput realTimeDataClient;
 
@@ -190,6 +246,8 @@ namespace TradingSoftware
             this.CurrentPosition = currentPosition;
             this.IsFutureTrading = isFutureTrading;
             this.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
+
+            this.lastIgnoredSignal = -100;
 
             this.Thread = new Thread(this.Run);
         }
@@ -243,7 +301,7 @@ namespace TradingSoftware
                 //DONE: wait till new bar is ready
                 if (_barsize.Equals(BarSize.OneMinute))
                 {
-                    while (length == this.Bars.Count && this.RunThread)
+                    while (length == this.Bars.Count && this.RunThread && !this.isStopTrading)
                     {
                         Thread.Sleep(1000);
                     }
@@ -253,9 +311,23 @@ namespace TradingSoftware
 
                     //For testing purposes
                     //this.Signals[this.Signals.Count - 2] = 0;
-                    //this.Signals[this.Signals.Count - 1] = 1;
+                    //this.Signals[this.Signals.Count - 1] = 3;
                     //if (this.didFirst)
-                    //    this.Signals[this.Signals.Count - 1] = 3;
+                    //    this.Signals[this.Signals.Count - 1] = 1;
+
+                    //Stop if isStopTradingAfterSignal is true and the signal is finished
+                    if (this.isStopTradingAfterSignal &&
+                       (Math.Sign(this.Signals[this.Signals.Count - 1]) != Math.Sign(this.CurrentPosition) ||
+                        Math.Sign(this.Signals[this.Signals.Count - 1]) == 0 ||
+                        this.CurrentPosition == 0))
+                    {
+                        this.isStopTrading = true;
+                    }
+
+                    if (this.isStopTrading)
+                    {
+                        this.Signals[this.Signals.Count - 1] = 0;
+                    }
 
                     this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
 
@@ -263,8 +335,22 @@ namespace TradingSoftware
                 }
                 if (IsTrading)
                 {
-                    if ((this.Signals[this.Signals.Count - 1] != this._currentPosition) || this.shallReenter)
+                    if (this.Signals[this.Signals.Count - 1] == 0)
                     {
+                        //just for testing purposes, but didFirst is generally almost only for testing purposes so it can stay like that
+                        this.didFirst = true;
+
+                        this.hasFirstSignalPassed = true;
+                    }
+
+                    if (((this.Signals[this.Signals.Count - 1] != this._currentPosition) || this.shallReenter)
+                        && (this.lastIgnoredSignal != this.Signals[this.Signals.Count - 1]))
+                    {
+                        if (this.lastIgnoredSignal != -100)
+                        {
+                            this.lastIgnoredSignal = -100;
+                        }
+
                         if ((this.didFirst && this.ShallIgnoreFirstSignal && (this.Signals[this.Signals.Count - 1] != this.Signals[this.Signals.Count - 2])))
                         {
                             this.hasFirstSignalPassed = true;
@@ -279,7 +365,16 @@ namespace TradingSoftware
                             SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
                             sound.Play();
 
-                            MessageBoxResult dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                            MessageBoxResult dialogResult;
+
+                            if (!isStopTrading)
+                            {
+                                dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                            }
+                            else
+                            {
+                                dialogResult = MessageBoxResult.Cancel;
+                            }
                             if (dialogResult == MessageBoxResult.Cancel)
                             {
                                 if (oldSignal != newSignal)
@@ -309,7 +404,6 @@ namespace TradingSoftware
                                         isBuy = true;
                                     }
 
-                                    // ???TODO: Wrong with Futures???
                                     this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
                                     this.IBOutput.Connect();
 
@@ -369,11 +463,31 @@ namespace TradingSoftware
 
                                 this.didFirst = true;
                             }
+                            else
+                            {
+                                this.didFirst = true;
+                                this.lastIgnoredSignal = this.Signals[this.Signals.Count - 1];
+                            }
                         }
                         else
                         {
                             this.didFirst = true;
                         }
+                    }
+
+                    if (isStopTradingAfterSignal)
+                    {
+                        this.isStopTradingAfterSignal = false;
+                    }
+
+                    if (this.isStopTrading)
+                    {
+                        this.IsTrading = false;
+                        this.isStopTrading = false;
+
+                        //To Ignore the first signal again after stopping, if wanted
+                        this.didFirst = false;
+                        this.hasFirstSignalPassed = false;
                     }
                 }
             }
@@ -425,6 +539,16 @@ namespace TradingSoftware
         public void Start()
         {
             this.Thread.Start();
+        }
+
+        public void StopTrading()
+        {
+            this.isStopTrading = true;
+        }
+
+        public void StopTradingAfterSignal()
+        {
+            this.isStopTradingAfterSignal = true;
         }
     }
 }

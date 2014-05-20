@@ -30,7 +30,7 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
 
             Worker worker = new Worker(this.mainViewModel,
-                                        new Equity("NQH4"),
+                                        new Equity("NQM4"),
                                         true,
                                         250000,
                                         "mBar",
@@ -39,7 +39,7 @@ namespace TradingSoftware
                                         100,
                                         true,
                                         0,
-                                        false);
+                                        true);
             worker.Start();
 
             this.mainViewModel.Workers.Add(worker);
@@ -102,6 +102,26 @@ namespace TradingSoftware
         {
             Worker worker = ((FrameworkElement)sender).DataContext as Worker;
             worker.shallReenter = true;
+        }
+
+        private void StopOneWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
+            worker.StopTrading();
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                worker.StopTrading();
+            }
+        }
+
+        private void StopAfterSignalButton_Click(object sender, RoutedEventArgs e)
+        {
+            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
+            worker.StopTradingAfterSignal();
         }
     }
 }
