@@ -64,10 +64,13 @@ namespace TradingSoftware
         public void GetHistoricalDataBars(TimeSpan timeSpan)
         {
             //inputClient.RequestHistoricalData(IBID.TickerID++,this.Equity, DateTime.Now, timeSpan,Barsize, HistoricalDataType.Trades,1)
-            if (this.Barsize == BarSize.OneMinute)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
-            else if (this.Barsize == BarSize.OneDay)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+            lock (IBID.TickerLock)
+            {
+                if (this.Barsize == BarSize.OneMinute)
+                    inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+                else if (this.Barsize == BarSize.OneDay)
+                    inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+            }
         }
 
         /// <summary>
@@ -77,7 +80,10 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public void SubscribeForRealTimeBars()
         {
-            inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, (this.IsFuture) ? false : true);
+            lock (IBID.TickerLock)
+            {
+                inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, (this.IsFuture) ? false : true);
+            }
         }
 
         /// <summary>
@@ -158,7 +164,10 @@ namespace TradingSoftware
                     {
                         b = AggregateBar();
                         RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
-                        this.mainViewModel.ConsoleText += "Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
+                        lock (IBID.ConsoleTextLock)
+                        {
+                            this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
+                        }
                         ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
                     }
                 }
@@ -198,7 +207,10 @@ namespace TradingSoftware
             {
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
-                this.mainViewModel.ConsoleText += "Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                }
 
                 //parses the received bar to one of my bars
                 ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
@@ -221,9 +233,18 @@ namespace TradingSoftware
             //establishing a connection
             try
             {
-                this.mainViewModel.ConsoleText += "Connecting to IB.\n";
-                inputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
-                this.mainViewModel.ConsoleText += "Successfully connected.\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Connecting to IB.\n";
+                }
+                lock (IBID.ConnectionLock)
+                {
+                    inputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
+                }
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
+                }
 
                 //Add our event-handling methods to the inputClient.
                 //After this, the inputClient knows, which methods it should call when a Historical or a realtime bar arrives.

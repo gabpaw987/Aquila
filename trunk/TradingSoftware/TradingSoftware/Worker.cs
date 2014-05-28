@@ -329,7 +329,10 @@ namespace TradingSoftware
                         this.Signals[this.Signals.Count - 1] = 0;
                     }
 
-                    this.mainViewModel.SignalText += "Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
+                    lock (IBID.ConsoleTextLock)
+                    {
+                        this.mainViewModel.SignalText += this.Equity + ": Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
+                    }
 
                     length = this.Bars.Count;
                 }
@@ -362,19 +365,26 @@ namespace TradingSoftware
 
                             int newSignal = Signals[Signals.Count - 1];
 
-                            SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
-                            sound.Play();
+                            lock (IBID.SoundLock)
+                            {
+                                //Ensure that only one AutoClosingMessageBox gets opened at a time
+                                Thread.Sleep(200);
+
+                                SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
+                                sound.Play();
+                            }
 
                             MessageBoxResult dialogResult;
-
+                            
                             if (!isStopTrading)
                             {
-                                dialogResult = AutoClosingMessageBox.Show("New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                                dialogResult = AutoClosingMessageBox.Show(this.Equity + ": New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
                             }
                             else
                             {
                                 dialogResult = MessageBoxResult.Cancel;
                             }
+
                             if (dialogResult == MessageBoxResult.Cancel)
                             {
                                 if (oldSignal != newSignal)
@@ -499,7 +509,10 @@ namespace TradingSoftware
 
             this.realTimeDataClient.Connect();
 
-            this.mainViewModel.ConsoleText += "Start receiving realtime bars...\n";
+            lock (IBID.ConsoleTextLock)
+            {
+                this.mainViewModel.ConsoleText += this.Equity + ": Start receiving realtime bars...\n";
+            }
             this.realTimeDataClient.SubscribeForRealTimeBars();
 
             //Wait for first 5sec bar
@@ -523,7 +536,10 @@ namespace TradingSoftware
                 historicalDataClient.Connect();
 
                 //request historical data bars
-                this.mainViewModel.ConsoleText += "Please wait... Historical minute bars are getting fetched!\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.mainViewModel.ConsoleText += this.Equity + ": Please wait... Historical minute bars are getting fetched!\n";
+                }
                 historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
 
                 while ((this.Bars.Count < historicalDataClient.totalHistoricalBars ||

@@ -42,7 +42,24 @@ namespace TradingSoftware
                                         true);
             worker.Start();
 
+            /* Second worker for testing purposes
             this.mainViewModel.Workers.Add(worker);
+
+            Worker worker2 = new Worker(this.mainViewModel,
+                                        new Equity("ESM4"),
+                                        true,
+                                        250000,
+                                        "mBar",
+                                        "Trades",
+                                        100,
+                                        100,
+                                        true,
+                                        0,
+                                        true);
+            worker2.Start();
+
+            this.mainViewModel.Workers.Add(worker2);
+            */
 
             this.workersGrid.DataContext = this.mainViewModel.Workers;
         }

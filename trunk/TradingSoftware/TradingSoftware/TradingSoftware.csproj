@@ -39,6 +39,10 @@
     <Reference Include="Algorithms, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>lib\Algorithm\Algorithms.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FSharp.Core.4.0.0\lib\FSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Krs.Ats.IBNet">
       <HintPath>lib\Krs.Ats.IBNet.dll</HintPath>
     </Reference>
@@ -101,6 +105,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
