@@ -41,10 +41,10 @@ namespace TradingSoftware
                                         0,
                                         true);
             worker.Start();
-
-            /* Second worker for testing purposes
+                        
             this.mainViewModel.Workers.Add(worker);
 
+            /* Second worker for testing purposes
             Worker worker2 = new Worker(this.mainViewModel,
                                         new Equity("ESM4"),
                                         true,

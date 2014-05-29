@@ -170,8 +170,13 @@ namespace TradingSoftware
         /// <remarks></remarks>
         private void client_NextValidId(object sender, NextValidIdEventArgs e)
         {
-            if (IBID.OrderID == 0)
-                IBID.OrderID = e.OrderId;
+            if (IBID.OrderID == 1)
+            {
+                lock (IBID.OrderLock)
+                {
+                    IBID.OrderID = e.OrderId;
+                }
+            }
         }
 
         public void RequestTickPrice()
@@ -219,7 +224,7 @@ namespace TradingSoftware
                     this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
                 }
 
-                //Add the important eventhandler to the outputClient
+                //Add the important eventhandlers to the outputClient
                 outputClient.NextValidId += client_NextValidId;
                 outputClient.TickPrice += client_TickPrice;
                 outputClient.Error += client_Error;
