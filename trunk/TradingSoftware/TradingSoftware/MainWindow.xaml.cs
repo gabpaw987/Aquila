@@ -39,15 +39,16 @@ namespace TradingSoftware
                                         100,
                                         true,
                                         0,
+                                        true,
                                         true);
             worker.Start();
                         
             this.mainViewModel.Workers.Add(worker);
 
-            /* Second worker for testing purposes
+            // Second worker
             Worker worker2 = new Worker(this.mainViewModel,
                                         new Equity("ESM4"),
-                                        true,
+                                        false,
                                         250000,
                                         "mBar",
                                         "Trades",
@@ -55,11 +56,12 @@ namespace TradingSoftware
                                         100,
                                         true,
                                         0,
+                                        true,
                                         true);
             worker2.Start();
 
             this.mainViewModel.Workers.Add(worker2);
-            */
+            //
 
             this.workersGrid.DataContext = this.mainViewModel.Workers;
         }
@@ -100,7 +102,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationRoundLotSize,
                                        this.mainViewModel.CreationIsFuture,
                                        this.mainViewModel.CreationCurrentPosition,
-                                       this.mainViewModel.CreationShallIgnoreFirstSignal);
+                                       this.mainViewModel.CreationShallIgnoreFirstSignal,
+                                       this.mainViewModel.CreationHasAlgorithmParameters);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 

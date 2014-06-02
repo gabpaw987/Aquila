@@ -253,5 +253,24 @@ namespace TradingSoftware
                 }
             }
         }
+
+        private bool _creationHasAlgorithmParameters;
+
+        public bool CreationHasAlgorithmParameters
+        {
+            get
+            {
+                return _creationHasAlgorithmParameters;
+            }
+            set
+            {
+                if (value != _creationHasAlgorithmParameters)
+                {
+                    _creationHasAlgorithmParameters = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationHasAlgorithmParameters"));
+                }
+            }
+        }
     }
 }

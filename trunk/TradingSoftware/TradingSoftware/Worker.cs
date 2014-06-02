@@ -7,6 +7,8 @@ using System.Threading;
 using System.Windows;
 using Krs.Ats.IBNet;
 using Krs.Ats.IBNet.Contracts;
+using System.Globalization;
+using System.IO;
 
 namespace TradingSoftware
 {
@@ -190,6 +192,38 @@ namespace TradingSoftware
                     PropertyChanged(this, new PropertyChangedEventArgs("ShallIgnoreFirstSignal"));
             }
         }
+        public bool _hasAlgorithmParameters;
+
+        [DisplayName("Does Algorithm Take Parameters?")]
+        public bool HasAlgorithmParameters
+        {
+            get { return _hasAlgorithmParameters; }
+            set
+            {
+                _hasAlgorithmParameters = value;
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("HasAlgorithmParameters"));
+            }
+        }
+
+
+        public Dictionary<string, decimal> _parsedAlgorithmParameters;
+
+        public string _algorithmParameters;
+
+        public string AlgorithmParameters
+        {
+            //get { return _algorithmParameters; }
+            set
+            {
+                _algorithmParameters = value;
+                _parsedAlgorithmParameters = this.parseAlgorithmParameters(value);
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("AlgorithmParameters"));
+            }
+        }
 
         private MainViewModel mainViewModel;
 
@@ -217,7 +251,8 @@ namespace TradingSoftware
         private IBInput realTimeDataClient;
 
         public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize, string dataType,
-                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition, bool shallIgnoreFirstSignal)
+                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition, bool shallIgnoreFirstSignal,
+                      bool hasAlgorithmParameters)
         {
             this.mainViewModel = mainViewModel;
 
@@ -247,9 +282,48 @@ namespace TradingSoftware
             this.IsFutureTrading = isFutureTrading;
             this.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
 
+            this._parsedAlgorithmParameters = new Dictionary<string, decimal>();
+
+            this.HasAlgorithmParameters = hasAlgorithmParameters;
+
             this.lastIgnoredSignal = -100;
 
             this.Thread = new Thread(this.Run);
+        }
+
+        public Dictionary<string, decimal> parseAlgorithmParameters(string rawAlgorithmParameters)
+        {
+            Dictionary<string, decimal> parameters = new Dictionary<string,decimal>();
+
+            try
+            {
+                string[] separatedAlgorithmParameters = rawAlgorithmParameters.Split('\n');
+                foreach (string parameter in separatedAlgorithmParameters)
+                {
+                    string[] separatedParameter = parameter.Split(',');
+                    parameters.Add(separatedParameter[0], decimal.Parse(separatedParameter[1], CultureInfo.InvariantCulture));
+                }
+            }
+            catch(Exception)
+            {
+                this.mainViewModel.ConsoleText += this.Equity + ": Exception while parsing parameters.";
+                parameters = null;
+            }
+
+            return parameters;
+        }
+
+        public string readAlgorithmParameters()
+        {
+            try
+            {
+                return File.ReadAllText("Parameters/" + this.Equity + ".param");
+            }
+            catch (Exception)
+            {
+                this.mainViewModel.ConsoleText += this.Equity + ": Param-File not found.";
+                return null;
+            }
         }
 
         public Future ConvertToFutures(string input)
@@ -298,7 +372,7 @@ namespace TradingSoftware
 
             while (RunThread)
             {
-                //DONE: wait till new bar is ready
+                //TODO: exit on exception
                 if (_barsize.Equals(BarSize.OneMinute))
                 {
                     while (length == this.Bars.Count && this.RunThread && !this.isStopTrading)
@@ -307,8 +381,16 @@ namespace TradingSoftware
                     }
 
                     //Calculate the decision
-                    Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>());
-
+                    if (this.HasAlgorithmParameters)
+                    {
+                        this.AlgorithmParameters = this.readAlgorithmParameters();
+                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this._parsedAlgorithmParameters);
+                    }
+                    else
+                    {
+                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), new Dictionary<string, decimal>());
+                    }
+                    
                     //For testing purposes
                     //this.Signals[this.Signals.Count - 2] = 0;
                     //this.Signals[this.Signals.Count - 1] = 3;
