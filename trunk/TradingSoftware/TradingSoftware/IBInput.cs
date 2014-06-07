@@ -54,7 +54,7 @@ namespace TradingSoftware
 
         public bool hadFirst { get; set; }
 
-        private MainViewModel mainViewModel;
+        private WorkerViewModel workerViewModel;
 
         /// <summary>
         /// When this method is called, the HistrocialData bars are requested. After the request the client_HistoricalData event is called every time a bar<br/>
@@ -119,9 +119,9 @@ namespace TradingSoftware
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(MainViewModel mainViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Contract equity, BarSize barsize, bool isFuture)
+        public IBInput(WorkerViewModel workerViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Contract equity, BarSize barsize, bool isFuture)
         {
-            this.mainViewModel = mainViewModel;
+            this.workerViewModel = workerViewModel;
 
             ListOfBars = LOB;
 
@@ -166,7 +166,7 @@ namespace TradingSoftware
                         RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
                         lock (IBID.ConsoleTextLock)
                         {
-                            this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
+                            this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
                         }
                         ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
                     }
@@ -209,7 +209,7 @@ namespace TradingSoftware
                 totalHistoricalBars = e.RecordTotal;
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
                 }
 
                 //parses the received bar to one of my bars
@@ -235,7 +235,7 @@ namespace TradingSoftware
             {
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Connecting to IB.\n";
+                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Connecting to IB.\n";
                 }
                 lock (IBID.ConnectionLock)
                 {
@@ -243,7 +243,7 @@ namespace TradingSoftware
                 }
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.mainViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
+                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
                 }
 
                 //Add our event-handling methods to the inputClient.

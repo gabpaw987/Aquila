@@ -13,219 +13,10 @@ using System.IO;
 namespace TradingSoftware
 {
     [Serializable()]
-    public class Worker : INotifyPropertyChanged
+    public class Worker
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public bool _isTrading;
-
-        [DisplayName("Is trading?")]
-        public bool IsTrading
-        {
-            get { return _isTrading; }
-            set
-            {
-                _isTrading = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsTrading"));
-            }
-        }
-
-        private Contract _equity;
-
-        [DisplayName("Symbol")]
-        public string Equity
-        {
-            get { return _equity.Symbol; }
-
-            //set
-            //{
-            //    _equity = new Equity(value);
-            //    if (PropertyChanged != null)
-            //        PropertyChanged(this, new PropertyChangedEventArgs("Equity"));
-            //}
-        }
-
-        private decimal _amount;
-
-        [DisplayName("Invested amount")]
-        public decimal Amount
-        {
-            get { return _amount; }
-            set
-            {
-                _amount = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("Amount"));
-            }
-        }
-
-        private BarSize _barsize;
-
-        [DisplayName("Barsize")]
-        public string Barsize
-        {
-            get { return _barsize.ToString(); }
-            set
-            {
-                if (value.Equals("mBar") || value.Equals("Minute"))
-                {
-                    _barsize = BarSize.OneMinute;
-                }
-                else if (value.Equals("dBar") || value.Equals("Daily"))
-                {
-                    _barsize = BarSize.OneDay;
-                }
-
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("Barsize"));
-            }
-        }
-
-        public HistoricalDataType _historicalType;
-        public RealTimeBarType _realtimeType;
-
-        [DisplayName("Data type")]
-        public string DataType
-        {
-            get
-            {
-                if (_historicalType.ToString().Equals(_realtimeType.ToString()))
-                    return _historicalType.ToString();
-                else
-                    return "inconsistent";
-            }
-            set
-            {
-                if (value.Equals("Bid"))
-                {
-                    _historicalType = HistoricalDataType.Bid;
-                    _realtimeType = RealTimeBarType.Bid;
-                }
-                else if (value.Equals("Ask"))
-                {
-                    _historicalType = HistoricalDataType.Ask;
-                    _realtimeType = RealTimeBarType.Ask;
-                }
-                else if (value.Equals("Last") || value.Equals("Trades"))
-                {
-                    _historicalType = HistoricalDataType.Trades;
-                    _realtimeType = RealTimeBarType.Trades;
-                }
-                else if (value.Equals("Midpoint"))
-                {
-                    _historicalType = HistoricalDataType.Midpoint;
-                    _realtimeType = RealTimeBarType.Midpoint;
-                }
-
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("DataType"));
-            }
-        }
-
-        public decimal _pricePremiumPercentage;
-
-        [DisplayName("Price premium [%]")]
-        public decimal PricePremiumPercentage
-        {
-            get { return _pricePremiumPercentage; }
-            set
-            {
-                _pricePremiumPercentage = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("PricePremiumPercentage"));
-            }
-        }
-
-        public int _roundLotSize;
-
-        [DisplayName("Round lot size")]
-        public int RoundLotSize
-        {
-            get { return _roundLotSize; }
-            set
-            {
-                _roundLotSize = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("RoundLotSize"));
-            }
-        }
-
-        public int _currentPosition;
-
-        [DisplayName("Cur. Position")]
-        public int CurrentPosition
-        {
-            get { return _currentPosition; }
-            set
-            {
-                _currentPosition = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentPosition"));
-            }
-        }
-
-        public bool _isFutureTrading;
-
-        [DisplayName("FutureTrading")]
-        public bool IsFutureTrading
-        {
-            get { return _isFutureTrading; }
-            set
-            {
-                _isFutureTrading = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsFutureTrading"));
-            }
-        }
-
-        public bool _shallIgnoreFirstSignal;
-
-        [DisplayName("Shall Ignore First Signal")]
-        public bool ShallIgnoreFirstSignal
-        {
-            get { return _shallIgnoreFirstSignal; }
-            set
-            {
-                _shallIgnoreFirstSignal = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("ShallIgnoreFirstSignal"));
-            }
-        }
-        public bool _hasAlgorithmParameters;
-
-        [DisplayName("Does Algorithm Take Parameters?")]
-        public bool HasAlgorithmParameters
-        {
-            get { return _hasAlgorithmParameters; }
-            set
-            {
-                _hasAlgorithmParameters = value;
-
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("HasAlgorithmParameters"));
-            }
-        }
-
-
-        public Dictionary<string, decimal> _parsedAlgorithmParameters;
-
-        public string _algorithmParameters;
-
-        public string AlgorithmParameters
-        {
-            //get { return _algorithmParameters; }
-            set
-            {
-                _algorithmParameters = value;
-                _parsedAlgorithmParameters = this.parseAlgorithmParameters(value);
-
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("AlgorithmParameters"));
-            }
-        }
-
         private MainViewModel mainViewModel;
+        private WorkerViewModel workerViewModel;
 
         private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
         private List<int> Signals;
@@ -250,110 +41,51 @@ namespace TradingSoftware
 
         private IBInput realTimeDataClient;
 
-        public Worker(MainViewModel mainViewModel, Equity equity, bool isTrading, decimal amount, string barsize, string dataType,
-                      decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition, bool shallIgnoreFirstSignal,
-                      bool hasAlgorithmParameters)
+        public Worker(MainViewModel mainViewModel, WorkerViewModel workerViewModel, string equity, bool isTrading, string barsize,
+                      string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition,
+                      bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath)
         {
             this.mainViewModel = mainViewModel;
+            this.workerViewModel = workerViewModel;
 
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
 
-            this.IsTrading = isTrading;
-
-            if (isFutureTrading)
-            {
-                this._equity = ConvertToFutures(equity.Symbol);
-            }
-            else
-            {
-                this._equity = equity;
-            }
-
-            this.Amount = amount;
-            this.Barsize = barsize;
-            this.DataType = dataType;
-            this.PricePremiumPercentage = pricePremiumPercentage;
-            this.RoundLotSize = roundLotSize;
-
+            this.workerViewModel.IsTrading = isTrading;
+            this.workerViewModel.EquityAsString = equity;
+            this.workerViewModel.BarsizeAsString = barsize;
+            this.workerViewModel.DataType = dataType;
+            this.workerViewModel.PricePremiumPercentage = pricePremiumPercentage;
+            this.workerViewModel.RoundLotSize = roundLotSize;
             this.didFirst = false;
             this.hasFirstSignalPassed = false;
-            this.CurrentPosition = currentPosition;
-            this.IsFutureTrading = isFutureTrading;
-            this.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
-
-            this._parsedAlgorithmParameters = new Dictionary<string, decimal>();
-
-            this.HasAlgorithmParameters = hasAlgorithmParameters;
-
+            this.workerViewModel.CurrentPosition = currentPosition;
+            this.workerViewModel.IsFutureTrading = isFutureTrading;
+            this.workerViewModel.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
+            this.workerViewModel.AlgorithmFilePath = algorithmFilePath;
+            this.workerViewModel._parsedAlgorithmParameters = new Dictionary<string, decimal>();
+            this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
             this.lastIgnoredSignal = -100;
 
+            XMLHandler.CreateWorker(equity, isTrading, barsize, dataType, "mustbechanged", pricePremiumPercentage,
+                                    isFutureTrading, currentPosition, shallIgnoreFirstSignal, hasAlgorithmParameters,
+                                    roundLotSize, "mustbeChanged");
+            
             this.Thread = new Thread(this.Run);
-        }
-
-        public Dictionary<string, decimal> parseAlgorithmParameters(string rawAlgorithmParameters)
-        {
-            Dictionary<string, decimal> parameters = new Dictionary<string,decimal>();
-
-            try
-            {
-                string[] separatedAlgorithmParameters = rawAlgorithmParameters.Split('\n');
-                foreach (string parameter in separatedAlgorithmParameters)
-                {
-                    string[] separatedParameter = parameter.Split(',');
-                    parameters.Add(separatedParameter[0], decimal.Parse(separatedParameter[1], CultureInfo.InvariantCulture));
-                }
-            }
-            catch(Exception)
-            {
-                this.mainViewModel.ConsoleText += this.Equity + ": Exception while parsing parameters.";
-                parameters = null;
-            }
-
-            return parameters;
         }
 
         public string readAlgorithmParameters()
         {
             try
             {
-                return File.ReadAllText("Parameters/" + this.Equity + ".param");
+                return File.ReadAllText("Parameters/" + this.workerViewModel.EquityAsString + ".param");
             }
             catch (Exception)
             {
-                this.mainViewModel.ConsoleText += this.Equity + ": Param-File not found.";
+                this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Param-File not found.";
                 return null;
             }
-        }
-
-        public Future ConvertToFutures(string input)
-        {
-            string expiry = "201" + input.ElementAt(3);
-            switch ((input.ElementAt(2) + "").ToUpper())
-            {
-                case ("Z"):
-                    expiry += "12";
-                    break;
-
-                case ("Q"):
-                    expiry += "09";
-                    break;
-
-                case ("H"):
-                    expiry += "03";
-                    break;
-
-                case ("M"):
-                    expiry += "06";
-                    break;
-
-                default:
-                    break;
-            }
-
-            //
-            return new Future(input.ElementAt(0) + "" + input.ElementAt(1), "GLOBEX", expiry);
-        }
+        }        
 
         public void Stop()
         {
@@ -373,7 +105,7 @@ namespace TradingSoftware
             while (RunThread)
             {
                 //TODO: exit on exception
-                if (_barsize.Equals(BarSize.OneMinute))
+                if (this.workerViewModel.BarsizeAsObject.Equals(BarSize.OneMinute))
                 {
                     while (length == this.Bars.Count && this.RunThread && !this.isStopTrading)
                     {
@@ -381,10 +113,10 @@ namespace TradingSoftware
                     }
 
                     //Calculate the decision
-                    if (this.HasAlgorithmParameters)
+                    if (this.workerViewModel.HasAlgorithmParameters)
                     {
-                        this.AlgorithmParameters = this.readAlgorithmParameters();
-                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this._parsedAlgorithmParameters);
+                        this.workerViewModel.AlgorithmParameters = this.readAlgorithmParameters();
+                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this.workerViewModel.ParsedAlgorithmParameters);
                     }
                     else
                     {
@@ -399,9 +131,9 @@ namespace TradingSoftware
 
                     //Stop if isStopTradingAfterSignal is true and the signal is finished
                     if (this.isStopTradingAfterSignal &&
-                       (Math.Sign(this.Signals[this.Signals.Count - 1]) != Math.Sign(this.CurrentPosition) ||
+                       (Math.Sign(this.Signals[this.Signals.Count - 1]) != Math.Sign(this.workerViewModel.CurrentPosition) ||
                         Math.Sign(this.Signals[this.Signals.Count - 1]) == 0 ||
-                        this.CurrentPosition == 0))
+                        this.workerViewModel.CurrentPosition == 0))
                     {
                         this.isStopTrading = true;
                     }
@@ -413,12 +145,12 @@ namespace TradingSoftware
 
                     lock (IBID.ConsoleTextLock)
                     {
-                        this.mainViewModel.SignalText += this.Equity + ": Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
+                        this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Current Signal: " + this.Bars.Last().Item1.ToString() + " ... " + Signals.Last() + "\n";
                     }
 
                     length = this.Bars.Count;
                 }
-                if (IsTrading)
+                if (this.workerViewModel.IsTrading)
                 {
                     if (this.Signals[this.Signals.Count - 1] == 0)
                     {
@@ -428,7 +160,7 @@ namespace TradingSoftware
                         this.hasFirstSignalPassed = true;
                     }
 
-                    if (((this.Signals[this.Signals.Count - 1] != this._currentPosition) || this.shallReenter)
+                    if (((this.Signals[this.Signals.Count - 1] != this.workerViewModel.CurrentPosition) || this.shallReenter)
                         && (this.lastIgnoredSignal != this.Signals[this.Signals.Count - 1]))
                     {
                         if (this.lastIgnoredSignal != -100)
@@ -436,14 +168,14 @@ namespace TradingSoftware
                             this.lastIgnoredSignal = -100;
                         }
 
-                        if ((this.didFirst && this.ShallIgnoreFirstSignal && (this.Signals[this.Signals.Count - 1] != this.Signals[this.Signals.Count - 2])))
+                        if ((this.didFirst && this.workerViewModel.ShallIgnoreFirstSignal && (this.Signals[this.Signals.Count - 1] != this.Signals[this.Signals.Count - 2])))
                         {
                             this.hasFirstSignalPassed = true;
                         }
 
-                        if (this.hasFirstSignalPassed || !this.ShallIgnoreFirstSignal)
+                        if (this.hasFirstSignalPassed || !this.workerViewModel.ShallIgnoreFirstSignal)
                         {
-                            int oldSignal = _currentPosition;
+                            int oldSignal = this.workerViewModel.CurrentPosition;
 
                             int newSignal = Signals[Signals.Count - 1];
 
@@ -460,7 +192,7 @@ namespace TradingSoftware
                             
                             if (!isStopTrading)
                             {
-                                dialogResult = AutoClosingMessageBox.Show(this.Equity + ": New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
+                                dialogResult = AutoClosingMessageBox.Show(this.workerViewModel.EquityAsString + ": New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
                             }
                             else
                             {
@@ -496,25 +228,14 @@ namespace TradingSoftware
                                         isBuy = true;
                                     }
 
-                                    this.IBOutput = new IBOutput(this.mainViewModel, this._equity);
+                                    this.IBOutput = new IBOutput(this.workerViewModel, this.workerViewModel.EquityAsContract);
                                     this.IBOutput.Connect();
 
                                     this.IBOutput.RequestTickPrice();
 
-                                    decimal roundLotPrice = 0m;
-
-                                    if (isBuy)
-                                    {
-                                        roundLotPrice = this.IBOutput.currentAskPrice * this.RoundLotSize;
-                                    }
-                                    else
-                                    {
-                                        roundLotPrice = this.IBOutput.currentBidPrice * this.RoundLotSize;
-                                    }
-
-                                    int one = 1; //(int)((this.Amount / roundLotPrice) / 3m);
-                                    int two = 2; //(int)(((this.Amount / roundLotPrice) * 2m) / 3m);
-                                    int three = 3; //(int)(this.Amount / roundLotPrice);
+                                    int one = 1;
+                                    int two = 2;
+                                    int three = 3;
 
                                     int amountToZero = 0;
                                     switch (toZero)
@@ -540,15 +261,14 @@ namespace TradingSoftware
                                         }
                                     }
 
-                                    if (amountToZero != 0 && IsTrading)
+                                    if (amountToZero != 0 && this.workerViewModel.IsTrading)
                                     {
-                                        // iboutput place and execute
-                                        if (isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+                                        if(isBuy)
+                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
                                         else if (!isBuy)
-                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this._isFutureTrading) ? 1 : this.RoundLotSize), PricePremiumPercentage);
+                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
 
-                                        this.CurrentPosition = newSignal;
+                                        this.workerViewModel.CurrentPosition = newSignal;
                                         this.IBOutput.Disconnect();
                                     }
                                 }
@@ -574,7 +294,7 @@ namespace TradingSoftware
 
                     if (this.isStopTrading)
                     {
-                        this.IsTrading = false;
+                        this.workerViewModel.IsTrading = false;
                         this.isStopTrading = false;
 
                         //To Ignore the first signal again after stopping, if wanted
@@ -587,13 +307,13 @@ namespace TradingSoftware
 
         public void loadHistoricalData()
         {
-            this.realTimeDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute, _isFutureTrading);
+            this.realTimeDataClient = new IBInput(this.workerViewModel, this.Bars, this.workerViewModel.EquityAsContract, BarSize.OneMinute, this.workerViewModel.IsFutureTrading);
 
             this.realTimeDataClient.Connect();
 
             lock (IBID.ConsoleTextLock)
             {
-                this.mainViewModel.ConsoleText += this.Equity + ": Start receiving realtime bars...\n";
+                this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Start receiving realtime bars...\n";
             }
             this.realTimeDataClient.SubscribeForRealTimeBars();
 
@@ -604,7 +324,7 @@ namespace TradingSoftware
             }
 
             //wait until minute is full
-            if (_barsize.Equals(BarSize.OneMinute))
+            if (this.workerViewModel.BarsizeAsObject.Equals(BarSize.OneMinute))
             {
                 while (this.realTimeDataClient.RealTimeBarList.Count != 0 && this.RunThread)
                 {
@@ -614,13 +334,13 @@ namespace TradingSoftware
 
             if (RunThread)
             {
-                var historicalDataClient = new IBInput(this.mainViewModel, this.Bars, this._equity, BarSize.OneMinute, _isFutureTrading);
+                var historicalDataClient = new IBInput(this.workerViewModel, this.Bars, this.workerViewModel.EquityAsContract, this.workerViewModel.BarsizeAsObject, this.workerViewModel.IsFutureTrading);
                 historicalDataClient.Connect();
 
                 //request historical data bars
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.mainViewModel.ConsoleText += this.Equity + ": Please wait... Historical minute bars are getting fetched!\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Please wait... Historical minute bars are getting fetched!\n";
                 }
                 historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
 

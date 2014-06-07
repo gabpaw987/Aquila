@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using Krs.Ats.IBNet.Contracts;
+using System.IO;
 
 namespace TradingSoftware
 {
@@ -12,25 +13,17 @@ namespace TradingSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
-        //TextWriter _consoleTextWriter;
-
         public MainWindow()
         {
             InitializeComponent();
 
-            //_consoleTextWriter = new TextBoxStreamWriter(this.ConsoleBox);
-            // Redirect the out Console stream
-            //Console.SetOut(_consoleTextWriter);
-
-            // Undo it again:
-            // StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            // standardOutput.AutoFlush = true;
-            // Console.SetOut(standardOutput);
-
             this.mainViewModel.Workers = new List<Worker>();
+            this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
 
-            Worker worker = new Worker(this.mainViewModel,
-                                        new Equity("NQM4"),
+            XMLHandler.CreateSettingsFileIfNecessary();
+            XMLHandler.checkIfXMLHasWorkers();
+            /*Worker worker = new Worker(this.mainViewModel,
+                                        "NQM4",
                                         true,
                                         250000,
                                         "mBar",
@@ -47,7 +40,7 @@ namespace TradingSoftware
 
             // Second worker
             Worker worker2 = new Worker(this.mainViewModel,
-                                        new Equity("ESM4"),
+                                        "ESM4",
                                         false,
                                         250000,
                                         "mBar",
@@ -61,15 +54,17 @@ namespace TradingSoftware
             worker2.Start();
 
             this.mainViewModel.Workers.Add(worker2);
-            //
+            */
 
-            this.workersGrid.DataContext = this.mainViewModel.Workers;
         }
 
+        /*
+         *To autogenerate columns for all properties again use AutoGeneratingColumn="OnAutoGeneratingColumn" in datagrid plus this method
         private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             e.Column.Header = ((PropertyDescriptor)e.PropertyDescriptor).DisplayName;
         }
+        */
 
         private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
@@ -91,11 +86,14 @@ namespace TradingSoftware
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
+            WorkerTab workerTab = new WorkerTab();
+
             // TODO: block creation if something is not filled out
+            // TODO: GUI for algorithmFilePath
             Worker worker = new Worker(this.mainViewModel,
-                                       new Equity(this.mainViewModel.CreationSymbol),
+                                       workerTab.workerViewModel,
+                                       this.mainViewModel.CreationSymbol,
                                        this.mainViewModel.CreationIsTrading,
-                                       this.mainViewModel.CreationAmount,
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
@@ -103,11 +101,17 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationIsFuture,
                                        this.mainViewModel.CreationCurrentPosition,
                                        this.mainViewModel.CreationShallIgnoreFirstSignal,
-                                       this.mainViewModel.CreationHasAlgorithmParameters);
+                                       this.mainViewModel.CreationHasAlgorithmParameters,
+                                       this.mainViewModel.CreationAlgorithmFilePath);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
+            workerTab.setUpTabWorkerConnection(worker);
+
+            this.mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
             this.workersGrid.Items.Refresh();
+
+            this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

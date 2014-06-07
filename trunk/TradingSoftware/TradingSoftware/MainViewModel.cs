@@ -26,40 +26,21 @@ namespace TradingSoftware
             }
         }
 
-        private string _consoleText;
+        private List<WorkerViewModel> _workerViewModels;
 
-        public string ConsoleText
+        public List<WorkerViewModel> WorkerViewModels
         {
             get
             {
-                return _consoleText;
+                return _workerViewModels;
             }
             set
             {
-                if (value != _consoleText)
+                if (value != _workerViewModels)
                 {
-                    _consoleText = value;
+                    _workerViewModels = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("ConsoleText"));
-                }
-            }
-        }
-
-        private string _signalText;
-
-        public string SignalText
-        {
-            get
-            {
-                return _signalText;
-            }
-            set
-            {
-                if (value != _signalText)
-                {
-                    _signalText = value;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("SignalText"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("WorkerViewModels"));
                 }
             }
         }
@@ -98,25 +79,6 @@ namespace TradingSoftware
                     _creationIsTrading = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("CreationIsTrading"));
-                }
-            }
-        }
-
-        private decimal _creationAmount;
-
-        public decimal CreationAmount
-        {
-            get
-            {
-                return _creationAmount;
-            }
-            set
-            {
-                if (value != _creationAmount)
-                {
-                    _creationAmount = value;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("CreationAmount"));
                 }
             }
         }
@@ -269,6 +231,25 @@ namespace TradingSoftware
                     _creationHasAlgorithmParameters = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("CreationHasAlgorithmParameters"));
+                }
+            }
+        }
+
+        private string _creationAlgorithmFilePath;
+
+        public string CreationAlgorithmFilePath
+        {
+            get
+            {
+                return _creationAlgorithmFilePath;
+            }
+            set
+            {
+                if (value != _creationAlgorithmFilePath)
+                {
+                    _creationAlgorithmFilePath = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationAlgorithmFilePath"));
                 }
             }
         }
