@@ -21,7 +21,18 @@ namespace TradingSoftware
             this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
 
             XMLHandler.CreateSettingsFileIfNecessary();
-            XMLHandler.checkIfXMLHasWorkers();
+            List<WorkerTab> newWorkerTabs = XMLHandler.LoadWorkersFromXML(this.mainViewModel);
+
+            this.workersGrid.Items.Refresh();
+
+            if (newWorkerTabs.Count > 0)
+            {
+                foreach (WorkerTab workerTab in newWorkerTabs)
+                {
+                    this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
+                }
+            }
+
             /*Worker worker = new Worker(this.mainViewModel,
                                         "NQM4",
                                         true,
@@ -107,8 +118,21 @@ namespace TradingSoftware
             this.mainViewModel.Workers.Add(worker);
 
             workerTab.setUpTabWorkerConnection(worker);
-
             this.mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
+
+            XMLHandler.CreateWorker(this.mainViewModel.CreationSymbol,
+                                    this.mainViewModel.CreationIsTrading,
+                                    this.mainViewModel.CreationBarSize,
+                                    this.mainViewModel.CreationDataType,
+                                    "tobechanged",//this.mainViewModel.CreationAlgorithmFilePath,
+                                    this.mainViewModel.CreationPricePremiumPercentage,
+                                    this.mainViewModel.CreationIsFuture,
+                                    this.mainViewModel.CreationCurrentPosition,
+                                    this.mainViewModel.CreationShallIgnoreFirstSignal,
+                                    this.mainViewModel.CreationHasAlgorithmParameters,
+                                    this.mainViewModel.CreationRoundLotSize,
+                                    "tobechanged");
+
             this.workersGrid.Items.Refresh();
 
             this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);

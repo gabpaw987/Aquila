@@ -59,33 +59,44 @@ namespace TradingSoftware
             }
         }
 
-        public static List<WorkerTab> LoadWorkersFromXML(List<Worker> workers, MainViewModel mainViewModel)
+        public static List<WorkerTab> LoadWorkersFromXML(MainViewModel mainViewModel)
         {
             List<WorkerTab> workerTabs = new List<WorkerTab>();
             if (checkIfXMLHasWorkers())
             {
                 XDocument document = XDocument.Load(settingsFilePath);
-                List<XElement> workerElements = (List<XElement>) document.Root.Elements("Worker");
+                List<XElement> workerElements = document.Root.Elements("Worker").ToList();
 
                 foreach (XElement workerElement in workerElements)
                 {
                     WorkerTab workerTab = new WorkerTab();
 
-                    bool isWorkerFurtureTrading = workerElement.Attribute("isFutureTrading").Value.Equals("True") ? true : false;
+                    bool isWorkerFurtureTrading = workerElement.Attribute("isFutureTrading").Value.Equals("true") ? true : false;
 
                     Worker worker = new Worker(mainViewModel, workerTab.workerViewModel,
-                                               workerElement.Attribute("equity").Value,
-                                               workerElement.Attribute("isTrading").Value.Equals("True") ? true : false,
+                                               workerElement.Attribute("symbol").Value,
+                                               workerElement.Attribute("isTrading").Value.Equals("true") ? true : false,
                                                workerElement.Attribute("barsize").Value,
-                                               workerElement.Attribute("datatype").Value,
+                                               workerElement.Attribute("dataType").Value,
                                                decimal.Parse(workerElement.Attribute("pricePremiumPercentage").Value, CultureInfo.InvariantCulture),
                                                isWorkerFurtureTrading ? int.Parse(workerElement.Attribute("roundLotSize").Value, CultureInfo.InvariantCulture) : 1,
                                                isWorkerFurtureTrading,
                                                int.Parse(workerElement.Attribute("currentPosition").Value, CultureInfo.InvariantCulture),
-                                               workerElement.Attribute("shallIgnoreFirstSignal").Value.Equals("True") ? true : false,
-                                               workerElement.Attribute("hasAlgorithmParameters").Value.Equals("True") ? true : false,
+                                               workerElement.Attribute("shallIgnoreFirstSignal").Value.Equals("true") ? true : false,
+                                               workerElement.Attribute("hasAlgorithmParameters").Value.Equals("true") ? true : false,
                                                workerElement.Attribute("algorithmFilePath").Value);
 
+                    if (workerTab.workerViewModel.HasAlgorithmParameters && workerElement.Value != null && workerElement.Value.Length != 0)
+                    {
+                        workerTab.workerViewModel.AlgorithmParameters = workerElement.Value;
+                    }
+
+                    worker.Start();
+
+                    mainViewModel.Workers.Add(worker);
+                    workerTab.setUpTabWorkerConnection(worker);
+                    mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
+                    workerTabs.Add(workerTab);
                 }
             }
             return workerTabs;
@@ -107,6 +118,7 @@ namespace TradingSoftware
                 workerElement.Add(new XAttribute("dataType", dataType));
                 workerElement.Add(new XAttribute("pricePremiumPercentage", pricePremiumPercentage));
                 workerElement.Add(new XAttribute("isFutureTrading", isFutureTrading));
+                workerElement.Add(new XAttribute("currentPosition", currentPosition));
                 workerElement.Add(new XAttribute("shallIgnoreFirstSignal", shallIgnoreFirstSignal));
                 workerElement.Add(new XAttribute("hasAlgorithmParameters", hasAlgorithmParameters));
                 workerElement.Add(new XAttribute("algorithmFilePath", algorithmFilePath));

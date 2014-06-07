@@ -66,10 +66,6 @@ namespace TradingSoftware
             this.workerViewModel._parsedAlgorithmParameters = new Dictionary<string, decimal>();
             this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
             this.lastIgnoredSignal = -100;
-
-            XMLHandler.CreateWorker(equity, isTrading, barsize, dataType, "mustbechanged", pricePremiumPercentage,
-                                    isFutureTrading, currentPosition, shallIgnoreFirstSignal, hasAlgorithmParameters,
-                                    roundLotSize, "mustbeChanged");
             
             this.Thread = new Thread(this.Run);
         }
