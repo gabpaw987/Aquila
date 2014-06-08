@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using Krs.Ats.IBNet.Contracts;
 using System.IO;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace TradingSoftware
 {
@@ -20,54 +22,10 @@ namespace TradingSoftware
 
             this.mainViewModel.Workers = new List<Worker>();
             this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
+            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
 
             XMLHandler.CreateSettingsFileIfNecessary();
-            List<WorkerTab> newWorkerTabs = XMLHandler.LoadWorkersFromXML(this.mainViewModel);
-
-            this.workersGrid.Items.Refresh();
-
-            if (newWorkerTabs.Count > 0)
-            {
-                foreach (WorkerTab workerTab in newWorkerTabs)
-                {
-                    this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
-                }
-            }
-
-            /*Worker worker = new Worker(this.mainViewModel,
-                                        "NQM4",
-                                        true,
-                                        250000,
-                                        "mBar",
-                                        "Trades",
-                                        100,
-                                        100,
-                                        true,
-                                        0,
-                                        true,
-                                        true);
-            worker.Start();
-                        
-            this.mainViewModel.Workers.Add(worker);
-
-            // Second worker
-            Worker worker2 = new Worker(this.mainViewModel,
-                                        "ESM4",
-                                        false,
-                                        250000,
-                                        "mBar",
-                                        "Trades",
-                                        100,
-                                        100,
-                                        true,
-                                        0,
-                                        true,
-                                        true);
-            worker2.Start();
-
-            this.mainViewModel.Workers.Add(worker2);
-            */
-
+            XMLHandler.LoadWorkersFromXML(this);
         }
 
         /*
@@ -98,7 +56,7 @@ namespace TradingSoftware
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkerTab workerTab = new WorkerTab();
+            WorkerTab workerTab = new WorkerTab(this);
 
             // TODO: block creation if something is not filled out
             // TODO: GUI for algorithmFilePath
@@ -114,7 +72,8 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationCurrentPosition,
                                        this.mainViewModel.CreationShallIgnoreFirstSignal,
                                        this.mainViewModel.CreationHasAlgorithmParameters,
-                                       this.mainViewModel.CreationAlgorithmFilePath);
+                                       this.mainViewModel.CreationAlgorithmFilePath,
+                                       this.mainViewModel.CreationAlgorithmParameters);
             worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
@@ -125,18 +84,23 @@ namespace TradingSoftware
                                     this.mainViewModel.CreationIsTrading,
                                     this.mainViewModel.CreationBarSize,
                                     this.mainViewModel.CreationDataType,
-                                    "tobechanged",//this.mainViewModel.CreationAlgorithmFilePath,
+                                    this.mainViewModel.CreationAlgorithmFilePath,
                                     this.mainViewModel.CreationPricePremiumPercentage,
                                     this.mainViewModel.CreationIsFuture,
                                     this.mainViewModel.CreationCurrentPosition,
                                     this.mainViewModel.CreationShallIgnoreFirstSignal,
                                     this.mainViewModel.CreationHasAlgorithmParameters,
                                     (this.mainViewModel.CreationIsFuture ? 1 : this.mainViewModel.CreationRoundLotSize),
-                                    "tobechanged");
+                                    this.mainViewModel.CreationAlgorithmParameters);
 
             this.workersGrid.Items.Refresh();
 
             this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
+
+            //reset creation-variables
+            this.mainViewModel.CreationSymbol = "";
+            this.mainViewModel.CreationIsTrading = false;
+            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -149,14 +113,26 @@ namespace TradingSoftware
 
         private void ReenterButton_Click(object sender, RoutedEventArgs e)
         {
-            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
-            worker.shallReenter = true;
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                if (worker.workerViewModel.Equals(workerViewModel))
+                {
+                    worker.shallReenter = true;
+                }
+            }
         }
 
         private void StopOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
-            worker.StopTrading();
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                if (worker.workerViewModel.Equals(workerViewModel))
+                {
+                    worker.StopTrading();
+                }
+            }
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -169,8 +145,14 @@ namespace TradingSoftware
 
         private void StopAfterSignalButton_Click(object sender, RoutedEventArgs e)
         {
-            Worker worker = ((FrameworkElement)sender).DataContext as Worker;
-            worker.StopTradingAfterSignal();
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                if (worker.workerViewModel.Equals(workerViewModel))
+                {
+                    worker.StopTradingAfterSignal();
+                }
+            }
         }
 
         private void AlgorithmFilePathButton_Click(object sender, RoutedEventArgs e)
@@ -195,8 +177,54 @@ namespace TradingSoftware
         private void ChangeWorkerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+            this.ShowSettingsWindow(workerViewModel);
+        }
+
+        public void ShowSettingsWindow(WorkerViewModel workerViewModel)
+        {
             ChangeWorkerSettingsWindow settingsWindow = new ChangeWorkerSettingsWindow(workerViewModel);
             settingsWindow.Show();
+        }
+
+        private void RemoveWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+
+            Worker worker = null;
+
+            foreach (Worker tmpWorker in this.mainViewModel.Workers)
+            {
+                if (tmpWorker.workerViewModel.Equals(workerViewModel))
+                {
+                    worker = tmpWorker;
+                }
+            }
+
+            this.RemoveWorker(worker);
+        }
+
+        public void RemoveWorker(Worker worker)
+        {
+            if (worker != null)
+            {
+                worker.StopTrading();
+                while (worker.workerViewModel.IsTrading)
+                {
+                    Thread.Sleep(50);
+                }
+                worker.Stop();
+
+                this.mainViewModel.Workers.Remove(worker);
+                this.mainViewModel.WorkerViewModels.Remove(worker.workerViewModel);
+                XMLHandler.RemoveWorker(worker.workerViewModel.EquityAsString);
+
+                WorkerTab workerTab = this.MainTabControl.Items.Cast<TabItem>()
+                                                            .Where(item => item.Name.Equals(worker.workerViewModel.EquityAsString))
+                                                            .FirstOrDefault() as WorkerTab;
+                this.MainTabControl.Items.Remove(workerTab);
+
+                this.workersGrid.Items.Refresh();
+            }
         }
     }
 }

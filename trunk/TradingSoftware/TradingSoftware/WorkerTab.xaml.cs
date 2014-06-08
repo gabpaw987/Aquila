@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,10 +12,13 @@ namespace TradingSoftware
     public partial class WorkerTab : TabItem
     {
         private Worker worker;
+        private MainWindow mainWindow;
 
-        public WorkerTab()
+        public WorkerTab(MainWindow mainWindow)
         {
             InitializeComponent();
+
+            this.mainWindow = mainWindow;
         }
 
         public void setUpTabWorkerConnection(Worker worker)
@@ -23,6 +27,7 @@ namespace TradingSoftware
             this.workerGrid.DataContext = new List<WorkerViewModel> { this.workerViewModel };
             this.workerGrid.Items.Refresh();
 
+            this.WorkerTabItem.Name = this.workerViewModel.EquityAsString;
             this.WorkerTabItem.Header = this.workerViewModel.EquityAsString;
         }
 
@@ -45,6 +50,15 @@ namespace TradingSoftware
         private void ReenterButton_Click(object sender, RoutedEventArgs e)
         {
             this.worker.shallReenter = true;
+        }
+
+        private void RemoveWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.mainWindow.RemoveWorker(this.worker);
+        }
+        private void ChangeWorkerSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.ShowSettingsWindow(this.workerViewModel);
         }
     }
 }

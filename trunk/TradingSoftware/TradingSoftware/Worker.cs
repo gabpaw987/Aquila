@@ -16,7 +16,7 @@ namespace TradingSoftware
     public class Worker
     {
         private MainViewModel mainViewModel;
-        private WorkerViewModel workerViewModel;
+        public WorkerViewModel workerViewModel;
 
         private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
         private List<int> Signals;
@@ -43,7 +43,7 @@ namespace TradingSoftware
 
         public Worker(MainViewModel mainViewModel, WorkerViewModel workerViewModel, string equity, bool isTrading, string barsize,
                       string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition,
-                      bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath)
+                      bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath, string algorithmParameters)
         {
             this.mainViewModel = mainViewModel;
             this.workerViewModel = workerViewModel;
@@ -51,8 +51,9 @@ namespace TradingSoftware
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
 
-            this.workerViewModel.IsTrading = isTrading;
+            this.workerViewModel.IsFutureTrading = isFutureTrading;
             this.workerViewModel.EquityAsString = equity;
+            this.workerViewModel.IsTrading = isTrading;
             this.workerViewModel.BarsizeAsString = barsize;
             this.workerViewModel.DataType = dataType;
             this.workerViewModel.PricePremiumPercentage = pricePremiumPercentage;
@@ -60,11 +61,11 @@ namespace TradingSoftware
             this.didFirst = false;
             this.hasFirstSignalPassed = false;
             this.workerViewModel.CurrentPosition = currentPosition;
-            this.workerViewModel.IsFutureTrading = isFutureTrading;
             this.workerViewModel.ShallIgnoreFirstSignal = shallIgnoreFirstSignal;
             this.workerViewModel.AlgorithmFilePath = algorithmFilePath;
             this.workerViewModel._parsedAlgorithmParameters = new Dictionary<string, decimal>();
             this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
+            this.workerViewModel.AlgorithmParameters = algorithmParameters;
             this.lastIgnoredSignal = -100;
             
             this.Thread = new Thread(this.Run);

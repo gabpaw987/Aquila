@@ -11,5 +11,6 @@ namespace TradingSoftware
         public static Object TickerLock = new Object();
         public static Object OrderLock = new Object();
         public static Object SoundLock = new Object();
+        public static Object XMLReadLock = new Object();
     }
 }

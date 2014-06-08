@@ -49,31 +49,72 @@ namespace TradingSoftware
 
         public static bool checkIfXMLHasWorkers()
         {
-            if(XDocument.Load(settingsFilePath).Root.Elements("Worker").Any())
+            lock (IBID.XMLReadLock)
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (XDocument.Load(settingsFilePath).Root.Elements("Worker").Any())
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
-        public static List<WorkerTab> LoadWorkersFromXML(MainViewModel mainViewModel)
+        public static bool RemoveWorker(string workerSymbol)
         {
-            List<WorkerTab> workerTabs = new List<WorkerTab>();
+            XDocument document = null;
+            lock (IBID.XMLReadLock)
+            {
+                document = XDocument.Load(settingsFilePath);
+            }
+            foreach(XElement workerElement in document.Root.Elements("Worker"))
+            {
+                if(workerElement.Attribute("symbol").Value.Equals(workerSymbol))
+                {
+                    workerElement.Remove();
+
+                    document.Save(settingsFilePath);
+
+                    if (ValidateXMLDocument(document))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static void LoadWorkersFromXML(MainWindow mainWindow)
+        {
             if (checkIfXMLHasWorkers())
             {
-                XDocument document = XDocument.Load(settingsFilePath);
+                XDocument document = null;
+                lock (IBID.XMLReadLock)
+                {
+                    document = XDocument.Load(settingsFilePath);
+                }
                 List<XElement> workerElements = document.Root.Elements("Worker").ToList();
 
                 foreach (XElement workerElement in workerElements)
                 {
-                    WorkerTab workerTab = new WorkerTab();
+                    WorkerTab workerTab = new WorkerTab(mainWindow);
 
+                    bool hasAlgorithmParameters = workerElement.Attribute("hasAlgorithmParameters").Value.Equals("true") ? true : false;
                     bool isWorkerFurtureTrading = workerElement.Attribute("isFutureTrading").Value.Equals("true") ? true : false;
 
-                    Worker worker = new Worker(mainViewModel, workerTab.workerViewModel,
+                    string algorithmParameters = "";
+                    if (hasAlgorithmParameters && workerElement.Value != null && workerElement.Value.Length != 0)
+                    {
+                        algorithmParameters = workerElement.Value;
+                    }
+
+                    Worker worker = new Worker(mainWindow.mainViewModel, workerTab.workerViewModel,
                                                workerElement.Attribute("symbol").Value,
                                                workerElement.Attribute("isTrading").Value.Equals("true") ? true : false,
                                                workerElement.Attribute("barsize").Value,
@@ -83,23 +124,22 @@ namespace TradingSoftware
                                                isWorkerFurtureTrading,
                                                int.Parse(workerElement.Attribute("currentPosition").Value, CultureInfo.InvariantCulture),
                                                workerElement.Attribute("shallIgnoreFirstSignal").Value.Equals("true") ? true : false,
-                                               workerElement.Attribute("hasAlgorithmParameters").Value.Equals("true") ? true : false,
-                                               workerElement.Attribute("algorithmFilePath").Value);
+                                               hasAlgorithmParameters,
+                                               workerElement.Attribute("algorithmFilePath").Value,
+                                               algorithmParameters);
 
-                    if (workerTab.workerViewModel.HasAlgorithmParameters && workerElement.Value != null && workerElement.Value.Length != 0)
-                    {
-                        workerTab.workerViewModel.AlgorithmParameters = workerElement.Value;
-                    }
+                    
 
                     worker.Start();
 
-                    mainViewModel.Workers.Add(worker);
+                    mainWindow.mainViewModel.Workers.Add(worker);
                     workerTab.setUpTabWorkerConnection(worker);
-                    mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
-                    workerTabs.Add(workerTab);
+                    mainWindow.mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
+
+                    mainWindow.MainTabControl.Items.Insert(mainWindow.MainTabControl.Items.Count - 1, workerTab);
                 }
+                mainWindow.workersGrid.Items.Refresh();
             }
-            return workerTabs;
         }
 
         public static bool CreateWorker(string equity, bool isTrading, string barsize, string dataType, string algorithmFilePath,
@@ -109,7 +149,11 @@ namespace TradingSoftware
         {
             try
             {
-                XDocument document = XDocument.Load(settingsFilePath);
+                XDocument document = null;
+                lock (IBID.XMLReadLock)
+                {
+                    document = XDocument.Load(settingsFilePath);
+                }
 
                 XElement workerElement = new XElement("Worker");
                 workerElement.Add(new XAttribute("symbol", equity));
@@ -130,7 +174,7 @@ namespace TradingSoftware
 
                 if (hasAlgorithmParameters)
                 {
-                    workerElement.Add(new XElement("AlgorithmParameters", algorithmParamters));
+                    workerElement.Value = algorithmParamters;
                 }
 
                 document.Root.Add(workerElement);
@@ -155,8 +199,11 @@ namespace TradingSoftware
         private static bool ValidateXMLDocument(XDocument documentToValidate)
         {
             bool wasValidationSuccessful = true;
-
-            XDocument doc = XDocument.Load(settingsFilePath);
+            XDocument doc = null;
+            lock (IBID.XMLReadLock)
+            {
+                doc = XDocument.Load(settingsFilePath);
+            }
 
             XmlSchemaSet schemaSet = new XmlSchemaSet();
             schemaSet.Add(null, schemaFilePath);
@@ -180,58 +227,58 @@ namespace TradingSoftware
             return wasValidationSuccessful;
         }
 
-        /// <summary>
-        /// Reads the data of specified node provided in the parameter
-        /// </summary>
-        /// <param name="pstrValueToRead">Node to be read</param>
-        /// <returns>string containing the value</returns>
-        private static string ReadValueFromXML(string pstrValueToRead)
+        public static string ReadValueFromXML(string workerSymbol, string attributeToRead)
         {
             try
             {
-                //settingsFilePath is a string variable storing the path of the settings file 
-                XPathDocument doc = new XPathDocument(settingsFilePath);
-                XPathNavigator nav = doc.CreateNavigator();
-                // Compile a standard XPath expression
-                XPathExpression expr;
-                expr = nav.Compile(@"/TradingSoftware/" + pstrValueToRead);
-                XPathNodeIterator iterator = nav.Select(expr);
-                // Iterate on the node set
-                while (iterator.MoveNext())
+                XDocument document = null;
+                lock (IBID.XMLReadLock)
                 {
-                    return iterator.Current.Value;
+                    document = XDocument.Load(settingsFilePath);
                 }
+                foreach (XElement workerElement in document.Root.Elements("Worker"))
+                {
+                    if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
+                    {
+                        return workerElement.Attribute(attributeToRead).Value;
+                    }
+                }                
                 return string.Empty;
             }
             catch
             {
-                //do some error logging here. Leaving for you to do 
                 return string.Empty;
             }
         }
 
-        /// <summary>
-        /// Writes the updated value to XML
-        /// </summary>
-        /// <param name="pstrValueToRead">Node of XML to read</param>
-        /// <param name="pstrValueToWrite">Value to write to that node</param>
-        /// <returns></returns>
-        private static bool WriteValueTOXML(string pstrValueToRead, string pstrValueToWrite)
+        public static bool WriteValueToXML(string workerSymbol, string attributeToRead, string valueToWrite)
         {
             try
             {
-                //settingsFilePath is a string variable storing the path of the settings file 
-                XmlTextReader reader = new XmlTextReader(settingsFilePath);
-                XmlDocument doc = new XmlDocument();
-                doc.Load(reader);
-                //we have loaded the XML, so it's time to close the reader.
-                reader.Close();
-                XmlNode oldNode;
-                XmlElement root = doc.DocumentElement;
-                oldNode = root.SelectSingleNode("/TradingSoftware/" + pstrValueToRead);
-                oldNode.InnerText = pstrValueToWrite;
-                doc.Save(settingsFilePath);
-                return true;
+                XDocument document = null;
+                lock (IBID.XMLReadLock)
+                {
+                    document = XDocument.Load(settingsFilePath);
+                }
+                foreach (XElement workerElement in document.Root.Elements("Worker"))
+                {
+                    if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
+                    {
+                        workerElement.Attribute(attributeToRead).Value = valueToWrite;
+
+                        document.Save(settingsFilePath);
+
+                        if (ValidateXMLDocument(document))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return false;
             }
             catch
             {
