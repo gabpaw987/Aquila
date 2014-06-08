@@ -59,6 +59,12 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.8.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.8.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -66,6 +72,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AutoClosingMessageBox.cs" />
+    <Compile Include="ChangeWorkerSettingsWindow.xaml.cs">
+      <DependentUpon>ChangeWorkerSettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IBID.cs" />
     <Compile Include="IBInput.cs" />
     <Compile Include="IBOutput.cs" />
@@ -76,6 +85,10 @@
     </Compile>
     <Compile Include="WorkerViewModel.cs" />
     <Compile Include="XMLHandler.cs" />
+    <Page Include="ChangeWorkerSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

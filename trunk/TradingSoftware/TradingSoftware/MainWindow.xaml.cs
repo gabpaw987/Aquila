@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Krs.Ats.IBNet.Contracts;
 using System.IO;
+using System;
 
 namespace TradingSoftware
 {
@@ -108,7 +109,7 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
                                        this.mainViewModel.CreationPricePremiumPercentage,
-                                       this.mainViewModel.CreationRoundLotSize,
+                                       (this.mainViewModel.CreationIsFuture ? 1 : this.mainViewModel.CreationRoundLotSize),
                                        this.mainViewModel.CreationIsFuture,
                                        this.mainViewModel.CreationCurrentPosition,
                                        this.mainViewModel.CreationShallIgnoreFirstSignal,
@@ -130,7 +131,7 @@ namespace TradingSoftware
                                     this.mainViewModel.CreationCurrentPosition,
                                     this.mainViewModel.CreationShallIgnoreFirstSignal,
                                     this.mainViewModel.CreationHasAlgorithmParameters,
-                                    this.mainViewModel.CreationRoundLotSize,
+                                    (this.mainViewModel.CreationIsFuture ? 1 : this.mainViewModel.CreationRoundLotSize),
                                     "tobechanged");
 
             this.workersGrid.Items.Refresh();
@@ -170,6 +171,32 @@ namespace TradingSoftware
         {
             Worker worker = ((FrameworkElement)sender).DataContext as Worker;
             worker.StopTradingAfterSignal();
+        }
+
+        private void AlgorithmFilePathButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.FileName = "Algorithm.dll"; // Default file name
+            dlg.DefaultExt = ".dll"; // Default file extension
+            dlg.Filter = "Algorithm File (.dll)|*.dll"; // Filter files by extension
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                // Open document
+                this.mainViewModel.CreationAlgorithmFilePath = dlg.FileName;
+            }
+        }
+
+        private void ChangeWorkerSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+            ChangeWorkerSettingsWindow settingsWindow = new ChangeWorkerSettingsWindow(workerViewModel);
+            settingsWindow.Show();
         }
     }
 }
