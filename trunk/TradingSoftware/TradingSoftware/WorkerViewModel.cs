@@ -61,25 +61,26 @@ namespace TradingSoftware
                 bool newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "isTrading").Equals("true") ? true : false;
                 if (!_isTrading.Equals(newValue))
                 {
-                    _isTrading = newValue;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("IsTrading"));
+                    this.IsTrading = newValue;
                 }
                 return _isTrading;
             }
             set
             {
-                _isTrading = value;
+                if (value != _isTrading)
+                {
+                    _isTrading = value;
 
-                XMLHandler.WriteValueToXML(this.EquityAsString, "isTrading", _isTrading.Equals(true) ? "true" : "false");
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "isTrading", value.Equals(true) ? "true" : "false");
 
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsTrading"));
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsTrading"));
+                }
             }
         }
 
         private Contract _equity;
-
+        
         public Contract EquityAsContract
         {
             get
@@ -110,24 +111,28 @@ namespace TradingSoftware
             get
             {
                 string currentValue = "";
-                if (this.IsFutureTrading)
+
+                if (_equity != null)
                 {
-                    currentValue = ConvertFutureToString((Future)_equity);
-                }
-                else
-                {
-                    currentValue = _equity.Symbol;
+                    //To not get into an infinite loop
+                    if (this._isFutureTrading)
+                    {
+                        currentValue = ConvertFutureToString((Future)_equity);
+                    }
+                    else
+                    {
+                        currentValue = _equity.Symbol;
+                    }
+
+                    string newValue = XMLHandler.ReadValueFromXML(currentValue, "symbol"); 
+                    
+                    if (!currentValue.Equals(newValue) && newValue.Length != 0)
+                    {
+                        this.EquityAsString = newValue;
+                    }
                 }
 
-                string newValue = XMLHandler.ReadValueFromXML(currentValue, "symbol");
-                if (!currentValue.Equals(newValue) && newValue.Length != 0)
-                {
-                    this.EquityAsString = newValue;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("EquityAsString"));
-                }
-
-                if (this.IsFutureTrading)
+                if (this._isFutureTrading)
                 {
                     return ConvertFutureToString((Future)_equity);
                 }
@@ -140,11 +145,12 @@ namespace TradingSoftware
             {
                 if (value.Length != 0)
                 {
+                    string currentValue = "";
+
                     if (_equity != null)
                     {
-                        string currentValue = "";
 
-                        if (this.IsFutureTrading)
+                        if (this._isFutureTrading)
                         {
                             currentValue = ConvertFutureToString((Future)_equity);
                         }
@@ -152,23 +158,24 @@ namespace TradingSoftware
                         {
                             currentValue = _equity.Symbol;
                         }
-
-                        if(currentValue != value)
-                            XMLHandler.WriteValueToXML(currentValue, "symbol", value);
                     }
 
-                    if (this.IsFutureTrading)
+                    if (currentValue != value)
                     {
-                        _equity = ConvertToFutures(value);
-                    }
-                    else
-                    {
-                        _equity = new Equity(value);
-                    }
+                        XMLHandler.WriteValueToXML(_equity == null ? value : currentValue, "symbol", value);
 
+                        if (this._isFutureTrading)
+                        {
+                            _equity = ConvertToFutures(value);
+                        }
+                        else
+                        {
+                            _equity = new Equity(value);
+                        }
 
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("EquityAsString"));
+                        if (PropertyChanged != null)
+                            PropertyChanged(this, new PropertyChangedEventArgs("EquityAsString"));
+                    }
                 }
             }
         }
@@ -185,12 +192,9 @@ namespace TradingSoftware
             }
             set
             {
-                this.BarsizeAsString = value.ToString();
-
-                if (PropertyChanged != null)
+                if (!value.Equals(_barsize))
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsString"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsObject"));
+                    this.BarsizeAsString = value.ToString();
                 }
             }
         }
@@ -198,37 +202,56 @@ namespace TradingSoftware
         [DisplayName("Barsize")]
         public string BarsizeAsString
         {
-            get 
+            get
             {
                 string newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "barsize");
                 if (!_barsize.Equals(newValue))
                 {
                     this.BarsizeAsString = newValue;
+                }
+
+                if (_barsize.ToString().Equals("OneMinute"))
+                {
+                    return "Minute";
+                }
+                else if (_barsize.ToString().Equals("OneDay"))
+                {
+                    return "Daily";
+                }
+                else
+                {
+                    return "Not supported";
+                }
+            }
+            set
+            {
+                if (value.Equals("mBar") || value.Equals("Minute") || value.Equals("OneMinute"))
+                {
+                    value = BarSize.OneMinute.ToString();
+                }
+                else if (value.Equals("dBar") || value.Equals("Daily") || value.Equals("OneDay"))
+                {
+                    value = BarSize.OneDay.ToString();
+                }
+
+                if (!value.Equals(_barsize.ToString()))
+                {
+                    if (value.Equals("OneMinute"))
+                    {
+                        _barsize = BarSize.OneMinute;
+                        XMLHandler.WriteValueToXML(this.EquityAsString, "barsize", "Minute");
+                    }
+                    else if (value.Equals("OneDay"))
+                    {
+                        _barsize = BarSize.OneDay;
+                        XMLHandler.WriteValueToXML(this.EquityAsString, "barsize", "Daily");
+                    }
+
                     if (PropertyChanged != null)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsString"));
                         PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsObject"));
                     }
-                }
-                return _barsize.ToString();
-            }
-            set
-            {
-                if (value.Equals("mBar") || value.Equals("Minute"))
-                {
-                    _barsize = BarSize.OneMinute;
-                }
-                else if (value.Equals("dBar") || value.Equals("Daily"))
-                {
-                    _barsize = BarSize.OneDay;
-                }
-
-                XMLHandler.WriteValueToXML(this.EquityAsString, "barsize", value);
-
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsString"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("BarsizeAsObject"));
                 }
             }
         }
@@ -245,9 +268,6 @@ namespace TradingSoftware
                 if (!_historicalType.ToString().Equals(newValue) || !_realtimeType.ToString().Equals(newValue))
                 {
                     this.DataType = newValue;
-
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("DataType"));
                 }
 
                 if (_historicalType.ToString().Equals(_realtimeType.ToString()))
@@ -257,31 +277,38 @@ namespace TradingSoftware
             }
             set
             {
-                if (value.Equals("Bid"))
+                if (value.Equals("Last"))
                 {
-                    _historicalType = HistoricalDataType.Bid;
-                    _realtimeType = RealTimeBarType.Bid;
+                    value = "Trades";
                 }
-                else if (value.Equals("Ask"))
+                if (!_historicalType.ToString().Equals(value) || !_realtimeType.ToString().Equals(value))
                 {
-                    _historicalType = HistoricalDataType.Ask;
-                    _realtimeType = RealTimeBarType.Ask;
-                }
-                else if (value.Equals("Last") || value.Equals("Trades"))
-                {
-                    _historicalType = HistoricalDataType.Trades;
-                    _realtimeType = RealTimeBarType.Trades;
-                }
-                else if (value.Equals("Midpoint"))
-                {
-                    _historicalType = HistoricalDataType.Midpoint;
-                    _realtimeType = RealTimeBarType.Midpoint;
-                }
+                    if (value.Equals("Bid"))
+                    {
+                        _historicalType = HistoricalDataType.Bid;
+                        _realtimeType = RealTimeBarType.Bid;
+                    }
+                    else if (value.Equals("Ask"))
+                    {
+                        _historicalType = HistoricalDataType.Ask;
+                        _realtimeType = RealTimeBarType.Ask;
+                    }
+                    else if (value.Equals("Last") || value.Equals("Trades"))
+                    {
+                        _historicalType = HistoricalDataType.Trades;
+                        _realtimeType = RealTimeBarType.Trades;
+                    }
+                    else if (value.Equals("Midpoint"))
+                    {
+                        _historicalType = HistoricalDataType.Midpoint;
+                        _realtimeType = RealTimeBarType.Midpoint;
+                    }
 
-                XMLHandler.WriteValueToXML(this.EquityAsString, "dataType", value);
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "dataType", value);
 
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("DataType"));
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("DataType"));
+                }
             }
         }
 
@@ -290,12 +317,28 @@ namespace TradingSoftware
         [DisplayName("Price premium [%]")]
         public decimal PricePremiumPercentage
         {
-            get { return _pricePremiumPercentage; }
+            get
+            {
+                decimal newValue = Decimal.Parse(XMLHandler.ReadValueFromXML(this.EquityAsString, "pricePremiumPercentage"), CultureInfo.InvariantCulture);
+                
+                if (!_pricePremiumPercentage.Equals(newValue))
+                {
+                    this.PricePremiumPercentage = newValue;
+                }
+
+                return _pricePremiumPercentage;
+            }
             set
             {
-                _pricePremiumPercentage = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("PricePremiumPercentage"));
+                if (_pricePremiumPercentage != value)
+                {
+                    _pricePremiumPercentage = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "pricePremiumPercentage", value.ToString(CultureInfo.InvariantCulture));
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("PricePremiumPercentage"));
+                }
             }
         }
 
@@ -304,12 +347,28 @@ namespace TradingSoftware
         [DisplayName("Cur. Position")]
         public int CurrentPosition
         {
-            get { return _currentPosition; }
+            get
+            {
+                int newValue = int.Parse(XMLHandler.ReadValueFromXML(this.EquityAsString, "currentPosition"), CultureInfo.InvariantCulture);
+                
+                if (!_currentPosition.Equals(newValue))
+                {
+                    this.CurrentPosition = newValue;
+                }
+
+                return _currentPosition;
+            }
             set
             {
-                _currentPosition = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("CurrentPosition"));
+                if (_currentPosition != value)
+                {
+                    _currentPosition = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "currentPosition", value.ToString(CultureInfo.InvariantCulture));
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CurrentPosition"));
+                }
             }
         }
 
@@ -318,12 +377,28 @@ namespace TradingSoftware
         [DisplayName("Round Lot Size")]
         public int RoundLotSize
         {
-            get { return _roundLotSize; }
+            get
+            {
+                int newValue = int.Parse(XMLHandler.ReadValueFromXML(this.EquityAsString, "roundLotSize"), CultureInfo.InvariantCulture);
+                
+                if (!_roundLotSize.Equals(newValue))
+                {
+                    this.RoundLotSize = newValue;
+                }
+
+                return _roundLotSize;
+            }
             set
             {
-                _roundLotSize = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("RoundLotSize"));
+                if (_roundLotSize != value)
+                {
+                    _roundLotSize = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "roundLotSize", value.ToString(CultureInfo.InvariantCulture));
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("RoundLotSize"));
+                }
             }
         }
 
@@ -332,12 +407,26 @@ namespace TradingSoftware
         [DisplayName("FutureTrading")]
         public bool IsFutureTrading
         {
-            get { return _isFutureTrading; }
+            get 
+            {
+                bool newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "isFutureTrading").Equals("true") ? true : false;
+                if (!_isFutureTrading.Equals(newValue))
+                {
+                    this.IsFutureTrading = newValue;
+                }
+                return _isFutureTrading;
+            }
             set
             {
-                _isFutureTrading = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsFutureTrading"));
+                if (value != _isFutureTrading)
+                {
+                    _isFutureTrading = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "isFutureTrading", value.Equals(true) ? "true" : "false");
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsFutureTrading"));
+                }
             }
         }
 
@@ -346,26 +435,54 @@ namespace TradingSoftware
         [DisplayName("Shall Ignore First Signal")]
         public bool ShallIgnoreFirstSignal
         {
-            get { return _shallIgnoreFirstSignal; }
+            get 
+            {
+                bool newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "shallIgnoreFirstSignal").Equals("true") ? true : false;
+                if (!_shallIgnoreFirstSignal.Equals(newValue))
+                {
+                    this.ShallIgnoreFirstSignal = newValue;
+                }
+                return _shallIgnoreFirstSignal;
+            }
             set
             {
-                _shallIgnoreFirstSignal = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("ShallIgnoreFirstSignal"));
+                if (value != _shallIgnoreFirstSignal)
+                {
+                    _shallIgnoreFirstSignal = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "shallIgnoreFirstSignal", value.Equals(true) ? "true" : "false");
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("ShallIgnoreFirstSignal"));
+                }
             }
         }
+
         public bool _hasAlgorithmParameters;
 
         [DisplayName("Algorithm with parameters?")]
         public bool HasAlgorithmParameters
         {
-            get { return _hasAlgorithmParameters; }
+            get 
+            {
+                bool newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "hasAlgorithmParameters").Equals("true") ? true : false;
+                if (!_hasAlgorithmParameters.Equals(newValue))
+                {
+                    this.HasAlgorithmParameters = newValue;
+                }
+                return _hasAlgorithmParameters;
+            }
             set
             {
-                _hasAlgorithmParameters = value;
+                if (value != _hasAlgorithmParameters)
+                {
+                    _hasAlgorithmParameters = value;
 
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("HasAlgorithmParameters"));
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "hasAlgorithmParameters", value.Equals(true) ? "true" : "false");
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("HasAlgorithmParameters"));
+                }
             }
         }
 
@@ -374,25 +491,47 @@ namespace TradingSoftware
 
         public Dictionary<string, decimal> ParsedAlgorithmParameters
         {
-            get { return _parsedAlgorithmParameters; }
+            get 
+            {
+                string tmpAlgorithmParameters = this.AlgorithmParameters;
+                return _parsedAlgorithmParameters;
+            }
         }
 
         public string _algorithmParameters;
 
         public string AlgorithmParameters
         {
-            get { return _algorithmParameters; }
+            get 
+            {
+                string newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "algorithmParameters");
+                if (!_algorithmParameters.Equals(newValue))
+                {
+                    this.AlgorithmParameters = newValue;
+                }
+                return _algorithmParameters;
+            }
             set
             {
-                _algorithmParameters = value;
-                if(value != null)
-                    if(value.Length != 0)
-                        _parsedAlgorithmParameters = this.parseAlgorithmParameters(value);
-
-                if (PropertyChanged != null)
+                if (!value.Equals(_algorithmParameters))
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("AlgorithmParameters"));
-                    PropertyChanged(this, new PropertyChangedEventArgs("ParsedAlgorithmParameters"));
+                    _algorithmParameters = value;
+
+                    if (value != null)
+                    {
+                        if (value.Length != 0)
+                        {
+                            _parsedAlgorithmParameters = this.parseAlgorithmParameters(value);
+                        }
+                    }
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "algorithmParameters", value);
+
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("AlgorithmParameters"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("ParsedAlgorithmParameters"));
+                    }
                 }
             }
         }
@@ -401,15 +540,23 @@ namespace TradingSoftware
 
         public string AlgorithmFilePath
         {
-            get
+            get 
             {
+                string newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "algorithmFilePath");
+                if (!_algorithmFilePath.Equals(newValue))
+                {
+                    this.AlgorithmFilePath = newValue;
+                }
                 return _algorithmFilePath;
             }
             set
             {
-                if (value != _algorithmFilePath)
+                if (!value.Equals(_algorithmFilePath))
                 {
                     _algorithmFilePath = value;
+
+                    XMLHandler.WriteValueToXML(this.EquityAsString, "algorithmFilePath", value);
+
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("AlgorithmFilePath"));
                 }

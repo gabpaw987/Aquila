@@ -51,8 +51,11 @@ namespace TradingSoftware
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
 
-            this.workerViewModel.IsFutureTrading = isFutureTrading;
+            //Just so equity knows how to convert the symbol
+            this.workerViewModel._isFutureTrading = isFutureTrading;
+
             this.workerViewModel.EquityAsString = equity;
+            this.workerViewModel.IsFutureTrading = isFutureTrading;
             this.workerViewModel.IsTrading = isTrading;
             this.workerViewModel.BarsizeAsString = barsize;
             this.workerViewModel.DataType = dataType;

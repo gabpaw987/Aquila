@@ -8,6 +8,7 @@ using System.IO;
 using System;
 using System.Linq;
 using System.Threading;
+using System.Windows.Data;
 
 namespace TradingSoftware
 {
@@ -50,13 +51,24 @@ namespace TradingSoftware
 
         private void ScrollToEnd_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ConsoleBoxScrollViewer.ScrollToEnd();
-            SignalBoxScrollViewer.ScrollToEnd();
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             WorkerTab workerTab = new WorkerTab(this);
+
+            XMLHandler.CreateWorker(this.mainViewModel.CreationSymbol,
+                                    this.mainViewModel.CreationIsTrading,
+                                    this.mainViewModel.CreationBarSize,
+                                    this.mainViewModel.CreationDataType,
+                                    this.mainViewModel.CreationAlgorithmFilePath,
+                                    this.mainViewModel.CreationPricePremiumPercentage,
+                                    this.mainViewModel.CreationIsFuture,
+                                    this.mainViewModel.CreationCurrentPosition,
+                                    this.mainViewModel.CreationShallIgnoreFirstSignal,
+                                    this.mainViewModel.CreationHasAlgorithmParameters,
+                                    (this.mainViewModel.CreationIsFuture ? 1 : this.mainViewModel.CreationRoundLotSize),
+                                    this.mainViewModel.CreationAlgorithmParameters);
 
             // TODO: block creation if something is not filled out
             // TODO: GUI for algorithmFilePath
@@ -80,19 +92,6 @@ namespace TradingSoftware
             workerTab.setUpTabWorkerConnection(worker);
             this.mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
 
-            XMLHandler.CreateWorker(this.mainViewModel.CreationSymbol,
-                                    this.mainViewModel.CreationIsTrading,
-                                    this.mainViewModel.CreationBarSize,
-                                    this.mainViewModel.CreationDataType,
-                                    this.mainViewModel.CreationAlgorithmFilePath,
-                                    this.mainViewModel.CreationPricePremiumPercentage,
-                                    this.mainViewModel.CreationIsFuture,
-                                    this.mainViewModel.CreationCurrentPosition,
-                                    this.mainViewModel.CreationShallIgnoreFirstSignal,
-                                    this.mainViewModel.CreationHasAlgorithmParameters,
-                                    (this.mainViewModel.CreationIsFuture ? 1 : this.mainViewModel.CreationRoundLotSize),
-                                    this.mainViewModel.CreationAlgorithmParameters);
-
             this.workersGrid.Items.Refresh();
 
             this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
@@ -101,6 +100,23 @@ namespace TradingSoftware
             this.mainViewModel.CreationSymbol = "";
             this.mainViewModel.CreationIsTrading = false;
             this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
+        }
+
+        public void AddSignalBoxToSummary(WorkerViewModel workerViewModel)
+        {
+            ScrollViewer scrollViewer = new ScrollViewer();
+            scrollViewer.Name = workerViewModel.EquityAsString + "_scrollViewer";
+
+            TextBox textBox = new TextBox();
+            textBox.Name = workerViewModel.EquityAsString + "_textBox";
+            textBox.DataContext = workerViewModel;
+            textBox.SetBinding(TextBox.TextProperty, new Binding("SignalText"));
+
+            scrollViewer.Content = textBox;
+
+
+            
+            this.mainViewModel.SignalBoxes.Add(scrollViewer);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

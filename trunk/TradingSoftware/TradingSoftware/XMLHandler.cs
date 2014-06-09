@@ -240,7 +240,14 @@ namespace TradingSoftware
                 {
                     if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
                     {
-                        return workerElement.Attribute(attributeToRead).Value;
+                        if (!attributeToRead.Equals("algorithmParameters"))
+                        {
+                            return workerElement.Attribute(attributeToRead).Value;
+                        }
+                        else
+                        {
+                            return workerElement.Value;
+                        }
                     }
                 }                
                 return string.Empty;
@@ -264,17 +271,32 @@ namespace TradingSoftware
                 {
                     if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
                     {
-                        workerElement.Attribute(attributeToRead).Value = valueToWrite;
-
-                        document.Save(settingsFilePath);
-
-                        if (ValidateXMLDocument(document))
+                        //If algorithmParameters shall be written, write them as the Value of the Worker
+                        if (!(attributeToRead.Equals("algorithmParameters") ? workerElement.Value : workerElement.Attribute(attributeToRead).Value).Equals(valueToWrite))
                         {
-                            return true;
+                            if (attributeToRead.Equals("algorithmParameters"))
+                            {
+                                workerElement.Value = valueToWrite;
+                            }
+                            else
+                            {
+                                workerElement.Attribute(attributeToRead).Value = valueToWrite;
+                            }
+
+                            document.Save(settingsFilePath);
+
+                            if (ValidateXMLDocument(document))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
-                            return false;
+                            return true;
                         }
                     }
                 }
