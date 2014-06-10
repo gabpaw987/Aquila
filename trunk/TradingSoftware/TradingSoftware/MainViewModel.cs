@@ -1,11 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace TradingSoftware
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private List<ScrollViewer> _signalBoxes;
+
+        public List<ScrollViewer> SignalBoxes
+        {
+            get
+            {
+                return _signalBoxes;
+            }
+            set
+            {
+                if (value != _signalBoxes)
+                {
+                    _signalBoxes = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("SignalBoxes"));
+                }
+            }
+        }
 
         private List<Worker> _workers;
 

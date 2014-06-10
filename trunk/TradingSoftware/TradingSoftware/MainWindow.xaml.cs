@@ -23,6 +23,7 @@ namespace TradingSoftware
 
             this.mainViewModel.Workers = new List<Worker>();
             this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
+            this.mainViewModel.SignalBoxes = new List<ScrollViewer>();
             this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
 
             XMLHandler.CreateSettingsFileIfNecessary();
@@ -51,6 +52,29 @@ namespace TradingSoftware
 
         private void ScrollToEnd_TextChanged(object sender, TextChangedEventArgs e)
         {
+            TextBox textBox = (TextBox) sender;
+
+            //Get symbol traded by of the sending Worker
+            string symbol = "";
+            for(int i = 0; i < textBox.Name.Length; i++)
+            {
+                if(!textBox.Name.ElementAt(i).Equals('_'))
+                {
+                    symbol += textBox.Name.ElementAt(i);
+                }
+                else
+                {
+                    i = textBox.Name.Length;
+                }
+            }
+
+            foreach(ScrollViewer scrollViewer in this.mainViewModel.SignalBoxes)
+            {                
+                if(scrollViewer.Name.Substring(0,symbol.Length).Equals(symbol))
+                {
+                    scrollViewer.ScrollToEnd();
+                }
+            }
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
@@ -86,7 +110,6 @@ namespace TradingSoftware
                                        this.mainViewModel.CreationHasAlgorithmParameters,
                                        this.mainViewModel.CreationAlgorithmFilePath,
                                        this.mainViewModel.CreationAlgorithmParameters);
-            worker.Start();
             this.mainViewModel.Workers.Add(worker);
 
             workerTab.setUpTabWorkerConnection(worker);
@@ -95,6 +118,7 @@ namespace TradingSoftware
             this.workersGrid.Items.Refresh();
 
             this.MainTabControl.Items.Insert(this.MainTabControl.Items.Count - 1, workerTab);
+            this.AddSignalBoxToSummary(workerTab.workerViewModel);
 
             //reset creation-variables
             this.mainViewModel.CreationSymbol = "";
@@ -106,17 +130,39 @@ namespace TradingSoftware
         {
             ScrollViewer scrollViewer = new ScrollViewer();
             scrollViewer.Name = workerViewModel.EquityAsString + "_scrollViewer";
+            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 
             TextBox textBox = new TextBox();
             textBox.Name = workerViewModel.EquityAsString + "_textBox";
             textBox.DataContext = workerViewModel;
             textBox.SetBinding(TextBox.TextProperty, new Binding("SignalText"));
+            textBox.IsEnabled = false;
+            textBox.TextChanged += this.ScrollToEnd_TextChanged;
 
             scrollViewer.Content = textBox;
-
-
-            
             this.mainViewModel.SignalBoxes.Add(scrollViewer);
+
+            this.UpdateSignalBoxSummary();            
+        }
+
+        public void UpdateSignalBoxSummary()
+        {
+            this.SignalSummaryGrid.Children.Clear();
+            this.SignalSummaryGrid.ColumnDefinitions.Clear();
+
+            for (int i = 0; i < this.mainViewModel.SignalBoxes.Count; i++)
+            {
+                if (((i / 2) + 1) > this.SignalSummaryGrid.ColumnDefinitions.Count)
+                {
+                    this.SignalSummaryGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                }
+
+                ScrollViewer signalbox = this.mainViewModel.SignalBoxes[i];
+                Grid.SetRow(signalbox, i % 2);
+                Grid.SetColumn(signalbox, i / 2);
+                this.SignalSummaryGrid.Children.Add(signalbox);
+            }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -151,7 +197,27 @@ namespace TradingSoftware
             }
         }
 
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                worker.workerViewModel.IsTrading = true;
+                if (!worker.IsRunning())
+                {
+                    worker.Start();
+                }
+            }
+        }
+
         private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                worker.Stop();
+            }
+        }
+
+        private void StopTradingButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (Worker worker in this.mainViewModel.Workers)
             {
@@ -233,6 +299,17 @@ namespace TradingSoftware
                 this.mainViewModel.Workers.Remove(worker);
                 this.mainViewModel.WorkerViewModels.Remove(worker.workerViewModel);
                 XMLHandler.RemoveWorker(worker.workerViewModel.EquityAsString);
+
+                foreach (ScrollViewer signalBox in this.mainViewModel.SignalBoxes)
+                {
+                    string workerName = worker.workerViewModel.EquityAsString;
+                    if (workerName.Equals(signalBox.Name.Substring(0, workerName.Length)))
+                    {
+                        this.mainViewModel.SignalBoxes.Remove(signalBox);
+                        break;
+                    }
+                }
+                this.UpdateSignalBoxSummary();
 
                 WorkerTab workerTab = this.MainTabControl.Items.Cast<TabItem>()
                                                             .Where(item => item.Name.Equals(worker.workerViewModel.EquityAsString))

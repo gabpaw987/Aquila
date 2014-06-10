@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <DataGrid Name="workerGrid" Grid.Row="0" Grid.Column="0" Margin="0" ItemsSource="{Binding}"
                               HorizontalAlignment="Stretch" CanUserReorderColumns="True" CanUserResizeColumns="True"
-                              IsReadOnly="False" AutoGenerateColumns="False">
+                              IsReadOnly="False" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>

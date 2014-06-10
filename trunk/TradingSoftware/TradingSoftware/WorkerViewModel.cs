@@ -271,9 +271,20 @@ namespace TradingSoftware
                 }
 
                 if (_historicalType.ToString().Equals(_realtimeType.ToString()))
-                    return _historicalType.ToString();
+                {
+                    if (_historicalType.ToString().Equals("Trades"))
+                    {
+                        return "Last";
+                    }
+                    else
+                    {
+                        return _historicalType.ToString();
+                    }
+                }
                 else
+                {
                     return "inconsistent";
+                }
             }
             set
             {
@@ -513,6 +524,10 @@ namespace TradingSoftware
             }
             set
             {
+                if(value == null)
+                {
+                    value = "";
+                }
                 if (!value.Equals(_algorithmParameters))
                 {
                     _algorithmParameters = value;

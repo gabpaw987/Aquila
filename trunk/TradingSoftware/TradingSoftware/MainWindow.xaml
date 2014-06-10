@@ -12,7 +12,7 @@
     </Window.DataContext>
     <DockPanel>
         <TabControl Name="MainTabControl" DockPanel.Dock="Top">
-            <TabItem Header="Console">
+            <TabItem Header="Signals">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -21,26 +21,20 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Row="0">
+                    <Grid Name="SignalSummaryGrid" Grid.Row="0">
                         <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="400"></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ScrollViewer Name="ConsoleBoxScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="0">
-                            <TextBox Name="ConsoleBox" IsEnabled="False" TextChanged="ScrollToEnd_TextChanged" Text="{Binding Path=ConsoleText}" />
-                        </ScrollViewer>
-                        <ScrollViewer Name="SignalBoxScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Column="1">
-                            <TextBox Name="SignalBox" IsEnabled="False" TextChanged="ScrollToEnd_TextChanged" Text="{Binding Path=SignalText}" />
-                        </ScrollViewer>
                     </Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" Grid.Row="1">
-                        <Button Click="StopButton_Click" Height="24" Width="100" Content="Stop trading"/>
+                        <Button Click="StartButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Start all workers"/>
+                        <Button Click="StopButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Stop all workers"/>
+                        <Button Click="StopTradingButton_Click" Height="24" Width="100" Content="Stop trading"/>
                     </StackPanel>
                 </Grid>
-
             </TabItem>
             <TabItem Header="Workers">
                 <Grid>
@@ -155,7 +149,7 @@
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="3"/>
                     <DataGrid Name="workersGrid" Grid.Row="3" Grid.Column="0" Margin="0" ItemsSource="{Binding Path=WorkerViewModels}"
                               HorizontalAlignment="Stretch" CanUserReorderColumns="True" CanUserResizeColumns="True"
-                              IsReadOnly="False" AutoGenerateColumns="False">
+                              IsReadOnly="False" AutoGenerateColumns="False" CanUserAddRows="False">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>

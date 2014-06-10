@@ -166,7 +166,7 @@ namespace TradingSoftware
                         RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
                         lock (IBID.ConsoleTextLock)
                         {
-                            this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
+                            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
                         }
                         ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
                     }
@@ -209,7 +209,7 @@ namespace TradingSoftware
                 totalHistoricalBars = e.RecordTotal;
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
                 }
 
                 //parses the received bar to one of my bars
@@ -235,7 +235,7 @@ namespace TradingSoftware
             {
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Connecting to IB.\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Connecting to IB.\n";
                 }
                 lock (IBID.ConnectionLock)
                 {
@@ -243,7 +243,7 @@ namespace TradingSoftware
                 }
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Successfully connected.\n";
                 }
 
                 //Add our event-handling methods to the inputClient.

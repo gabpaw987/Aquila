@@ -9,6 +9,7 @@ using Krs.Ats.IBNet;
 using Krs.Ats.IBNet.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 
 namespace TradingSoftware
 {
@@ -41,6 +42,8 @@ namespace TradingSoftware
 
         private IBInput realTimeDataClient;
 
+        private Type algorithmType;
+
         public Worker(MainViewModel mainViewModel, WorkerViewModel workerViewModel, string equity, bool isTrading, string barsize,
                       string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition,
                       bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath, string algorithmParameters)
@@ -60,7 +63,10 @@ namespace TradingSoftware
             this.workerViewModel.BarsizeAsString = barsize;
             this.workerViewModel.DataType = dataType;
             this.workerViewModel.PricePremiumPercentage = pricePremiumPercentage;
-            this.workerViewModel.RoundLotSize = roundLotSize;
+            if (!this.workerViewModel.IsFutureTrading)
+            {
+                this.workerViewModel.RoundLotSize = roundLotSize;
+            }
             this.didFirst = false;
             this.hasFirstSignalPassed = false;
             this.workerViewModel.CurrentPosition = currentPosition;
@@ -70,22 +76,7 @@ namespace TradingSoftware
             this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
             this.workerViewModel.AlgorithmParameters = algorithmParameters;
             this.lastIgnoredSignal = -100;
-            
-            this.Thread = new Thread(this.Run);
-        }
-
-        public string readAlgorithmParameters()
-        {
-            try
-            {
-                return File.ReadAllText("Parameters/" + this.workerViewModel.EquityAsString + ".param");
-            }
-            catch (Exception)
-            {
-                this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Param-File not found.";
-                return null;
-            }
-        }        
+        }    
 
         public void Stop()
         {
@@ -94,6 +85,7 @@ namespace TradingSoftware
             {
                 this.realTimeDataClient.Disconnect();
             }
+            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
         }
 
         public void Run()
@@ -112,16 +104,29 @@ namespace TradingSoftware
                         Thread.Sleep(1000);
                     }
 
-                    //Calculate the decision
-                    if (this.workerViewModel.HasAlgorithmParameters)
+                    //Load algorithm
+                    this.algorithmType = this.LoadAlgorithmFile();
+
+                    if (this.algorithmType != null)
                     {
-                        this.workerViewModel.AlgorithmParameters = this.readAlgorithmParameters();
-                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this.workerViewModel.ParsedAlgorithmParameters);
+                        //Calculate the decision
+                        if (this.workerViewModel.HasAlgorithmParameters)
+                        {
+                            Object[] oa = { Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this.workerViewModel.ParsedAlgorithmParameters };
+                            this.algorithmType.GetMethod("startCalculation").Invoke(null, oa);
+                        }
+                        else
+                        {
+                            Object[] oa = { Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>() };
+                            this.algorithmType.GetMethod("startCalculation").Invoke(null, oa);
+                        }
                     }
                     else
                     {
-                        Algorithm.DecisionCalculator.startCalculation(Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), new Dictionary<string, decimal>());
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Error while loading algorithm.\n";
                     }
+
+                    this.algorithmType = null;
                     
                     //For testing purposes
                     //this.Signals[this.Signals.Count - 2] = 0;
@@ -354,9 +359,30 @@ namespace TradingSoftware
             }
         }
 
+        public Type LoadAlgorithmFile()
+        {
+            Assembly assembly = Assembly.LoadFile(this.workerViewModel.AlgorithmFilePath);
+            AppDomain.CurrentDomain.Load(assembly.GetName());
+            return assembly.GetType("Algorithm.DecisionCalculator");
+        }
+
         public void Start()
         {
+            this.Thread = new Thread(this.Run);
             this.Thread.Start();
+            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker Started.\n";
+        }
+
+        public bool IsRunning()
+        {
+            if (this.Thread != null)
+            {
+                return this.Thread.IsAlive;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void StopTrading()

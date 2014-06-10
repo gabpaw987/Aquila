@@ -120,23 +120,20 @@ namespace TradingSoftware
                                                workerElement.Attribute("barsize").Value,
                                                workerElement.Attribute("dataType").Value,
                                                decimal.Parse(workerElement.Attribute("pricePremiumPercentage").Value, CultureInfo.InvariantCulture),
-                                               isWorkerFurtureTrading ? int.Parse(workerElement.Attribute("roundLotSize").Value, CultureInfo.InvariantCulture) : 1,
+                                               !isWorkerFurtureTrading ? int.Parse(workerElement.Attribute("roundLotSize").Value, CultureInfo.InvariantCulture) : 1,
                                                isWorkerFurtureTrading,
                                                int.Parse(workerElement.Attribute("currentPosition").Value, CultureInfo.InvariantCulture),
                                                workerElement.Attribute("shallIgnoreFirstSignal").Value.Equals("true") ? true : false,
                                                hasAlgorithmParameters,
                                                workerElement.Attribute("algorithmFilePath").Value,
                                                algorithmParameters);
-
                     
-
-                    worker.Start();
-
                     mainWindow.mainViewModel.Workers.Add(worker);
                     workerTab.setUpTabWorkerConnection(worker);
                     mainWindow.mainViewModel.WorkerViewModels.Add(workerTab.workerViewModel);
 
                     mainWindow.MainTabControl.Items.Insert(mainWindow.MainTabControl.Items.Count - 1, workerTab);
+                    mainWindow.AddSignalBoxToSummary(workerTab.workerViewModel);
                 }
                 mainWindow.workersGrid.Items.Refresh();
             }
@@ -167,7 +164,7 @@ namespace TradingSoftware
                 workerElement.Add(new XAttribute("hasAlgorithmParameters", hasAlgorithmParameters));
                 workerElement.Add(new XAttribute("algorithmFilePath", algorithmFilePath));
 
-                if (isFutureTrading)
+                if (!isFutureTrading)
                 {
                     workerElement.Add(new XAttribute("roundLotSize", roundLotSize));
                 }
@@ -272,7 +269,7 @@ namespace TradingSoftware
                     if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
                     {
                         //If algorithmParameters shall be written, write them as the Value of the Worker
-                        if (!(attributeToRead.Equals("algorithmParameters") ? workerElement.Value : workerElement.Attribute(attributeToRead).Value).Equals(valueToWrite))
+                        if (!((attributeToRead.Equals("algorithmParameters") ? workerElement.Value : workerElement.Attribute(attributeToRead).Value).Equals(valueToWrite)))
                         {
                             if (attributeToRead.Equals("algorithmParameters"))
                             {

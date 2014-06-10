@@ -122,7 +122,7 @@ namespace TradingSoftware
                     //Writes what happened to the Console and the log file
                     lock (IBID.ConsoleTextLock)
                     {
-                        this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
                     }
 
 
@@ -132,7 +132,7 @@ namespace TradingSoftware
                 {
                     lock (IBID.ConsoleTextLock)
                     {
-                        this.workerViewModel.ConsoleText += this.Equity.Symbol + ": An error occured while placing the order!\n";
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": An error occured while placing the order!\n";
                     }
                 }
                 return 0;
@@ -213,7 +213,7 @@ namespace TradingSoftware
             {
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Connecting to IB.\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Connecting to IB.\n";
                 }
                 lock (IBID.ConnectionLock)
                 {
@@ -221,7 +221,7 @@ namespace TradingSoftware
                 }
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.Equity.Symbol + ": Successfully connected.\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Successfully connected.\n";
                 }
 
                 //Add the important eventhandlers to the outputClient
