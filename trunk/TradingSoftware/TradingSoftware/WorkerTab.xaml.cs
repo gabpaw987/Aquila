@@ -39,17 +39,31 @@ namespace TradingSoftware
 
         private void StopThisWorkerButton_Click(object sender, RoutedEventArgs e)
         {
+            this.worker.Stop();
+        }
+
+        private void StartThisWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.worker.workerViewModel.IsTrading = true;
+            if (!this.worker.IsRunning())
+            {
+                this.worker.Start();
+            }
+        }
+
+        private void StopTradingThisWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
             this.worker.StopTrading();
         }
-        
-        private void StopAfterSignalButton_Click(object sender, RoutedEventArgs e)
+
+        private void StopThisWorkerAfterSignalButton_Click(object sender, RoutedEventArgs e)
         {
             this.worker.StopTradingAfterSignal();
         }
 
         private void ReenterButton_Click(object sender, RoutedEventArgs e)
         {
-            this.worker.shallReenter = true;
+            this.worker.Reenter();
         }
 
         private void RemoveWorkerButton_Click(object sender, RoutedEventArgs e)

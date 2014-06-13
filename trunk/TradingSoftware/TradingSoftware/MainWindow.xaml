@@ -31,8 +31,8 @@
                     </Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" Grid.Row="1">
                         <Button Click="StartButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Start all workers"/>
-                        <Button Click="StopButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Stop all workers"/>
-                        <Button Click="StopTradingButton_Click" Height="24" Width="100" Content="Stop trading"/>
+                        <Button Click="StopTradingButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Stop trading"/>
+                        <Button Click="StopButton_Click" Height="24" Width="100" Content="Stop all workers"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -86,7 +86,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="4">
                                     <Button Margin="0,0,5,0" Content="Browse" Click="AlgorithmFilePathButton_Click" />
-                                    <TextBox Width="100" Text="{Binding Path=CreationAlgorithmFilePath}" />
+                                    <TextBox Width="100" Name="CreationAlgorithmFilePathTextBox" TextChanged="ScrollToEndCreationAlgorithmPathTextBox_TextChanged" Text="{Binding Path=CreationAlgorithmFilePath}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="1" Grid.Column="1">
                                     <CheckBox IsChecked="{Binding Path=CreationIsTrading}"/>
@@ -168,7 +168,14 @@
                             <DataGridTemplateColumn>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Click="StopAfterSignalButton_Click">Stop After Signal</Button>
+                                        <Button Click="StopTradingOneWorkerButton_Click">Stop trading</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="StopTradingAfterSignalButton_Click">Stop trading after signal</Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

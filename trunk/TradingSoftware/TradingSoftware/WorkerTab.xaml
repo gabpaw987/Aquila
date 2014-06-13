@@ -38,7 +38,7 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="StopAfterSignalButton_Click">Stop After Signal</Button>
+                            <Button Click="StopThisWorkerAfterSignalButton_Click">Stop After Signal</Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -91,6 +91,9 @@
                 </ScrollViewer>
             </Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" Grid.Row="1">
+                <Button Click="StartThisWorkerButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Start this worker"/>
+                <Button Click="StopTradingThisWorkerButton_Click" Height="24" Width="100" Margin="0,0,10,0" Content="Stop trading"/>
+                <Button Click="StopThisWorkerAfterSignalButton_Click" Height="24" Width="140" Margin="0,0,10,0" Content="Stop trading after signal"/>
                 <Button Click="StopThisWorkerButton_Click" Height="24" Width="100" Content="Stop this worker"/>
             </StackPanel>
         </Grid>

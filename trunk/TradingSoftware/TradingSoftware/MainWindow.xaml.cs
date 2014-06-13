@@ -24,19 +24,11 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
             this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
             this.mainViewModel.SignalBoxes = new List<ScrollViewer>();
-            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
+            this.mainViewModel.CreationAlgorithmFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Algorithms.dll";
 
             XMLHandler.CreateSettingsFileIfNecessary();
             XMLHandler.LoadWorkersFromXML(this);
         }
-
-        /*
-         *To autogenerate columns for all properties again use AutoGeneratingColumn="OnAutoGeneratingColumn" in datagrid plus this method
-        private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Header = ((PropertyDescriptor)e.PropertyDescriptor).DisplayName;
-        }
-        */
 
         private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
@@ -75,6 +67,16 @@ namespace TradingSoftware
                     scrollViewer.ScrollToEnd();
                 }
             }
+        }
+
+        private void ScrollToEndCreationAlgorithmPathTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+
+            textBox.Focus(); // just for sure
+            textBox.CaretIndex = textBox.Text.Length;
+            Rect rect = textBox.GetRectFromCharacterIndex(textBox.CaretIndex);
+            textBox.ScrollToHorizontalOffset(Math.Max((textBox.HorizontalOffset + rect.Left - (textBox.ActualWidth - 40)), 0.0));
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
@@ -123,7 +125,7 @@ namespace TradingSoftware
             //reset creation-variables
             this.mainViewModel.CreationSymbol = "";
             this.mainViewModel.CreationIsTrading = false;
-            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
+            this.mainViewModel.CreationAlgorithmFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Algorithms.dll";
         }
 
         public void AddSignalBoxToSummary(WorkerViewModel workerViewModel)
@@ -132,6 +134,7 @@ namespace TradingSoftware
             scrollViewer.Name = workerViewModel.EquityAsString + "_scrollViewer";
             scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scrollViewer.Margin = new Thickness(2);
 
             TextBox textBox = new TextBox();
             textBox.Name = workerViewModel.EquityAsString + "_textBox";
@@ -175,26 +178,12 @@ namespace TradingSoftware
 
         private void ReenterButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
-            foreach (Worker worker in this.mainViewModel.Workers)
-            {
-                if (worker.workerViewModel.Equals(workerViewModel))
-                {
-                    worker.shallReenter = true;
-                }
-            }
+            this.FindWorker(sender).Reenter();
         }
 
         private void StopOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
-            foreach (Worker worker in this.mainViewModel.Workers)
-            {
-                if (worker.workerViewModel.Equals(workerViewModel))
-                {
-                    worker.StopTrading();
-                }
-            }
+            this.FindWorker(sender).Stop();
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -225,16 +214,14 @@ namespace TradingSoftware
             }
         }
 
-        private void StopAfterSignalButton_Click(object sender, RoutedEventArgs e)
+        private void StopTradingOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
-            foreach (Worker worker in this.mainViewModel.Workers)
-            {
-                if (worker.workerViewModel.Equals(workerViewModel))
-                {
-                    worker.StopTradingAfterSignal();
-                }
-            }
+            this.FindWorker(sender).StopTrading();
+        }
+
+        private void StopTradingAfterSignalButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.FindWorker(sender).StopTradingAfterSignal();
         }
 
         private void AlgorithmFilePathButton_Click(object sender, RoutedEventArgs e)
@@ -270,19 +257,7 @@ namespace TradingSoftware
 
         private void RemoveWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
-
-            Worker worker = null;
-
-            foreach (Worker tmpWorker in this.mainViewModel.Workers)
-            {
-                if (tmpWorker.workerViewModel.Equals(workerViewModel))
-                {
-                    worker = tmpWorker;
-                }
-            }
-
-            this.RemoveWorker(worker);
+            this.RemoveWorker(this.FindWorker(sender));
         }
 
         public void RemoveWorker(Worker worker)
@@ -290,9 +265,12 @@ namespace TradingSoftware
             if (worker != null)
             {
                 worker.StopTrading();
-                while (worker.workerViewModel.IsTrading)
+                if (worker.didFirst)
                 {
-                    Thread.Sleep(50);
+                    while (worker.workerViewModel.IsTrading)
+                    {
+                        Thread.Sleep(50);
+                    }
                 }
                 worker.Stop();
 
@@ -318,6 +296,21 @@ namespace TradingSoftware
 
                 this.workersGrid.Items.Refresh();
             }
+        }
+
+        public Worker FindWorker(object sender)
+        {
+            WorkerViewModel workerViewModel = ((FrameworkElement)sender).DataContext as WorkerViewModel;
+
+            foreach (Worker tmpWorker in this.mainViewModel.Workers)
+            {
+                if (tmpWorker.workerViewModel.Equals(workerViewModel))
+                {
+                    return tmpWorker;
+                }
+            }
+
+            return null;
         }
     }
 }
