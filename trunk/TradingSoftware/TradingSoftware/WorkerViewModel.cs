@@ -13,6 +13,26 @@ namespace TradingSoftware
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private bool _isThreadRunning;
+
+        public bool IsThreadRunning
+        {
+            get
+            {
+                return _isThreadRunning;
+            }
+            set
+            {
+                if (value != _isThreadRunning)
+                {
+                    _isThreadRunning = value;
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsThreadRunning"));
+                }
+            }
+        }
+
         private string _consoleText;
 
         public string ConsoleText
@@ -431,7 +451,12 @@ namespace TradingSoftware
             {
                 if (value != _isFutureTrading)
                 {
+                    string equityString = this.EquityAsString;
+                    this._equity = null;
+
                     _isFutureTrading = value;
+
+                    this.EquityAsString = equityString;
 
                     XMLHandler.WriteValueToXML(this.EquityAsString, "isFutureTrading", value.Equals(true) ? "true" : "false");
 
@@ -578,6 +603,53 @@ namespace TradingSoftware
             }
         }
 
+        private string _exchange;
+
+        public string Exchange
+        {
+            get
+            {
+                //if not first call
+                if (this._equity != null)
+                {
+                    string newValue = XMLHandler.ReadValueFromXML(this.EquityAsString, "exchange");
+                    if (!_exchange.Equals(newValue))
+                    {
+                        this.Exchange = newValue;
+                    }
+                }
+                return _exchange;
+            }
+            set
+            {
+                //if not first call
+                if (this._equity != null)
+                {
+                    if (!value.Equals(_exchange))
+                    {
+                        string equityString = this.EquityAsString;
+                        this._equity = null;
+
+                        _exchange = value;
+
+                        this.EquityAsString = equityString;
+
+                        XMLHandler.WriteValueToXML(this.EquityAsString, "exchange", value);
+
+                        if (PropertyChanged != null)
+                            PropertyChanged(this, new PropertyChangedEventArgs("Exchange"));
+                    }
+                }
+                else
+                {
+                    _exchange = value;
+
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("Exchange"));
+                }
+            }
+        }
+
         public Future ConvertToFutures(string input)
         {
             string expiry = "201" + input.ElementAt(3);
@@ -587,7 +659,7 @@ namespace TradingSoftware
                     expiry += "12";
                     break;
 
-                case ("Q"):
+                case ("Q"): case ("U"):
                     expiry += "09";
                     break;
 
@@ -603,7 +675,7 @@ namespace TradingSoftware
                     break;
             }
 
-            return new Future(input.ElementAt(0) + "" + input.ElementAt(1), "GLOBEX", expiry);
+            return new Future(input.ElementAt(0) + "" + input.ElementAt(1), this.Exchange, expiry);
         }
 
         public string ConvertFutureToString(Future input)
@@ -646,9 +718,9 @@ namespace TradingSoftware
                 try
                 {
                     string[] separatedAlgorithmParameters = rawAlgorithmParameters.Split('\n');
-                    foreach (string parameter in separatedAlgorithmParameters)
+                    for (int i = 0; i < separatedAlgorithmParameters.Length; i++ )
                     {
-                        string[] separatedParameter = parameter.Split(',');
+                        string[] separatedParameter = separatedAlgorithmParameters[i].Split(',');
                         parameters.Add(separatedParameter[0], decimal.Parse(separatedParameter[1], CultureInfo.InvariantCulture));
                     }
                 }

@@ -117,16 +117,15 @@ namespace TradingSoftware
                     }
 
                     //place it and request its execution.
-                    outputClient.PlaceOrder(IBID.OrderID, this.Equity, BuyContract);
+                    outputClient.PlaceOrder(IBID.OrderId, this.Equity, BuyContract);
 
                     //Writes what happened to the Console and the log file
                     lock (IBID.ConsoleTextLock)
                     {
-                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Order Executed with Order ID: " + (IBID.OrderId) + "!\n";
                     }
 
-
-                    return IBID.OrderID++;
+                    return IBID.OrderId++;
                 }
                 catch (Exception)
                 {
@@ -136,7 +135,7 @@ namespace TradingSoftware
                     }
                 }
                 return 0;
-            }
+            }            
         }
 
         /// <summary>
@@ -160,24 +159,23 @@ namespace TradingSoftware
             }
         }
 
-        /// <summary>
-        /// Handles the NextValidId event of the outpurClient control. Whenever a new outputclient is initialised this eventhandler is added to it, in order to receive<br/>
-        /// its next valid Order ID. Because the different connectionIDs result in not understandable orderIDs I made the orderID static and only set it to the<br/>
-        /// new value at the first time an outputClient is initialised, in order to keep the orderID managemanet clear.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="Krs.Ats.IBNet.NextValidIdEventArgs"/> instance containing the event data.</param>
-        /// <remarks></remarks>
-        private void client_NextValidId(object sender, NextValidIdEventArgs e)
-        {
-            if (IBID.OrderID == 1)
+        /* currently not used
+            /// <summary>
+            /// Handles the NextValidId event of the outpurClient control. Whenever a new outputclient is initialised this eventhandler is added to it, in order to receive<br/>
+            /// its next valid Order ID. Because the different connectionIDs result in not understandable orderIDs I made the orderID static and only set it to the<br/>
+            /// new value at the first time an outputClient is initialised, in order to keep the orderID managemanet clear.
+            /// </summary>
+            /// <param name="sender">The source of the event.</param>
+            /// <param name="e">The <see cref="Krs.Ats.IBNet.NextValidIdEventArgs"/> instance containing the event data.</param>
+            /// <remarks></remarks>
+            private void client_NextValidId(object sender, NextValidIdEventArgs e)
             {
-                lock (IBID.OrderLock)
+                if (IBID.OrderID == 0)
                 {
                     IBID.OrderID = e.OrderId;
                 }
             }
-        }
+        */
 
         public void RequestTickPrice()
         {
@@ -225,7 +223,7 @@ namespace TradingSoftware
                 }
 
                 //Add the important eventhandlers to the outputClient
-                outputClient.NextValidId += client_NextValidId;
+                //currently unused: outputClient.NextValidId += client_NextValidId;
                 outputClient.TickPrice += client_TickPrice;
                 outputClient.Error += client_Error;
 

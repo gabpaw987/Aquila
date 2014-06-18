@@ -23,6 +23,7 @@ namespace TradingSoftware
                 {
                     XDocument document = new XDocument();
                     XElement rootElement = new XElement("TradingSoftware");
+                    rootElement.Add(new XAttribute("orderId", 1));
                     document.Add(rootElement);
 
                     document.Save(settingsFilePath);
@@ -106,22 +107,22 @@ namespace TradingSoftware
                     WorkerTab workerTab = new WorkerTab(mainWindow);
 
                     bool hasAlgorithmParameters = workerElement.Attribute("hasAlgorithmParameters").Value.Equals("true") ? true : false;
-                    bool isWorkerFurtureTrading = workerElement.Attribute("isFutureTrading").Value.Equals("true") ? true : false;
 
                     string algorithmParameters = "";
                     if (hasAlgorithmParameters && workerElement.Value != null && workerElement.Value.Length != 0)
                     {
-                        algorithmParameters = workerElement.Value;
+                        algorithmParameters = workerElement.Value.Substring(1, workerElement.Value.Length - 1);
                     }
 
                     Worker worker = new Worker(mainWindow.mainViewModel, workerTab.workerViewModel,
                                                workerElement.Attribute("symbol").Value,
+                                               workerElement.Attribute("exchange").Value,
                                                workerElement.Attribute("isTrading").Value.Equals("true") ? true : false,
                                                workerElement.Attribute("barsize").Value,
                                                workerElement.Attribute("dataType").Value,
                                                decimal.Parse(workerElement.Attribute("pricePremiumPercentage").Value, CultureInfo.InvariantCulture),
-                                               !isWorkerFurtureTrading ? int.Parse(workerElement.Attribute("roundLotSize").Value, CultureInfo.InvariantCulture) : 1,
-                                               isWorkerFurtureTrading,
+                                               int.Parse(workerElement.Attribute("roundLotSize").Value, CultureInfo.InvariantCulture),
+                                               workerElement.Attribute("isFutureTrading").Value.Equals("true") ? true : false,
                                                int.Parse(workerElement.Attribute("currentPosition").Value, CultureInfo.InvariantCulture),
                                                workerElement.Attribute("shallIgnoreFirstSignal").Value.Equals("true") ? true : false,
                                                hasAlgorithmParameters,
@@ -139,10 +140,10 @@ namespace TradingSoftware
             }
         }
 
-        public static bool CreateWorker(string equity, bool isTrading, string barsize, string dataType, string algorithmFilePath,
-                                        decimal pricePremiumPercentage, bool isFutureTrading, int currentPosition,
-                                        bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, int roundLotSize,
-                                        string algorithmParamters)
+        public static bool CreateWorker(string equity, string exchange, bool isTrading, string barsize, string dataType,
+                                        string algorithmFilePath, decimal pricePremiumPercentage, bool isFutureTrading,
+                                        int currentPosition, bool shallIgnoreFirstSignal, bool hasAlgorithmParameters,
+                                        int roundLotSize, string algorithmParamters)
         {
             try
             {
@@ -154,6 +155,7 @@ namespace TradingSoftware
 
                 XElement workerElement = new XElement("Worker");
                 workerElement.Add(new XAttribute("symbol", equity));
+                workerElement.Add(new XAttribute("exchange", exchange));
                 workerElement.Add(new XAttribute("isTrading", isTrading));
                 workerElement.Add(new XAttribute("barsize", barsize));
                 workerElement.Add(new XAttribute("dataType", dataType));
@@ -168,10 +170,14 @@ namespace TradingSoftware
                 {
                     workerElement.Add(new XAttribute("roundLotSize", roundLotSize));
                 }
+                else
+                {
+                    workerElement.Add(new XAttribute("roundLotSize", 1));
+                }
 
                 if (hasAlgorithmParameters)
                 {
-                    workerElement.Value = algorithmParamters;
+                    workerElement.Value = "\n" + algorithmParamters;
                 }
 
                 document.Root.Add(workerElement);
@@ -233,20 +239,28 @@ namespace TradingSoftware
                 {
                     document = XDocument.Load(settingsFilePath);
                 }
-                foreach (XElement workerElement in document.Root.Elements("Worker"))
+
+                if (attributeToRead.Equals("orderId"))
                 {
-                    if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
+                    return document.Root.Attribute("orderId").Value;
+                }
+                else
+                {
+                    foreach (XElement workerElement in document.Root.Elements("Worker"))
                     {
-                        if (!attributeToRead.Equals("algorithmParameters"))
+                        if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
                         {
-                            return workerElement.Attribute(attributeToRead).Value;
-                        }
-                        else
-                        {
-                            return workerElement.Value;
+                            if (!attributeToRead.Equals("algorithmParameters"))
+                            {
+                                return workerElement.Attribute(attributeToRead).Value;
+                            }
+                            else
+                            {
+                                return workerElement.Value.Substring(1, workerElement.Value.Length - 1);
+                            }
                         }
                     }
-                }                
+                }
                 return string.Empty;
             }
             catch
@@ -257,6 +271,8 @@ namespace TradingSoftware
 
         public static bool WriteValueToXML(string workerSymbol, string attributeToRead, string valueToWrite)
         {
+            bool wasSuccessful = false;
+
             try
             {
                 XDocument document = null;
@@ -264,44 +280,60 @@ namespace TradingSoftware
                 {
                     document = XDocument.Load(settingsFilePath);
                 }
-                foreach (XElement workerElement in document.Root.Elements("Worker"))
+
+                if (attributeToRead.Equals("orderId"))
                 {
-                    if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
+                    document.Root.Attribute("orderId").Value = valueToWrite;
+                }
+                else
+                {
+                    foreach (XElement workerElement in document.Root.Elements("Worker"))
                     {
-                        //If algorithmParameters shall be written, write them as the Value of the Worker
-                        if (!((attributeToRead.Equals("algorithmParameters") ? workerElement.Value : workerElement.Attribute(attributeToRead).Value).Equals(valueToWrite)))
+                        if (workerElement.Attribute("symbol").Value.Equals(workerSymbol))
                         {
-                            if (attributeToRead.Equals("algorithmParameters"))
+                            //If algorithmParameters shall be written, write them as the Value of the Worker
+                            if (!((attributeToRead.Equals("algorithmParameters") ? workerElement.Value : workerElement.Attribute(attributeToRead).Value).Equals(valueToWrite)))
                             {
-                                workerElement.Value = valueToWrite;
+                                if (attributeToRead.Equals("algorithmParameters"))
+                                {
+                                    workerElement.Value = "\n" + valueToWrite;
+                                }
+                                else
+                                {
+                                    workerElement.Attribute(attributeToRead).Value = valueToWrite;
+                                }
                             }
                             else
                             {
-                                workerElement.Attribute(attributeToRead).Value = valueToWrite;
+                                wasSuccessful = true;
                             }
-
-                            document.Save(settingsFilePath);
-
-                            if (ValidateXMLDocument(document))
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            return true;
                         }
                     }
                 }
-                return false;
+
+                //Do not save the file again if nothing changed
+                if (!wasSuccessful)
+                {
+                    lock (IBID.XMLReadLock)
+                    {
+                        document.Save(settingsFilePath);
+
+                        if (ValidateXMLDocument(document))
+                        {
+                            wasSuccessful = true;
+                        }
+                        else
+                        {
+                            wasSuccessful = false;
+                        }
+                    }
+                }
+
+                return wasSuccessful;
             }
             catch
             {
-                return false;
+                return wasSuccessful;
             }
         }
     }

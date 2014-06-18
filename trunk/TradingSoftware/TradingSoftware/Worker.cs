@@ -44,15 +44,18 @@ namespace TradingSoftware
 
         private Type algorithmType;
 
-        public Worker(MainViewModel mainViewModel, WorkerViewModel workerViewModel, string equity, bool isTrading, string barsize,
-                      string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading, int currentPosition,
-                      bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath, string algorithmParameters)
+        public Worker(MainViewModel mainViewModel, WorkerViewModel workerViewModel, string equity, string exchange, bool isTrading,
+                      string barsize, string dataType, decimal pricePremiumPercentage, int roundLotSize, bool isFutureTrading,
+                      int currentPosition, bool shallIgnoreFirstSignal, bool hasAlgorithmParameters, string algorithmFilePath,
+                      string algorithmParameters)
         {
             this.mainViewModel = mainViewModel;
             this.workerViewModel = workerViewModel;
 
             this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
             this.Signals = new List<int>();
+
+            this.workerViewModel.Exchange = exchange;
 
             //Just so equity knows how to convert the symbol
             this.workerViewModel._isFutureTrading = isFutureTrading;
@@ -92,6 +95,8 @@ namespace TradingSoftware
                 {
                     Thread.Sleep(200);
                 }
+
+                this.workerViewModel.IsThreadRunning = false;
 
                 this.Bars.Clear();
                 this.Signals.Clear();
@@ -150,15 +155,15 @@ namespace TradingSoftware
 
                         //For testing purposes
                         //this.Signals[this.Signals.Count - 2] = 0;
-                        //this.Signals[this.Signals.Count - 1] = 3;
-                        //if (this.didFirst)
-                        //    this.Signals[this.Signals.Count - 1] = 1;
+                        this.Signals[this.Signals.Count - 1] = 3;
+                        if (this.didFirst)
+                            this.Signals[this.Signals.Count - 1] = -1;
 
                         //Stop if isStopTradingAfterSignal is true and the signal is finished
                         if (this.isStopTradingAfterSignal &&
-                           (Math.Sign(this.Signals[this.Signals.Count - 1]) != Math.Sign(this.workerViewModel.CurrentPosition) ||
-                            Math.Sign(this.Signals[this.Signals.Count - 1]) == 0 ||
-                            this.workerViewModel.CurrentPosition == 0))
+                           ((Math.Sign(this.Signals[this.Signals.Count - 1]) != Math.Sign(this.workerViewModel.CurrentPosition)) ||
+                            (Math.Sign(this.Signals[this.Signals.Count - 1]) == 0) ||
+                            (this.workerViewModel.CurrentPosition == 0)))
                         {
                             this.isStopTrading = true;
                         }
@@ -387,7 +392,19 @@ namespace TradingSoftware
 
         public Type LoadAlgorithmFile()
         {
-            Assembly assembly = Assembly.LoadFile(this.workerViewModel.AlgorithmFilePath);
+            string absoluteAlgorithmFilePath = "";
+
+            if (Path.IsPathRooted(this.workerViewModel.AlgorithmFilePath))
+            {
+                absoluteAlgorithmFilePath = this.workerViewModel.AlgorithmFilePath;
+            }
+            else
+            {
+                absoluteAlgorithmFilePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), this.workerViewModel.AlgorithmFilePath);
+                absoluteAlgorithmFilePath = Path.GetFullPath((new Uri(absoluteAlgorithmFilePath)).LocalPath);
+            }
+
+            Assembly assembly = Assembly.LoadFile(absoluteAlgorithmFilePath);
             AppDomain.CurrentDomain.Load(assembly.GetName());
             return assembly.GetType("Algorithm.DecisionCalculator");
         }
@@ -398,6 +415,8 @@ namespace TradingSoftware
             {
                 this.Thread = new Thread(this.Run);
                 this.Thread.Start();
+
+                this.workerViewModel.IsThreadRunning = true;
 
                 this.RunThread = true;
 

@@ -274,6 +274,25 @@ namespace TradingSoftware
             }
         }
 
+        private string _creationExchange;
+
+        public string CreationExchange
+        {
+            get
+            {
+                return _creationExchange;
+            }
+            set
+            {
+                if (value != _creationExchange)
+                {
+                    _creationExchange = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationExchange"));
+                }
+            }
+        }
+
         private string _creationAlgorithmParameters;
 
         public string CreationAlgorithmParameters

@@ -45,7 +45,7 @@ namespace TradingSoftware
         private void StartThisWorkerButton_Click(object sender, RoutedEventArgs e)
         {
             this.worker.workerViewModel.IsTrading = true;
-            if (!this.worker.IsRunning())
+            if (!this.worker.workerViewModel.IsThreadRunning)
             {
                 this.worker.Start();
             }

@@ -24,7 +24,7 @@ namespace TradingSoftware
             this.mainViewModel.Workers = new List<Worker>();
             this.mainViewModel.WorkerViewModels = new List<WorkerViewModel>();
             this.mainViewModel.SignalBoxes = new List<ScrollViewer>();
-            this.mainViewModel.CreationAlgorithmFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Algorithms.dll";
+            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
 
             XMLHandler.CreateSettingsFileIfNecessary();
             XMLHandler.LoadWorkersFromXML(this);
@@ -84,6 +84,7 @@ namespace TradingSoftware
             WorkerTab workerTab = new WorkerTab(this);
 
             XMLHandler.CreateWorker(this.mainViewModel.CreationSymbol,
+                                    this.mainViewModel.CreationExchange,
                                     this.mainViewModel.CreationIsTrading,
                                     this.mainViewModel.CreationBarSize,
                                     this.mainViewModel.CreationDataType,
@@ -101,6 +102,7 @@ namespace TradingSoftware
             Worker worker = new Worker(this.mainViewModel,
                                        workerTab.workerViewModel,
                                        this.mainViewModel.CreationSymbol,
+                                       this.mainViewModel.CreationExchange,
                                        this.mainViewModel.CreationIsTrading,
                                        this.mainViewModel.CreationBarSize,
                                        this.mainViewModel.CreationDataType,
@@ -125,7 +127,8 @@ namespace TradingSoftware
             //reset creation-variables
             this.mainViewModel.CreationSymbol = "";
             this.mainViewModel.CreationIsTrading = false;
-            this.mainViewModel.CreationAlgorithmFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Algorithms.dll";
+            this.mainViewModel.CreationExchange = "GLOBEX";
+            this.mainViewModel.CreationAlgorithmFilePath = "Algorithms.dll";
         }
 
         public void AddSignalBoxToSummary(WorkerViewModel workerViewModel)
@@ -191,7 +194,7 @@ namespace TradingSoftware
             foreach (Worker worker in this.mainViewModel.Workers)
             {
                 worker.workerViewModel.IsTrading = true;
-                if (!worker.IsRunning())
+                if (!worker.workerViewModel.IsThreadRunning)
                 {
                     worker.Start();
                 }

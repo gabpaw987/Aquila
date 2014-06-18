@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TradingSoftware"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="MainWindow" Height="600" Width="750" Closing="Window_Closing">
+        Title="MainWindow" Height="650" Width="750" Closing="Window_Closing">
     <Window.Resources>
         <xctk:InverseBoolConverter x:Key="InverseBoolConverter" />
     </Window.Resources>
@@ -58,18 +58,19 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="150"></ColumnDefinition>
-                                    <ColumnDefinition Width="150"></ColumnDefinition>
-                                    <ColumnDefinition Width="25"></ColumnDefinition>
+                                    <ColumnDefinition Width="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="10"></ColumnDefinition>
                                     <ColumnDefinition Width="150"></ColumnDefinition>
                                     <ColumnDefinition Width="200"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Text-Labels -->
                                 <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Symbol:</Label>
-                                <Label Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">Algorithm filepath:</Label>
+                                <Label Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">Exchange:</Label>
                                 <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Is trading?</Label>
                                 <Label Grid.Row="1" Grid.Column="3" VerticalAlignment="Center">Price premium:</Label>
                                 <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Barsize:</Label>
@@ -78,31 +79,34 @@
                                 <Label Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" IsEnabled="{Binding Path=CreationIsFuture, Converter={StaticResource InverseBoolConverter}}">Round lot size:</Label>
                                 <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Current Position:</Label>
                                 <Label Grid.Row="4" Grid.Column="3" VerticalAlignment="Center">Shall ignore first signal?</Label>
-                                <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">With parameters?</Label>
-                                <Label Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" IsEnabled="{Binding Path=CreationHasAlgorithmParameters}"> Algortihm parameters:</Label>
+                                <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Algorithm filepath:</Label>
+                                <Label Grid.Row="5" Grid.Column="3" VerticalAlignment="Center">With parameters?</Label>
+                                <Label Grid.Row="6" Grid.Column="0" Margin="0,5,0,0" IsEnabled="{Binding Path=CreationHasAlgorithmParameters}"> Algortihm parameters:</Label>
 
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="1">
-                                    <TextBox Width="130" Text="{Binding Path=CreationSymbol}" />
+                                    <TextBox Width="150" Text="{Binding Path=CreationSymbol}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Grid.Column="4">
-                                    <Button Margin="0,0,5,0" Content="Browse" Click="AlgorithmFilePathButton_Click" />
-                                    <TextBox Width="100" Name="CreationAlgorithmFilePathTextBox" TextChanged="ScrollToEndCreationAlgorithmPathTextBox_TextChanged" Text="{Binding Path=CreationAlgorithmFilePath}" />
+                                    <ComboBox SelectedValuePath="Content" Width="150" SelectedValue="{Binding Path=CreationExchange}">
+                                        <ComboBoxItem IsSelected="True">GLOBEX</ComboBoxItem>
+                                        <ComboBoxItem>ECBOT</ComboBoxItem>
+                                    </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="1" Grid.Column="1">
-                                    <CheckBox IsChecked="{Binding Path=CreationIsTrading}"/>
+                                    <CheckBox Margin="0,5,0,0" IsChecked="{Binding Path=CreationIsTrading}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10"  Grid.Row="1" Grid.Column="4">
                                     <TextBox Height="20" Width="50" Text="{Binding Path=CreationPricePremiumPercentage}" PreviewTextInput="NumericOnly_WithDecimalPlace" />
                                     <Label Content="%"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="2" Grid.Column="1">
-                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationBarSize}">
+                                    <ComboBox SelectedValuePath="Content" Width="150" SelectedValue="{Binding Path=CreationBarSize}">
                                         <ComboBoxItem IsSelected="True">Minute</ComboBoxItem>
                                         <ComboBoxItem>Daily</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="2" Grid.Column="4">
-                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationDataType}">
+                                    <ComboBox SelectedValuePath="Content" Width="150" SelectedValue="{Binding Path=CreationDataType}">
                                         <ComboBoxItem>Bid</ComboBoxItem>
                                         <ComboBoxItem>Ask</ComboBoxItem>
                                         <ComboBoxItem IsSelected="True">Last</ComboBoxItem>
@@ -110,17 +114,17 @@
                                     </ComboBox>
                                 </StackPanel>                              
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="3" Grid.Column="1">
-                                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=CreationIsFuture}"/>
+                                    <CheckBox Margin="0,5,0,0" IsChecked="{Binding Path=CreationIsFuture}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="3" Grid.Column="4">
-                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationRoundLotSize}" IsEnabled="{Binding Path=CreationIsFuture, Converter={StaticResource InverseBoolConverter}}">
+                                    <ComboBox SelectedValuePath="Content" Width="150" SelectedValue="{Binding Path=CreationRoundLotSize}" IsEnabled="{Binding Path=CreationIsFuture, Converter={StaticResource InverseBoolConverter}}">
                                         <ComboBoxItem>10</ComboBoxItem>
                                         <ComboBoxItem>50</ComboBoxItem>
                                         <ComboBoxItem IsSelected="True">100</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="4" Grid.Column="1">
-                                    <ComboBox SelectedValuePath="Content" Width="130" SelectedValue="{Binding Path=CreationCurrentPosition}">
+                                    <ComboBox SelectedValuePath="Content" Width="150" SelectedValue="{Binding Path=CreationCurrentPosition}">
                                         <ComboBoxItem>-3</ComboBoxItem>
                                         <ComboBoxItem>-2</ComboBoxItem>
                                         <ComboBoxItem>-1</ComboBoxItem>
@@ -131,16 +135,20 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="4" Grid.Column="4">
-                                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=CreationShallIgnoreFirstSignal}"/>
+                                    <CheckBox Margin="0,5,0,0" IsChecked="{Binding Path=CreationShallIgnoreFirstSignal}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="5" Grid.Column="1">
-                                    <CheckBox Margin="10,5,0,0" IsChecked="{Binding Path=CreationHasAlgorithmParameters}"/>
+                                    <Button Margin="0,0,5,0" Content="Browse" Click="AlgorithmFilePathButton_Click" />
+                                    <TextBox Width="100" Name="CreationAlgorithmFilePathTextBox" TextChanged="ScrollToEndCreationAlgorithmPathTextBox_TextChanged" Text="{Binding Path=CreationAlgorithmFilePath}" />
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="5" Grid.Column="4" IsEnabled="{Binding Path=CreationHasAlgorithmParameters}">
-                                    <TextBox TextWrapping="NoWrap" AcceptsReturn="True" Width="150" Text="{Binding Path=CreationAlgorithmParameters}" />
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="5" Grid.Column="4">
+                                    <CheckBox Margin="0,5,0,0" IsChecked="{Binding Path=CreationHasAlgorithmParameters}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4" IsEnabled="{Binding Path=CreationHasAlgorithmParameters}">
+                                    <TextBox TextWrapping="NoWrap" AcceptsReturn="True" Width="510" Text="{Binding Path=CreationAlgorithmParameters}" />
                                 </StackPanel>
 
-                                <Button Click="CreateButton_Click" Margin="20,20,0,0" Height="24" Width="100" Grid.Row="6" Grid.Column="4"
+                                <Button Click="CreateButton_Click" Margin="20,20,0,0" Height="24" Width="100" Grid.Row="7" Grid.Column="4"
                                         Content="Create Worker"/>
                             </Grid>
                         </StackPanel>
