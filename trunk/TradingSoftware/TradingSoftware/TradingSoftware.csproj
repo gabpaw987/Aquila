@@ -69,7 +69,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AutoClosingMessageBox.cs" />
     <Compile Include="ChangeWorkerSettingsWindow.xaml.cs">
       <DependentUpon>ChangeWorkerSettingsWindow.xaml</DependentUpon>
     </Compile>

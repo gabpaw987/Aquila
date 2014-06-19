@@ -34,11 +34,7 @@ namespace TradingSoftware
         private bool isStopTradingAfterSignal = false;
 
         public bool didFirst;
-        public bool shallReenter;
         public bool hasFirstSignalPassed;
-
-        //is -100 if no signal was ignored recently
-        public int lastIgnoredSignal;
 
         private IBInput realTimeDataClient;
 
@@ -78,7 +74,6 @@ namespace TradingSoftware
             this.workerViewModel._parsedAlgorithmParameters = new Dictionary<string, decimal>();
             this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
             this.workerViewModel.AlgorithmParameters = algorithmParameters;
-            this.lastIgnoredSignal = -100;
         }    
 
         public void Stop()
@@ -104,7 +99,6 @@ namespace TradingSoftware
                 this.isStopTradingAfterSignal = false;
                 this.didFirst = false;
                 this.hasFirstSignalPassed = false;
-                this.lastIgnoredSignal = -100;
 
                 this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
                 this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
@@ -122,7 +116,7 @@ namespace TradingSoftware
                 //TODO: exit on exception
                 if (this.workerViewModel.BarsizeAsObject.Equals(BarSize.OneMinute))
                 {
-                    while (length == this.Bars.Count && this.RunThread && !this.isStopTrading && !this.shallReenter)
+                    while (length == this.Bars.Count && this.RunThread && !this.isStopTrading)
                     {
                         Thread.Sleep(1000);
                     }
@@ -155,9 +149,9 @@ namespace TradingSoftware
 
                         //For testing purposes
                         //this.Signals[this.Signals.Count - 2] = 0;
-                        this.Signals[this.Signals.Count - 1] = 3;
-                        if (this.didFirst)
-                            this.Signals[this.Signals.Count - 1] = -1;
+                        //this.Signals[this.Signals.Count - 1] = 3;
+                        //if (this.didFirst)
+                        //    this.Signals[this.Signals.Count - 1] = -1;
 
                         //Stop if isStopTradingAfterSignal is true and the signal is finished
                         if (this.isStopTradingAfterSignal &&
@@ -190,14 +184,8 @@ namespace TradingSoftware
                             this.hasFirstSignalPassed = true;
                         }
 
-                        if (((this.Signals[this.Signals.Count - 1] != this.workerViewModel.CurrentPosition))
-                            && (this.lastIgnoredSignal != this.Signals[this.Signals.Count - 1]))
+                        if (((this.Signals[this.Signals.Count - 1] != this.workerViewModel.CurrentPosition)))
                         {
-                            if (this.lastIgnoredSignal != -100)
-                            {
-                                this.lastIgnoredSignal = -100;
-                            }
-
                             if ((this.didFirst && this.workerViewModel.ShallIgnoreFirstSignal && (this.Signals[this.Signals.Count - 1] != this.Signals[this.Signals.Count - 2])))
                             {
                                 this.hasFirstSignalPassed = true;
@@ -211,105 +199,65 @@ namespace TradingSoftware
 
                                 lock (IBID.SoundLock)
                                 {
-                                    //Ensure that only one AutoClosingMessageBox gets opened at a time
+                                    //Ensure that only one order is placed at a time
                                     Thread.Sleep(200);
 
                                     SoundPlayer sound = new SoundPlayer(@"../../sounds/BIGHORN.wav");
                                     sound.Play();
                                 }
 
-                                MessageBoxResult dialogResult;
+                                if (oldSignal != newSignal)
+                                {
+                                    bool isBuy = false;
+                                    int toZero = 0;
+                                    int fromZero = 0;
 
-                                if (!isStopTrading && !this.shallReenter)
-                                {
-                                    dialogResult = AutoClosingMessageBox.Show(this.workerViewModel.EquityAsString + ": New Signal is " + newSignal + ".\n Would you like to ignore the order?", "New Signal", 5000, MessageBoxButton.OKCancel);
-                                }
-                                else
-                                {
-                                    dialogResult = MessageBoxResult.Cancel;
-                                }
-
-                                if (dialogResult == MessageBoxResult.Cancel)
-                                {
-                                    if (oldSignal != newSignal)
+                                    if ((newSignal > 0 && oldSignal < 0) ||
+                                        (newSignal < 0 && oldSignal > 0))
                                     {
-                                        bool isBuy = false;
-                                        int toZero = 0;
-                                        int fromZero = 0;
-
-                                        if ((newSignal > 0 && oldSignal < 0) ||
-                                            (newSignal < 0 && oldSignal > 0))
-                                        {
-                                            toZero = 0 - oldSignal;
-                                            fromZero = newSignal;
-                                        }
-                                        else if (newSignal != 0)
-                                        {
-                                            //kaufen und verkaufen newSignal - oldSignal
-                                            toZero = newSignal - oldSignal;
-                                        }
-                                        else if (newSignal == 0)
-                                        {
-                                            toZero = 0 - oldSignal;
-                                        }
-
-                                        if (Math.Sign(toZero) == 1)
-                                        {
-                                            isBuy = true;
-                                        }
-
-                                        this.IBOutput = new IBOutput(this.workerViewModel, this.workerViewModel.EquityAsContract);
-                                        this.IBOutput.Connect();
-
-                                        this.IBOutput.RequestTickPrice();
-
-                                        int one = 1;
-                                        int two = 2;
-                                        int three = 3;
-
-                                        int amountToZero = 0;
-                                        switch (toZero)
-                                        {
-                                            case 1:
-                                            case -1: { amountToZero = one; break; }
-                                            case 2:
-                                            case -2: { amountToZero = two; break; }
-                                            case 3:
-                                            case -3: { amountToZero = three; break; }
-                                        }
-                                        int amountFromZero = 0;
-                                        if (fromZero != 0)
-                                        {
-                                            switch (fromZero)
-                                            {
-                                                case 1:
-                                                case -1: { amountFromZero = one; break; }
-                                                case 2:
-                                                case -2: { amountFromZero = two; break; }
-                                                case 3:
-                                                case -3: { amountFromZero = three; break; }
-                                            }
-                                        }
-
-                                        if (amountToZero != 0 && this.workerViewModel.IsTrading)
-                                        {
-                                            if (isBuy)
-                                                this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
-                                            else if (!isBuy)
-                                                this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
-
-                                            this.workerViewModel.CurrentPosition = newSignal;
-                                            this.IBOutput.Disconnect();
-                                        }
+                                        toZero = 0 - oldSignal;
+                                        fromZero = newSignal;
+                                    }
+                                    else if (newSignal != 0)
+                                    {
+                                        //kaufen und verkaufen newSignal - oldSignal
+                                        toZero = newSignal - oldSignal;
+                                    }
+                                    else if (newSignal == 0)
+                                    {
+                                        toZero = 0 - oldSignal;
                                     }
 
-                                    this.didFirst = true;
+                                    if (Math.Sign(toZero) == 1)
+                                    {
+                                        isBuy = true;
+                                    }
+
+                                    this.IBOutput = new IBOutput(this.workerViewModel, this.workerViewModel.EquityAsContract);
+                                    this.IBOutput.Connect();
+
+                                    this.IBOutput.RequestTickPrice();
+
+                                    int one = 1;
+                                    int two = 2;
+                                    int three = 3;
+
+                                    int amountToZero = Math.Abs(toZero);
+                                    int amountFromZero = Math.Abs(fromZero);
+
+                                    if (amountToZero != 0 && this.workerViewModel.IsTrading)
+                                    {
+                                        if (isBuy)
+                                            this.IBOutput.placeOrder(ActionSide.Buy, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
+                                        else if (!isBuy)
+                                            this.IBOutput.placeOrder(ActionSide.Sell, (amountToZero + amountFromZero) * ((this.workerViewModel.IsFutureTrading) ? 1 : this.workerViewModel.RoundLotSize), this.workerViewModel.PricePremiumPercentage);
+
+                                        this.workerViewModel.CurrentPosition = newSignal;
+                                        this.IBOutput.Disconnect();
+                                    }
                                 }
-                                else
-                                {
-                                    this.didFirst = true;
-                                    this.lastIgnoredSignal = this.Signals[this.Signals.Count - 1];
-                                }
+
+                                this.didFirst = true;
                             }
                             else
                             {
@@ -330,11 +278,6 @@ namespace TradingSoftware
                             //To Ignore the first signal again after stopping, if wanted
                             this.didFirst = false;
                             this.hasFirstSignalPassed = false;
-                        }
-
-                        if (this.shallReenter)
-                        {
-                            this.shallReenter = false;
                         }
                     }
                 }
@@ -449,17 +392,20 @@ namespace TradingSoftware
         {
             if (this.workerViewModel.IsTrading && this.workerViewModel.CurrentPosition != 0)
             {
-                this.isStopTradingAfterSignal = true;
+                if (this.isStopTradingAfterSignal)
+                {
+                    this.isStopTradingAfterSignal = false;
+                }
+                else
+                {
+                    this.isStopTradingAfterSignal = true;
+                }
             }
         }
 
-        public void Reenter()
+        public bool doesStopTradingAfterSignal()
         {
-            if (this.workerViewModel.IsTrading && this.lastIgnoredSignal != -100 && !this.shallReenter)
-            {
-                this.lastIgnoredSignal = -100;
-                this.shallReenter = true;
-            }
+            return this.isStopTradingAfterSignal;
         }
     }
 }

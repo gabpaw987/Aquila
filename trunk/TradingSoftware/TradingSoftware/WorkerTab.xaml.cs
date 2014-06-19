@@ -59,11 +59,15 @@ namespace TradingSoftware
         private void StopThisWorkerAfterSignalButton_Click(object sender, RoutedEventArgs e)
         {
             this.worker.StopTradingAfterSignal();
-        }
 
-        private void ReenterButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.worker.Reenter();
+            if (this.worker.doesStopTradingAfterSignal())
+            {
+                this.StopTradingAfterSignalButton.Content = "Don't stop trading after signal";
+            }
+            else
+            {
+                this.StopTradingAfterSignalButton.Content = "Stop trading after signal";
+            }
         }
 
         private void RemoveWorkerButton_Click(object sender, RoutedEventArgs e)

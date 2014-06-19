@@ -179,11 +179,6 @@ namespace TradingSoftware
             }
         }
 
-        private void ReenterButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.FindWorker(sender).Reenter();
-        }
-
         private void StopOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
             this.FindWorker(sender).Stop();
@@ -199,6 +194,11 @@ namespace TradingSoftware
                     worker.Start();
                 }
             }
+        }
+
+        private void StartOneWorkerButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.FindWorker(sender).Start();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
