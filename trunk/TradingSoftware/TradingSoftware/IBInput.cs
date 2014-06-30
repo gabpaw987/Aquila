@@ -54,6 +54,8 @@ namespace TradingSoftware
 
         public bool hadFirst { get; set; }
 
+        public CSVWriter csvWriter { get; set; }
+
         private WorkerViewModel workerViewModel;
 
         /// <summary>
@@ -136,6 +138,8 @@ namespace TradingSoftware
             this.hadFirst = false;
             this.IsConnected = false;
             this.IsFuture = isFuture;
+
+            this.csvWriter = new CSVWriter(this.workerViewModel);
         }
 
         /// <summary>
@@ -168,7 +172,10 @@ namespace TradingSoftware
                         {
                             this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
                         }
-                        ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
+
+                        Tuple<DateTime, decimal, decimal, decimal, decimal> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5);
+                        this.ListOfBars.Add(newBar);
+                        this.csvWriter.WriteBar(newBar);
                     }
                 }
                 else
@@ -213,7 +220,9 @@ namespace TradingSoftware
                 }
 
                 //parses the received bar to one of my bars
-                ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
+                Tuple<DateTime, decimal, decimal, decimal, decimal> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close);
+                this.ListOfBars.Add(newBar);
+                this.csvWriter.WriteBar(newBar);
             }
         }
 
