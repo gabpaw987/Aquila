@@ -19,7 +19,7 @@ namespace TradingSoftware
             this.CreateOrReadCSV();
         }
 
-        public bool WriteBar(Tuple<DateTime, decimal, decimal, decimal, decimal> bar)
+        public bool WriteBar(Tuple<DateTime, decimal, decimal, decimal, decimal, long> bar)
         {
             lock (IBID.DataExportLock)
             {
@@ -30,7 +30,7 @@ namespace TradingSoftware
                         string barLineToWrite = "";
 
                         barLineToWrite += bar.Item1.ToString("MM/dd/yyyy, hh:mm:ss tt") + ",";
-                        barLineToWrite += bar.Item2 + "," + bar.Item3 + "," + bar.Item4 + "," + bar.Item5;
+                        barLineToWrite += bar.Item2 + "," + bar.Item3 + "," + bar.Item4 + "," + bar.Item5 + "," + bar.Item6;
 
                         using (StreamWriter writer = new StreamWriter(this.fileName, true))
                         {
@@ -60,7 +60,7 @@ namespace TradingSoftware
                     File.Create(this.fileName).Close();
                     using (StreamWriter writer = new StreamWriter(this.fileName))
                     {
-                        writer.WriteLine("Date,Time,Open,High,Low,Close");
+                        writer.WriteLine("Date,Time,Open,High,Low,Close,Volume");
                     }
 
                     this.lastWrittenDateTime = new DateTime();

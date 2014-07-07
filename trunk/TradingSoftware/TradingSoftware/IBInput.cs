@@ -20,7 +20,7 @@ namespace TradingSoftware
         /// <summary>
         /// A List were all bars that are in the application at the moment, are saved.
         /// </summary>
-        private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> ListOfBars;
+        private List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> ListOfBars;
 
         /// <summary>
         /// The client that handles all the input connections. In the constructor this one is connected to the IB with the id 0.<br/>
@@ -48,7 +48,7 @@ namespace TradingSoftware
         /// If this is the case, the CreateMinuteBar()-method is called to create a minute-bar out of the 12 5-second bars and this minute bar is added to the<br/>
         /// ListOfBars-list. Also when this happens the RealTimeBarList gets cleared to hold 12 new bars later on.
         /// </summary>
-        public List<Tuple<DateTime, decimal, decimal, decimal, decimal>> RealTimeBarList;
+        public List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> RealTimeBarList;
 
         public BarSize Barsize { get; private set; }
 
@@ -94,7 +94,7 @@ namespace TradingSoftware
         /// </summary>
         /// <returns>The created minute Bar.</returns>
         /// <remarks></remarks>
-        private Tuple<DateTime, decimal, decimal, decimal, decimal> AggregateBar()
+        private Tuple<DateTime, decimal, decimal, decimal, decimal, long> AggregateBar()
         {
             //First open value in the list
             decimal open = RealTimeBarList[0].Item2;
@@ -107,9 +107,12 @@ namespace TradingSoftware
 
             //The Last close value in the list
             decimal close = RealTimeBarList[RealTimeBarList.ToArray().Length - 1].Item5;
+            
+            //sum all volumes of the 5 sec bars
+            long volume = RealTimeBarList.Sum(x => x.Item6);
 
             //creates the bar with these values and returns it
-            return new Tuple<DateTime, decimal, decimal, decimal, decimal>(RealTimeBarList.First().Item1, open, high, low, close);
+            return new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(RealTimeBarList.First().Item1, open, high, low, close, volume);
         }
 
         /// <summary>
@@ -121,7 +124,7 @@ namespace TradingSoftware
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(WorkerViewModel workerViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Contract equity, BarSize barsize, bool isFuture)
+        public IBInput(WorkerViewModel workerViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> LOB, Contract equity, BarSize barsize, bool isFuture)
         {
             this.workerViewModel = workerViewModel;
 
@@ -133,7 +136,7 @@ namespace TradingSoftware
             inputClient = new IBClient();
             inputClient.ThrowExceptions = true;
 
-            RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
+            RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
             this.Equity = equity;
             this.hadFirst = false;
             this.IsConnected = false;
@@ -157,8 +160,8 @@ namespace TradingSoftware
                 System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 dtDateTime = dtDateTime.AddSeconds(e.Time).ToLocalTime();
 
-                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(dtDateTime, e.Open, e.High, e.Low, e.Close));
-                Tuple<DateTime, decimal, decimal, decimal, decimal> b = null;
+                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+                Tuple<DateTime, decimal, decimal, decimal, decimal, long> b = null;
 
                 if (this.hadFirst)
                 {
@@ -167,15 +170,14 @@ namespace TradingSoftware
                     if ((RealTimeBarList.ToArray().Length >= 12 && this.Barsize == BarSize.OneMinute) || (RealTimeBarList.ToArray().Length >= 4680 && this.Barsize == BarSize.OneDay))
                     {
                         b = AggregateBar();
-                        RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
+                        RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
                         lock (IBID.ConsoleTextLock)
                         {
-                            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
+                            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + ", " + b.Item6 + "\n";
                         }
 
-                        Tuple<DateTime, decimal, decimal, decimal, decimal> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5);
-                        this.ListOfBars.Add(newBar);
-                        this.csvWriter.WriteBar(newBar);
+                        this.ListOfBars.Add(b);
+                        this.csvWriter.WriteBar(b);
                     }
                 }
                 else
@@ -216,11 +218,11 @@ namespace TradingSoftware
                 totalHistoricalBars = e.RecordTotal;
                 lock (IBID.ConsoleTextLock)
                 {
-                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + ", " + e.Volume + "\n";
                 }
 
                 //parses the received bar to one of my bars
-                Tuple<DateTime, decimal, decimal, decimal, decimal> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close);
+                Tuple<DateTime, decimal, decimal, decimal, decimal, long> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(e.Date, e.Open, e.High, e.Low, e.Close, e.Volume);
                 this.ListOfBars.Add(newBar);
                 this.csvWriter.WriteBar(newBar);
             }

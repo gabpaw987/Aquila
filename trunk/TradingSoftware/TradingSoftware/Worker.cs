@@ -19,7 +19,7 @@ namespace TradingSoftware
         private MainViewModel mainViewModel;
         public WorkerViewModel workerViewModel;
 
-        private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> Bars;
+        private List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> Bars;
         private List<int> Signals;
         private Thread Thread;
 
@@ -48,7 +48,7 @@ namespace TradingSoftware
             this.mainViewModel = mainViewModel;
             this.workerViewModel = workerViewModel;
 
-            this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
+            this.Bars = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
             this.Signals = new List<int>();
 
             this.workerViewModel.Exchange = exchange;
