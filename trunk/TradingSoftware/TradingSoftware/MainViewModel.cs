@@ -1,11 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace TradingSoftware
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private List<ScrollViewer> _signalBoxes;
+
+        public List<ScrollViewer> SignalBoxes
+        {
+            get
+            {
+                return _signalBoxes;
+            }
+            set
+            {
+                if (value != _signalBoxes)
+                {
+                    _signalBoxes = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("SignalBoxes"));
+                }
+            }
+        }
 
         private List<Worker> _workers;
 
@@ -26,40 +46,21 @@ namespace TradingSoftware
             }
         }
 
-        private string _consoleText;
+        private List<WorkerViewModel> _workerViewModels;
 
-        public string ConsoleText
+        public List<WorkerViewModel> WorkerViewModels
         {
             get
             {
-                return _consoleText;
+                return _workerViewModels;
             }
             set
             {
-                if (value != _consoleText)
+                if (value != _workerViewModels)
                 {
-                    _consoleText = value;
+                    _workerViewModels = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("ConsoleText"));
-                }
-            }
-        }
-
-        private string _signalText;
-
-        public string SignalText
-        {
-            get
-            {
-                return _signalText;
-            }
-            set
-            {
-                if (value != _signalText)
-                {
-                    _signalText = value;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("SignalText"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("WorkerViewModels"));
                 }
             }
         }
@@ -98,25 +99,6 @@ namespace TradingSoftware
                     _creationIsTrading = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("CreationIsTrading"));
-                }
-            }
-        }
-
-        private decimal _creationAmount;
-
-        public decimal CreationAmount
-        {
-            get
-            {
-                return _creationAmount;
-            }
-            set
-            {
-                if (value != _creationAmount)
-                {
-                    _creationAmount = value;
-                    if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("CreationAmount"));
                 }
             }
         }
@@ -250,6 +232,82 @@ namespace TradingSoftware
                     _creationShallIgnoreFirstSignal = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("CreationShallIgnoreFirstSignal"));
+                }
+            }
+        }
+
+        private bool _creationHasAlgorithmParameters;
+
+        public bool CreationHasAlgorithmParameters
+        {
+            get
+            {
+                return _creationHasAlgorithmParameters;
+            }
+            set
+            {
+                if (value != _creationHasAlgorithmParameters)
+                {
+                    _creationHasAlgorithmParameters = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationHasAlgorithmParameters"));
+                }
+            }
+        }
+
+        private string _creationAlgorithmFilePath;
+
+        public string CreationAlgorithmFilePath
+        {
+            get
+            {
+                return _creationAlgorithmFilePath;
+            }
+            set
+            {
+                if (value != _creationAlgorithmFilePath)
+                {
+                    _creationAlgorithmFilePath = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationAlgorithmFilePath"));
+                }
+            }
+        }
+
+        private string _creationExchange;
+
+        public string CreationExchange
+        {
+            get
+            {
+                return _creationExchange;
+            }
+            set
+            {
+                if (value != _creationExchange)
+                {
+                    _creationExchange = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationExchange"));
+                }
+            }
+        }
+
+        private string _creationAlgorithmParameters;
+
+        public string CreationAlgorithmParameters
+        {
+            get
+            {
+                return _creationAlgorithmParameters;
+            }
+            set
+            {
+                if (value != _creationAlgorithmParameters)
+                {
+                    _creationAlgorithmParameters = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("CreationAlgorithmParameters"));
                 }
             }
         }

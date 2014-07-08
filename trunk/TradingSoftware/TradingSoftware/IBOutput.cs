@@ -58,7 +58,7 @@ namespace TradingSoftware
         /// </summary>
         private Boolean isCurrentAskSet = false;
 
-        private MainViewModel mainViewModel;
+        private WorkerViewModel workerViewModel;
 
         private Order BuyContract;
         private ActionSide buyOrSell;
@@ -69,9 +69,9 @@ namespace TradingSoftware
         /// </summary>
         /// <param name="equity">The equity used throughout the whole object.</param>
         /// <remarks></remarks>
-        public IBOutput(MainViewModel mainViewModel, Contract equity)
+        public IBOutput(WorkerViewModel workerViewModel, Contract equity)
         {
-            this.mainViewModel = mainViewModel;
+            this.workerViewModel = workerViewModel;
 
             this.Equity = equity;
 
@@ -87,46 +87,55 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public int placeOrder(ActionSide buyOrSell, int totalQuantity, decimal pricePremiumPercentage)
         {
-            try
+            lock (IBID.OrderLock)
             {
-                this.buyOrSell = buyOrSell;
-
-                //Make a new order like the user specified and also trade outside regular trading hours.
-                this.BuyContract = new Order();
-                this.BuyContract.Action = buyOrSell;
-                this.BuyContract.OutsideRth = false;
-
-                //Finish the order with the totalQuantity from the parameters. Tif is the Time an order stays in the TWS when it´s not filled.
-                this.BuyContract.OrderType = OrderType.Limit;
-                this.BuyContract.TotalQuantity = totalQuantity;
-                this.BuyContract.Tif = TimeInForce.Day;
-
-                //really transmit the order
-                this.BuyContract.Transmit = true;
-
-                this.RequestTickPrice();
-
-                if (pricePremiumPercentage > 0)
+                try
                 {
-                    if (buyOrSell.Equals(ActionSide.Buy))
-                        this.BuyContract.LimitPrice = currentAskPrice + ((currentAskPrice - currentBidPrice) * pricePremiumPercentage) / 100;
-                    else if (buyOrSell.Equals(ActionSide.Sell))
-                        this.BuyContract.LimitPrice = currentBidPrice - ((currentAskPrice - currentBidPrice) * pricePremiumPercentage) / 100;
+                    this.buyOrSell = buyOrSell;
+
+                    //Make a new order like the user specified and also trade outside regular trading hours.
+                    this.BuyContract = new Order();
+                    this.BuyContract.Action = buyOrSell;
+                    this.BuyContract.OutsideRth = false;
+
+                    //Finish the order with the totalQuantity from the parameters. Tif is the Time an order stays in the TWS when it´s not filled.
+                    this.BuyContract.OrderType = OrderType.Limit;
+                    this.BuyContract.TotalQuantity = totalQuantity;
+                    this.BuyContract.Tif = TimeInForce.Day;
+
+                    //really transmit the order
+                    this.BuyContract.Transmit = true;
+
+                    this.RequestTickPrice();
+
+                    if (pricePremiumPercentage > 0)
+                    {
+                        if (buyOrSell.Equals(ActionSide.Buy))
+                            this.BuyContract.LimitPrice = currentAskPrice + ((currentAskPrice - currentBidPrice) * pricePremiumPercentage) / 100;
+                        else if (buyOrSell.Equals(ActionSide.Sell))
+                            this.BuyContract.LimitPrice = currentBidPrice - ((currentAskPrice - currentBidPrice) * pricePremiumPercentage) / 100;
+                    }
+
+                    //place it and request its execution.
+                    outputClient.PlaceOrder(IBID.OrderId, this.Equity, BuyContract);
+
+                    //Writes what happened to the Console and the log file
+                    lock (IBID.ConsoleTextLock)
+                    {
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Order Executed with Order ID: " + (IBID.OrderId) + "!\n";
+                    }
+
+                    return IBID.OrderId++;
                 }
-
-                //place it and request its execution.
-                outputClient.PlaceOrder(IBID.OrderID, this.Equity, BuyContract);
-
-                //Writes what happened to the Console and the log file
-                this.mainViewModel.ConsoleText += "Order Executed with Order ID: " + (IBID.OrderID) + "!\n";
-
-                return IBID.OrderID++;
-            }
-            catch (Exception)
-            {
-                this.mainViewModel.ConsoleText += "An error occured while placing the order!\n";
-            }
-            return 0;
+                catch (Exception)
+                {
+                    lock (IBID.ConsoleTextLock)
+                    {
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": An error occured while placing the order!\n";
+                    }
+                }
+                return 0;
+            }            
         }
 
         /// <summary>
@@ -150,23 +159,30 @@ namespace TradingSoftware
             }
         }
 
-        /// <summary>
-        /// Handles the NextValidId event of the outpurClient control. Whenever a new outputclient is initialised this eventhandler is added to it, in order to receive<br/>
-        /// its next valid Order ID. Because the different connectionIDs result in not understandable orderIDs I made the orderID static and only set it to the<br/>
-        /// new value at the first time an outputClient is initialised, in order to keep the orderID managemanet clear.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="Krs.Ats.IBNet.NextValidIdEventArgs"/> instance containing the event data.</param>
-        /// <remarks></remarks>
-        private void client_NextValidId(object sender, NextValidIdEventArgs e)
-        {
-            if (IBID.OrderID == 0)
-                IBID.OrderID = e.OrderId;
-        }
+        /* currently not used
+            /// <summary>
+            /// Handles the NextValidId event of the outpurClient control. Whenever a new outputclient is initialised this eventhandler is added to it, in order to receive<br/>
+            /// its next valid Order ID. Because the different connectionIDs result in not understandable orderIDs I made the orderID static and only set it to the<br/>
+            /// new value at the first time an outputClient is initialised, in order to keep the orderID managemanet clear.
+            /// </summary>
+            /// <param name="sender">The source of the event.</param>
+            /// <param name="e">The <see cref="Krs.Ats.IBNet.NextValidIdEventArgs"/> instance containing the event data.</param>
+            /// <remarks></remarks>
+            private void client_NextValidId(object sender, NextValidIdEventArgs e)
+            {
+                if (IBID.OrderID == 0)
+                {
+                    IBID.OrderID = e.OrderId;
+                }
+            }
+        */
 
         public void RequestTickPrice()
         {
-            this.outputClient.RequestMarketData(IBID.TickerID++, this.Equity, null, false, false);
+            lock (IBID.TickerLock)
+            {
+                this.outputClient.RequestMarketData(IBID.TickerID++, this.Equity, null, false, false);
+            }
 
             //When the limit prices are already recieved, set the proper variables back to false and apply the limit price
             while (!isCurrentAskSet || !isCurrentBidSet)
@@ -193,12 +209,21 @@ namespace TradingSoftware
             //establishing a connection
             try
             {
-                this.mainViewModel.ConsoleText += "Connecting to IB.\n";
-                outputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
-                this.mainViewModel.ConsoleText += "Successfully connected.\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Connecting to IB.\n";
+                }
+                lock (IBID.ConnectionLock)
+                {
+                    outputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
+                }
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Successfully connected.\n";
+                }
 
-                //Add the important eventhandler to the outputClient
-                outputClient.NextValidId += client_NextValidId;
+                //Add the important eventhandlers to the outputClient
+                //currently unused: outputClient.NextValidId += client_NextValidId;
                 outputClient.TickPrice += client_TickPrice;
                 outputClient.Error += client_Error;
 

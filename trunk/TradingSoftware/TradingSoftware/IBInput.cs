@@ -20,7 +20,7 @@ namespace TradingSoftware
         /// <summary>
         /// A List were all bars that are in the application at the moment, are saved.
         /// </summary>
-        private List<Tuple<DateTime, decimal, decimal, decimal, decimal>> ListOfBars;
+        private List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> ListOfBars;
 
         /// <summary>
         /// The client that handles all the input connections. In the constructor this one is connected to the IB with the id 0.<br/>
@@ -48,13 +48,15 @@ namespace TradingSoftware
         /// If this is the case, the CreateMinuteBar()-method is called to create a minute-bar out of the 12 5-second bars and this minute bar is added to the<br/>
         /// ListOfBars-list. Also when this happens the RealTimeBarList gets cleared to hold 12 new bars later on.
         /// </summary>
-        public List<Tuple<DateTime, decimal, decimal, decimal, decimal>> RealTimeBarList;
+        public List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> RealTimeBarList;
 
         public BarSize Barsize { get; private set; }
 
         public bool hadFirst { get; set; }
 
-        private MainViewModel mainViewModel;
+        public CSVWriter csvWriter { get; set; }
+
+        private WorkerViewModel workerViewModel;
 
         /// <summary>
         /// When this method is called, the HistrocialData bars are requested. After the request the client_HistoricalData event is called every time a bar<br/>
@@ -64,10 +66,13 @@ namespace TradingSoftware
         public void GetHistoricalDataBars(TimeSpan timeSpan)
         {
             //inputClient.RequestHistoricalData(IBID.TickerID++,this.Equity, DateTime.Now, timeSpan,Barsize, HistoricalDataType.Trades,1)
-            if (this.Barsize == BarSize.OneMinute)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
-            else if (this.Barsize == BarSize.OneDay)
-                inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+            lock (IBID.TickerLock)
+            {
+                if (this.Barsize == BarSize.OneMinute)
+                    inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+                else if (this.Barsize == BarSize.OneDay)
+                    inputClient.RequestHistoricalData(IBID.TickerID++, this.Equity, DateTime.Now, timeSpan, Barsize, HistoricalDataType.Trades, (this.IsFuture) ? 0 : 1);
+            }
         }
 
         /// <summary>
@@ -77,7 +82,10 @@ namespace TradingSoftware
         /// <remarks></remarks>
         public void SubscribeForRealTimeBars()
         {
-            inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, (this.IsFuture) ? false : true);
+            lock (IBID.TickerLock)
+            {
+                inputClient.RequestRealTimeBars(IBID.TickerID++, this.Equity, 5, RealTimeBarType.Trades, (this.IsFuture) ? false : true);
+            }
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace TradingSoftware
         /// </summary>
         /// <returns>The created minute Bar.</returns>
         /// <remarks></remarks>
-        private Tuple<DateTime, decimal, decimal, decimal, decimal> AggregateBar()
+        private Tuple<DateTime, decimal, decimal, decimal, decimal, long> AggregateBar()
         {
             //First open value in the list
             decimal open = RealTimeBarList[0].Item2;
@@ -99,9 +107,12 @@ namespace TradingSoftware
 
             //The Last close value in the list
             decimal close = RealTimeBarList[RealTimeBarList.ToArray().Length - 1].Item5;
+            
+            //sum all volumes of the 5 sec bars
+            long volume = RealTimeBarList.Sum(x => x.Item6);
 
             //creates the bar with these values and returns it
-            return new Tuple<DateTime, decimal, decimal, decimal, decimal>(RealTimeBarList.First().Item1, open, high, low, close);
+            return new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(RealTimeBarList.First().Item1, open, high, low, close, volume);
         }
 
         /// <summary>
@@ -113,9 +124,9 @@ namespace TradingSoftware
         /// can connect to it.</param>
         /// <param name="equity">The equity this class shall represent.</param>
         /// <remarks></remarks>
-        public IBInput(MainViewModel mainViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal>> LOB, Contract equity, BarSize barsize, bool isFuture)
+        public IBInput(WorkerViewModel workerViewModel, List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> LOB, Contract equity, BarSize barsize, bool isFuture)
         {
-            this.mainViewModel = mainViewModel;
+            this.workerViewModel = workerViewModel;
 
             ListOfBars = LOB;
 
@@ -125,11 +136,13 @@ namespace TradingSoftware
             inputClient = new IBClient();
             inputClient.ThrowExceptions = true;
 
-            RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
+            RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
             this.Equity = equity;
             this.hadFirst = false;
             this.IsConnected = false;
             this.IsFuture = isFuture;
+
+            this.csvWriter = new CSVWriter(this.workerViewModel);
         }
 
         /// <summary>
@@ -147,8 +160,8 @@ namespace TradingSoftware
                 System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 dtDateTime = dtDateTime.AddSeconds(e.Time).ToLocalTime();
 
-                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(dtDateTime, e.Open, e.High, e.Low, e.Close));
-                Tuple<DateTime, decimal, decimal, decimal, decimal> b = null;
+                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+                Tuple<DateTime, decimal, decimal, decimal, decimal, long> b = null;
 
                 if (this.hadFirst)
                 {
@@ -157,9 +170,14 @@ namespace TradingSoftware
                     if ((RealTimeBarList.ToArray().Length >= 12 && this.Barsize == BarSize.OneMinute) || (RealTimeBarList.ToArray().Length >= 4680 && this.Barsize == BarSize.OneDay))
                     {
                         b = AggregateBar();
-                        RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal>>();
-                        this.mainViewModel.ConsoleText += "Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + "\n";
-                        ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(b.Item1, b.Item2, b.Item3, b.Item4, b.Item5));
+                        RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
+                        lock (IBID.ConsoleTextLock)
+                        {
+                            this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Real-time-Bar: " + b.Item1 + ", " + b.Item2 + ", " + b.Item3 + ", " + b.Item4 + ", " + b.Item5 + ", " + b.Item6 + "\n";
+                        }
+
+                        this.ListOfBars.Add(b);
+                        this.csvWriter.WriteBar(b);
                     }
                 }
                 else
@@ -198,10 +216,15 @@ namespace TradingSoftware
             {
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
-                this.mainViewModel.ConsoleText += "Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + "\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + ", " + e.Volume + "\n";
+                }
 
                 //parses the received bar to one of my bars
-                ListOfBars.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal>(e.Date, e.Open, e.High, e.Low, e.Close));
+                Tuple<DateTime, decimal, decimal, decimal, decimal, long> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(e.Date, e.Open, e.High, e.Low, e.Close, e.Volume);
+                this.ListOfBars.Add(newBar);
+                this.csvWriter.WriteBar(newBar);
             }
         }
 
@@ -221,9 +244,18 @@ namespace TradingSoftware
             //establishing a connection
             try
             {
-                this.mainViewModel.ConsoleText += "Connecting to IB.\n";
-                inputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
-                this.mainViewModel.ConsoleText += "Successfully connected.\n";
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Connecting to IB.\n";
+                }
+                lock (IBID.ConnectionLock)
+                {
+                    inputClient.Connect("127.0.0.1", 7496, IBID.ConnectionID++);
+                }
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Successfully connected.\n";
+                }
 
                 //Add our event-handling methods to the inputClient.
                 //After this, the inputClient knows, which methods it should call when a Historical or a realtime bar arrives.
