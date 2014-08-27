@@ -160,14 +160,38 @@ namespace TradingSoftware
                 System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 dtDateTime = dtDateTime.AddSeconds(e.Time).ToLocalTime();
 
-                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+                bool receivedLessBarsThisTimePeriod = false;
+                if (RealTimeBarList.Count != 0)
+                {
+                    if (this.Barsize == BarSize.OneMinute)
+                    {
+                        if (dtDateTime.Minute != RealTimeBarList.First().Item1.Minute)
+                        {
+                            receivedLessBarsThisTimePeriod = true;
+                        }
+                    }
+                    else if (this.Barsize == BarSize.OneDay)
+                    {
+                        if (dtDateTime.Day != RealTimeBarList.First().Item1.Day)
+                        {
+                            receivedLessBarsThisTimePeriod = true;
+                        }
+                    }
+                }
+
+                if (!receivedLessBarsThisTimePeriod)
+                {
+                    RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+                }
                 Tuple<DateTime, decimal, decimal, decimal, decimal, long> b = null;
 
                 if (this.hadFirst)
                 {
                     //When we got 12 bars in the RealTimeBarList create a minute bar
                     //TODO: the 4680 only make a day if started in the morning
-                    if ((RealTimeBarList.ToArray().Length >= 12 && this.Barsize == BarSize.OneMinute) || (RealTimeBarList.ToArray().Length >= 4680 && this.Barsize == BarSize.OneDay))
+                    if ((RealTimeBarList.ToArray().Length >= 12 && this.Barsize == BarSize.OneMinute) ||
+                        (RealTimeBarList.ToArray().Length >= 4680 && this.Barsize == BarSize.OneDay) ||
+                        receivedLessBarsThisTimePeriod)
                     {
                         b = AggregateBar();
                         RealTimeBarList = new List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>>();
@@ -178,6 +202,11 @@ namespace TradingSoftware
 
                         this.ListOfBars.Add(b);
                         this.csvWriter.WriteBar(b);
+
+                        if (receivedLessBarsThisTimePeriod)
+                        {
+                            RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+                        }
                     }
                 }
                 else
@@ -192,7 +221,9 @@ namespace TradingSoftware
                     }
                     else if (this.Barsize.Equals(BarSize.OneDay))
                     {
-                        if (this.RealTimeBarList.Last().Item1.Hour == 55)
+                        if (this.RealTimeBarList.Last().Item1.Hour == 23 &&
+                            this.RealTimeBarList.Last().Item1.Minute == 59 &&
+                            this.RealTimeBarList.Last().Item1.Second == 55)
                         {
                             this.RealTimeBarList.Clear();
                             this.hadFirst = true;
