@@ -24,7 +24,7 @@ namespace TradingSoftware
 
         /// <summary>
         /// The client that handles all the input connections. In the constructor this one is connected to the IB with the id 0.<br/>
-        /// It can be identified by this id and no more other clients can connect to IB with the same id. This oject represents the whole connection<br/>
+        /// It can be identified by this id and no more other clients can connect to IB with the same id. This object represents the whole connection<br/>
         /// to the InteractiveBrokers API and for example all the bars are requested over it.
         /// </summary>
         private IBClient inputClient;
@@ -55,6 +55,8 @@ namespace TradingSoftware
         public bool hadFirst { get; set; }
 
         public CSVWriter csvWriter { get; set; }
+
+        public int noOfHistoricalBarsReceived { get; set; }
 
         private WorkerViewModel workerViewModel;
 
@@ -142,7 +144,10 @@ namespace TradingSoftware
             this.IsConnected = false;
             this.IsFuture = isFuture;
 
+            this.noOfHistoricalBarsReceived = 0;
+
             this.csvWriter = new CSVWriter(this.workerViewModel);
+            this.ListOfBars.AddRange(this.csvWriter.CreateOrReadCSV());
         }
 
         /// <summary>
@@ -247,15 +252,21 @@ namespace TradingSoftware
             {
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
-                lock (IBID.ConsoleTextLock)
-                {
-                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + ", " + e.Volume + "\n";
-                }
 
+                this.noOfHistoricalBarsReceived++;
+                
                 //parses the received bar to one of my bars
                 Tuple<DateTime, decimal, decimal, decimal, decimal, long> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(e.Date, e.Open, e.High, e.Low, e.Close, e.Volume);
-                this.ListOfBars.Add(newBar);
-                this.csvWriter.WriteBar(newBar);
+                if (!this.ListOfBars.Contains(newBar))
+                {
+                    lock (IBID.ConsoleTextLock)
+                    {
+                        this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + ", " + e.Volume + "\n";
+                    }
+
+                    this.ListOfBars.Add(newBar);
+                    this.csvWriter.WriteBar(newBar);
+                }
             }
         }
 

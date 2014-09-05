@@ -72,6 +72,7 @@
     <Compile Include="ChangeWorkerSettingsWindow.xaml.cs">
       <DependentUpon>ChangeWorkerSettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CSVReader.cs" />
     <Compile Include="CSVWriter.cs" />
     <Compile Include="IBID.cs" />
     <Compile Include="IBInput.cs" />

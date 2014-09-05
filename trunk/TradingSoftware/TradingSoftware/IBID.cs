@@ -15,6 +15,7 @@ namespace TradingSoftware
         public static Object DataExportLock = new Object();
         
         public static int _orderId;
+        public static int _noOfBarsGivenToAlgorithm;
 
         public static int OrderId
         {
@@ -36,6 +37,30 @@ namespace TradingSoftware
                     _orderId = value;
 
                     XMLHandler.WriteValueToXML(null, "orderId", value.ToString(CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        public static int NoOfBarsGivenToAlgorithm
+        {
+            get
+            {
+                int newValue = int.Parse(XMLHandler.ReadValueFromXML(null, "noOfBarsGivenToAlgorithm"), CultureInfo.InvariantCulture);
+
+                if (!_noOfBarsGivenToAlgorithm.Equals(newValue))
+                {
+                    _noOfBarsGivenToAlgorithm = newValue;
+                }
+
+                return _noOfBarsGivenToAlgorithm;
+            }
+            set
+            {
+                if (_noOfBarsGivenToAlgorithm != value)
+                {
+                    _noOfBarsGivenToAlgorithm = value;
+
+                    XMLHandler.WriteValueToXML(null, "noOfBarsGivenToAlgorithm", value.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }

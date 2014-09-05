@@ -128,15 +128,31 @@ namespace TradingSoftware
 
                         if (this.algorithmType != null)
                         {
-                            //Calculate the decision
-                            if (this.workerViewModel.HasAlgorithmParameters)
+                            int noOfBarsGivenToAlgorith = IBID.NoOfBarsGivenToAlgorithm;
+                            List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> BarsGivenToAlgorithm;
+                            if (noOfBarsGivenToAlgorith != 0)
                             {
-                                Object[] oa = { Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), this.workerViewModel.ParsedAlgorithmParameters };
-                                this.algorithmType.GetMethod("startCalculation").Invoke(null, oa);
+                                BarsGivenToAlgorithm = this.Bars.GetRange(this.Bars.Count - noOfBarsGivenToAlgorith, noOfBarsGivenToAlgorith);
                             }
                             else
                             {
-                                Object[] oa = { Bars, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>() };
+                                BarsGivenToAlgorithm = this.Bars;
+                            }
+
+                            if (this.workerViewModel.HasAlgorithmParameters)
+                            {
+                                Dictionary<string, decimal> tempParsedAlgorithmParameters = this.workerViewModel.parseAlgorithmParameters(this.workerViewModel.AlgorithmParameters);
+                                Object[] oa = { BarsGivenToAlgorithm, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>(), tempParsedAlgorithmParameters };
+                                this.algorithmType.GetMethod("startCalculation").Invoke(null, oa);
+
+                                if (tempParsedAlgorithmParameters != this.workerViewModel.ParsedAlgorithmParameters)
+                                {
+                                    this.workerViewModel.ParsedAlgorithmParameters = tempParsedAlgorithmParameters;
+                                }
+                            }
+                            else
+                            {
+                                Object[] oa = { BarsGivenToAlgorithm, Signals, new Dictionary<string, List<decimal>>(), new Dictionary<string, List<decimal>>() };
                                 this.algorithmType.GetMethod("startCalculation").Invoke(null, oa);
                             }
                         }
@@ -323,7 +339,7 @@ namespace TradingSoftware
                 }
                 historicalDataClient.GetHistoricalDataBars(new TimeSpan(0, 23, 59, 59));
 
-                while ((this.Bars.Count < historicalDataClient.totalHistoricalBars ||
+                while ((historicalDataClient.noOfHistoricalBarsReceived < historicalDataClient.totalHistoricalBars ||
                        historicalDataClient.totalHistoricalBars == 0) && this.RunThread)
                 {
                     System.Threading.Thread.Sleep(100);
