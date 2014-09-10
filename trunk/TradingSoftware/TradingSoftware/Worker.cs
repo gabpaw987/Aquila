@@ -74,9 +74,9 @@ namespace TradingSoftware
             this.workerViewModel._parsedAlgorithmParameters = new Dictionary<string, decimal>();
             this.workerViewModel.HasAlgorithmParameters = hasAlgorithmParameters;
             this.workerViewModel.AlgorithmParameters = algorithmParameters;
-        }    
+        }
 
-        public void Stop()
+        public void Stop(bool WriteToConsole)
         {
             if (this.RunThread)
             {
@@ -100,8 +100,11 @@ namespace TradingSoftware
                 this.didFirst = false;
                 this.hasFirstSignalPassed = false;
 
-                this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
-                this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
+                if (WriteToConsole)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
+                    this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Worker stopped.\n";
+                }
             }
         }
 
@@ -368,7 +371,7 @@ namespace TradingSoftware
             return assembly.GetType("Algorithm.DecisionCalculator");
         }
 
-        public void Start()
+        public void Start(bool WriteToConsole)
         {
             if (!this.RunThread)
             {
@@ -379,8 +382,11 @@ namespace TradingSoftware
 
                 this.RunThread = true;
 
-                this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker Started.\n";
-                this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Worker Started.\n";
+                if (WriteToConsole)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Worker Started.\n";
+                    this.workerViewModel.SignalText += this.workerViewModel.EquityAsString + ": Worker Started.\n";
+                }
             }
         }
 

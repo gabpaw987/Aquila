@@ -9,6 +9,9 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Data;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
 
 namespace TradingSoftware
 {
@@ -17,6 +20,8 @@ namespace TradingSoftware
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Timer myTimer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,6 +33,64 @@ namespace TradingSoftware
 
             XMLHandler.CreateSettingsFileIfNecessary();
             XMLHandler.LoadWorkersFromXML(this);
+            SetTimerValue(IBID.TimeToReconnectToIB);
+        }
+
+        private void SetTimerValue(DateTime timerValue)
+        {
+            // trigger the event at 7 AM. For 7 PM use 19 i.e. 24 hour format
+            DateTime requiredTime = timerValue;
+            // initialize timer only, do not specify the start time or the interval
+            myTimer = new System.Threading.Timer(new TimerCallback(TimerAction));
+            // first parameter is the start time and the second parameter is the interval
+            // Timeout.Infinite means do not repeat the interval, only start the timer
+            myTimer.Change((int)(requiredTime - DateTime.Now).TotalMilliseconds, Timeout.Infinite);
+        }
+
+        private void TimerAction(object e)
+        {
+            //send trade report
+            var client = new SmtpClient("smtp.mail.yahoo.com", 587)
+            {
+                Credentials = new NetworkCredential("gabriel_pawlowsky@yahoo.de", "passwort"),
+                EnableSsl = true
+            };
+
+            DateTime now;
+            if (DateTime.Now.Hour < 12)
+            {
+                now = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
+            } 
+            else 
+            {
+                now = DateTime.Now;
+            }
+            string currentDateAsString = now.Year + now.Month.ToString("00") + now.Day.ToString("00");
+            
+            MailMessage mailMessage = new MailMessage("gabriel_pawlowsky@yahoo.de", "gabriel_pawlowsky@yahoo.de");
+            mailMessage.Subject = "Trade Confirmation CEON Trading Fund " + currentDateAsString;
+            mailMessage.Body = File.ReadAllText("Reports/Trade Confirmation CEON Trading Fund 20140904.htm");
+            mailMessage.IsBodyHtml = true;
+            mailMessage.BodyEncoding = Encoding.UTF32;
+            Attachment attachment = new Attachment("Reports/test.csv");
+            mailMessage.Attachments.Add(attachment);
+            client.Send(mailMessage);
+
+            //reconnect all running workers
+            foreach (Worker worker in this.mainViewModel.Workers)
+            {
+                if (worker.IsRunning())
+                {
+                    worker.Stop(false);
+                    worker.Start(false);
+
+                    worker.workerViewModel.ConsoleText += worker.workerViewModel.EquityAsString + ": Trade-Report sent and Worker reconnected.\n";
+                    worker.workerViewModel.SignalText += worker.workerViewModel.EquityAsString + ": Trade-Report sent and Worker reconnected.\n";
+                }
+            }
+
+            // now, call the set timer method to reset its next call time
+            SetTimerValue(IBID.TimeToReconnectToIB);
         }
 
         private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -175,13 +238,13 @@ namespace TradingSoftware
         {
             foreach (Worker worker in this.mainViewModel.Workers)
             {
-                worker.Stop();
+                worker.Stop(true);
             }
         }
 
         private void StopOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            this.FindWorker(sender).Stop();
+            this.FindWorker(sender).Stop(true);
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -191,21 +254,21 @@ namespace TradingSoftware
                 worker.workerViewModel.IsTrading = true;
                 if (!worker.workerViewModel.IsThreadRunning)
                 {
-                    worker.Start();
+                    worker.Start(true);
                 }
             }
         }
 
         private void StartOneWorkerButton_Click(object sender, RoutedEventArgs e)
         {
-            this.FindWorker(sender).Start();
+            this.FindWorker(sender).Start(true);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (Worker worker in this.mainViewModel.Workers)
             {
-                worker.Stop();
+                worker.Stop(true);
             }
         }
 
@@ -275,7 +338,7 @@ namespace TradingSoftware
                         Thread.Sleep(50);
                     }
                 }
-                worker.Stop();
+                worker.Stop(true);
 
                 this.mainViewModel.Workers.Remove(worker);
                 this.mainViewModel.WorkerViewModels.Remove(worker.workerViewModel);

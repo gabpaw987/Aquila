@@ -16,6 +16,7 @@ namespace TradingSoftware
         
         public static int _orderId;
         public static int _noOfBarsGivenToAlgorithm;
+        public static DateTime _timeToReconnectToIB;
 
         public static int OrderId
         {
@@ -61,6 +62,38 @@ namespace TradingSoftware
                     _noOfBarsGivenToAlgorithm = value;
 
                     XMLHandler.WriteValueToXML(null, "noOfBarsGivenToAlgorithm", value.ToString(CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        public static DateTime TimeToReconnectToIB
+        {
+            get
+            {
+                string[] newValues = XMLHandler.ReadValueFromXML(null, "timeToReconnectToIB").Split(':');
+                DateTime newValue = DateTime.Today.AddHours(int.Parse(newValues[0], CultureInfo.InvariantCulture))
+                                                  .AddMinutes(int.Parse(newValues[1], CultureInfo.InvariantCulture))
+                                                  .AddSeconds(int.Parse(newValues[2], CultureInfo.InvariantCulture));
+                //For times after midnight
+                if (newValue < DateTime.Now)
+                {
+                    newValue = newValue.AddDays(1);
+                }
+
+                if (!_timeToReconnectToIB.Equals(newValue))
+                {
+                    _timeToReconnectToIB = newValue;
+                }
+
+                return _timeToReconnectToIB;
+            }
+            set
+            {
+                if (_timeToReconnectToIB != value)
+                {
+                    _timeToReconnectToIB = value;
+
+                    XMLHandler.WriteValueToXML(null, "timeToReconnectToIB", value.Hour + ":" + value.Minute + ":" + value.Second);
                 }
             }
         }
