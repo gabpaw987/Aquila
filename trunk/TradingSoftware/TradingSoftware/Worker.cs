@@ -131,11 +131,11 @@ namespace TradingSoftware
 
                         if (this.algorithmType != null)
                         {
-                            int noOfBarsGivenToAlgorith = IBID.NoOfBarsGivenToAlgorithm;
+                            int noOfBarsGivenToAlgorithm = IBID.NoOfBarsGivenToAlgorithm;
                             List<Tuple<DateTime, decimal, decimal, decimal, decimal, long>> BarsGivenToAlgorithm;
-                            if (noOfBarsGivenToAlgorith != 0)
+                            if (noOfBarsGivenToAlgorithm != 0 && noOfBarsGivenToAlgorithm < this.Bars.Count)
                             {
-                                BarsGivenToAlgorithm = this.Bars.GetRange(this.Bars.Count - noOfBarsGivenToAlgorith, noOfBarsGivenToAlgorith);
+                                BarsGivenToAlgorithm = this.Bars.GetRange(this.Bars.Count - noOfBarsGivenToAlgorithm, noOfBarsGivenToAlgorithm);
                             }
                             else
                             {

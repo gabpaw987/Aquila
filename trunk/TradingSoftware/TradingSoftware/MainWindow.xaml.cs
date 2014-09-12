@@ -56,25 +56,30 @@ namespace TradingSoftware
                 EnableSsl = true
             };
 
-            DateTime now;
-            if (DateTime.Now.Hour < 12)
+            string csvFileName = "Reports/test.csv";
+            int indexOfDate = 0;
+            string[] tradeReportContent = File.ReadAllLines(csvFileName);
+            for (int i = 0; i < tradeReportContent[0].Split(',').Length; i++)
             {
-                now = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
-            } 
-            else 
-            {
-                now = DateTime.Now;
+                if (tradeReportContent[0].Split(',')[i].Equals("Date"))
+                {
+                    indexOfDate = i;
+                }
             }
-            string currentDateAsString = now.Year + now.Month.ToString("00") + now.Day.ToString("00");
+            string currentDateAsString = tradeReportContent[1].Split(',')[indexOfDate];
             
             MailMessage mailMessage = new MailMessage("gabriel_pawlowsky@yahoo.de", "gabriel_pawlowsky@yahoo.de");
             mailMessage.Subject = "Trade Confirmation CEON Trading Fund " + currentDateAsString;
             mailMessage.Body = File.ReadAllText("Reports/Trade Confirmation CEON Trading Fund 20140904.htm");
             mailMessage.IsBodyHtml = true;
             mailMessage.BodyEncoding = Encoding.UTF32;
-            Attachment attachment = new Attachment("Reports/test.csv");
+            string newCsvFileName = "trades." + currentDateAsString + ".csv";
+            File.Move(csvFileName, newCsvFileName);
+            Attachment attachment = new Attachment(newCsvFileName);
             mailMessage.Attachments.Add(attachment);
             client.Send(mailMessage);
+
+            File.Move(newCsvFileName, "Reports/Archive/" + newCsvFileName);
 
             //reconnect all running workers
             foreach (Worker worker in this.mainViewModel.Workers)

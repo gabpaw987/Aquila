@@ -72,8 +72,17 @@ namespace TradingSoftware
             {
                 string[] newValues = XMLHandler.ReadValueFromXML(null, "timeToReconnectToIB").Split(':');
                 DateTime newValue = DateTime.Today.AddHours(int.Parse(newValues[0], CultureInfo.InvariantCulture))
-                                                  .AddMinutes(int.Parse(newValues[1], CultureInfo.InvariantCulture))
-                                                  .AddSeconds(int.Parse(newValues[2], CultureInfo.InvariantCulture));
+                                                  .AddMinutes(int.Parse(newValues[1], CultureInfo.InvariantCulture));
+                int secondsToAdd = int.Parse(newValues[2], CultureInfo.InvariantCulture);
+                if(secondsToAdd < 10 || secondsToAdd > 50)
+                {
+                    newValue = newValue.AddSeconds(30);
+                }
+                else
+                {
+                    newValue = newValue.AddSeconds(secondsToAdd);
+                }
+
                 //For times after midnight
                 if (newValue < DateTime.Now)
                 {
