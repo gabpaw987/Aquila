@@ -67,19 +67,24 @@ namespace TradingSoftware
                 }
             }
             string currentDateAsString = tradeReportContent[1].Split(',')[indexOfDate];
-            
-            MailMessage mailMessage = new MailMessage("gabriel_pawlowsky@yahoo.de", "gabriel_pawlowsky@yahoo.de");
-            mailMessage.Subject = "Trade Confirmation CEON Trading Fund " + currentDateAsString;
-            mailMessage.Body = File.ReadAllText("Reports/Trade Confirmation CEON Trading Fund 20140904.htm");
-            mailMessage.IsBodyHtml = true;
-            mailMessage.BodyEncoding = Encoding.UTF32;
             string newCsvFileName = "trades." + currentDateAsString + ".csv";
-            File.Move(csvFileName, newCsvFileName);
-            Attachment attachment = new Attachment(newCsvFileName);
-            mailMessage.Attachments.Add(attachment);
-            client.Send(mailMessage);
 
-            File.Move(newCsvFileName, "Reports/Archive/" + newCsvFileName);
+            //Move to send attachment without paths in the file name and copy to save it in the archive
+            File.Copy(csvFileName, "Reports/Archive/" + newCsvFileName);
+            File.Move(csvFileName, newCsvFileName);
+
+            using (MailMessage mailMessage = new MailMessage("gabriel_pawlowsky@yahoo.de", "gabriel_pawlowsky@yahoo.de"))
+            {
+                mailMessage.Subject = "Trade Confirmation CEON Trading Fund " + currentDateAsString;
+                mailMessage.Body = File.ReadAllText("Reports/Trade Confirmation CEON Trading Fund 20140904.htm");
+                mailMessage.IsBodyHtml = true;
+                mailMessage.BodyEncoding = Encoding.UTF32;
+                Attachment attachment = new Attachment(newCsvFileName);
+                mailMessage.Attachments.Add(attachment);
+                client.Send(mailMessage);
+            }
+            //Delete the temporary attachment version of the trade report
+            File.Delete(newCsvFileName);
 
             //reconnect all running workers
             foreach (Worker worker in this.mainViewModel.Workers)
