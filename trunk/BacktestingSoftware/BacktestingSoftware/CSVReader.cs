@@ -118,7 +118,7 @@ namespace BacktestingSoftware
 
             DateTime timeOfBar = DateTime.MinValue;
 
-            timeOfBar = timeOfBar.AddYears(int.Parse(dateValues[2]) - 1 + (isDataFromESignal11 ? 0 : 2000));
+            timeOfBar = timeOfBar.AddYears(int.Parse(dateValues[2]) - 1 + (isDataFromESignal11 || !isUSDateFormat ? 0 : 2000));
             timeOfBar = timeOfBar.AddMonths(int.Parse(dateValues[isUSDateFormat ? 0 : 1]) - 1);
             timeOfBar = timeOfBar.AddDays(int.Parse(dateValues[isUSDateFormat ? 1 : 0]) - 1);
 
