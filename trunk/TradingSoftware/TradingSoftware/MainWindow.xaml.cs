@@ -50,13 +50,13 @@ namespace TradingSoftware
         private void TimerAction(object e)
         {
             //send trade report
-            var client = new SmtpClient("smtp.mail.yahoo.com", 587)
+            var client = new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential("gabriel_pawlowsky@yahoo.de", "passwort"),
+                Credentials = new NetworkCredential("aquila.ceon@gmail.com", "pEg200aQ"),
                 EnableSsl = true
             };
 
-            string csvFileName = "Reports/test.csv";
+            string csvFileName = "Reports/report.csv";
             int indexOfDate = 0;
             string[] tradeReportContent = File.ReadAllLines(csvFileName);
             for (int i = 0; i < tradeReportContent[0].Split(',').Length; i++)
@@ -73,8 +73,13 @@ namespace TradingSoftware
             File.Copy(csvFileName, "Reports/Archive/" + newCsvFileName);
             File.Move(csvFileName, newCsvFileName);
 
-            using (MailMessage mailMessage = new MailMessage("gabriel_pawlowsky@yahoo.de", "gabriel_pawlowsky@yahoo.de"))
+            //using (MailMessage mailMessage = new MailMessage("aquila.ceon@gmail.com", "josef.nikolaus@sochovsky.at"))
+            using (MailMessage mailMessage = new MailMessage("aquila.ceon@gmail.com", "futures@ing.lu"))
             {
+                mailMessage.Bcc.Add("josef.nikolaus@sochovsky.at");
+                mailMessage.Bcc.Add("peer@gmx.at");
+                mailMessage.Bcc.Add("hans@brabenetz.com");
+                mailMessage.Bcc.Add("gabriel.pawlowsky@yahoo.de");
                 mailMessage.Subject = "Trade Confirmation CEON Trading Fund " + currentDateAsString;
                 mailMessage.Body = File.ReadAllText("Reports/Trade Confirmation CEON Trading Fund 20140904.htm");
                 mailMessage.IsBodyHtml = true;
