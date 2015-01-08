@@ -1,4 +1,16 @@
-﻿namespace Algorithm
+﻿(*
+
+timeZone,1,1,1
+quantity,1,1,1
+rsiN,18,18,2
+rsiEmaN,5,5,2
+rsiLong,80,80,10
+rsiShort,20,20,10
+ymW,40,40,10
+
+ *)
+
+namespace Algorithm
     module DecisionCalculator=(*4554*)
         open System
         //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6,7 +18,7 @@
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         let readSymbol (sym:string)=
-            let prices = CSVReader2.read("D:/noctua/trunk/Input_Data/" + sym + ".csv");
+            let prices = CSVReader.read("D:/noctua/trunk/Input_Data/" + sym + ".csv");
             prices.ToArray()
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////

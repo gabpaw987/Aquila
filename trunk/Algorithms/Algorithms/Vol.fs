@@ -28,7 +28,7 @@ takeEarningsD,38,38,1
 *)
 
 namespace Algorithm
-    module DecisionCalculator=(*687*)
+    module DecisionCalculator687=(*687*)
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   GENERIC FUNCTIONS

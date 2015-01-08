@@ -1,7 +1,7 @@
 ﻿// functionality for using old signals so not everything needs to be recalculated works with params not higher than n=4000 
 // this n could be a new parameter
 namespace Algorithm
-    module DecisionCalculator=(*018*)
+    module DecisionCalculator018=(*018*)
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   GENERIC FUNCTIONS

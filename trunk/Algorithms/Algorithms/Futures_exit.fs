@@ -101,7 +101,7 @@ cutlossDecrN,148,148,20
 *)
 
 namespace Algorithm
-    module DecisionCalculator=(*018*)
+    module DecisionCalculator0181=(*0181*)
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   GENERIC FUNCTIONS
