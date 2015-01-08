@@ -1,9 +1,13 @@
 ﻿namespace Algorithm
     module DecisionCalculator=(*4554*)
-
+        open System
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   GENERIC FUNCTIONS
         //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        let readSymbol (sym:string)=
+            let prices = CSVReader2.read("D:/noctua/trunk/Input_Data/" + sym + ".csv");
+            prices.ToArray()
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   TREND FOLLOWER (e.g. averages)
@@ -104,12 +108,14 @@
             // test!
             //markets.Add("ym", (50, readSymbol("YM")))
 
+            //markets.Add("test", new Tuple<decimal, Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(40m, [|new Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>(System.DateTime.Now, 1m,1m,1m,1m,100L)|]))
+
             if (parameters.ContainsKey("nqW")) then
-                markets.Add("nq", (parameters.["nqW"], readSymbol("NQ")))
+                markets.Add("nq", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["nqW"], readSymbol("NQ")))
             if (parameters.ContainsKey("esW")) then
-                markets.Add("es", (parameters.["esW"], readSymbol("ES")))
+                markets.Add("es", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["esW"], readSymbol("ES")))
             if (parameters.ContainsKey("ymW")) then
-                markets.Add("ym", (parameters.["ymW"], readSymbol("YM")))
+                markets.Add("ym", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["ymW"], readSymbol("YM")))
             
             for market in markets do
                 if (market.Value.Item2.Length <> cPrices.Length || market.Value.Item1 = 0m) then
@@ -222,7 +228,3 @@
                         signals.[i] <- 0
             
             signals
-
-        let readSymbol (sym:string)=
-            let prices = //CSVReader.EnumerateExcelFile("D:/noctua/trunk/Input_Data/" + sym + ".csv", new DateTime(), DateTime.Now).ToList();
-            prices
