@@ -2,17 +2,23 @@
 
 timeZone,1,1,1
 quantity,1,1,1
-rsiN,18,18,2
-rsiEmaN,5,5,2
+rsiAvgN,18,18,2
+rsiAvgEmaN,5,5,2
+rsiThisN,0,0,2
+rsiThisEmaN,0,0,2
 rsiLong,80,80,10
 rsiShort,20,20,10
+rsiExitLong,0,0,1
+risExitShort,0,0,1
 ymW,40,40,10
 
  *)
 
 namespace Algorithm
     module DecisionCalculator=(*4554*)
+        
         open System
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   GENERIC FUNCTIONS
         //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,10 +95,19 @@ namespace Algorithm
             let quantity = 1
 
             // entry signal based on RSI-EMA system on weighted average of market data
-            let rsiN = 18
-            let rsiEmaN = 5
+            let rsiAvgN = 18
+            let rsiAvgEmaN = 5
             let rsiLong = 80m
             let rsiShort = 20m
+            let rsiExitLong = 20m
+            let rsiExitShort = 80m
+
+            // Chart Lines
+            chart1.Add("AVG;#0000FF", new System.Collections.Generic.List<decimal>())
+            chart2.Add("RSI_AVG;#FF0000", new System.Collections.Generic.List<decimal>())
+            chart2.Add("RSI_THIS;#FF00FF", new System.Collections.Generic.List<decimal>())
+            chart2.Add("RSI_long;#00FF00", new System.Collections.Generic.List<decimal>())
+            chart2.Add("RSI_short;#00FF00", new System.Collections.Generic.List<decimal>())
 
             (*
              * Read Parameters
@@ -103,15 +118,24 @@ namespace Algorithm
             // Future count
             let quantity = int (abs parameters.["quantity"])
 
-             // RSI
-            let rsiN = int parameters.["rsiN"]
-            let rsiEmaN = int parameters.["rsiEmaN"]
+            // RSI
+            let rsiAvgN = int parameters.["rsiAvgN"]
+            let rsiAvgEmaN = int parameters.["rsiAvgEmaN"]
             let rsiLong = parameters.["rsiLong"]
             let rsiShort = parameters.["rsiShort"]
+            // if given 0 then the parameters from the avg rsi are used for the individual as well
+            let rsiThisN = if (parameters.["rsiThisN"] <> 0m) then int parameters.["rsiThisN"] else rsiAvgN
+            let rsiThisEmaN = if (parameters.["rsiThisEmaN"] <> 0m) then int parameters.["rsiThisEmaN"] else rsiAvgEmaN
+            // rsiExit parameters can be deactivated (i.e. exitShort at long threshhold) by assigning 0
+            let rsiExitLong = if (parameters.["rsiExitLong"] <> 0m) then parameters.["rsiExitLong"] else rsiShort
+            let rsiExitShort = if (parameters.["rsiExitShort"] <> 0m) then parameters.["rsiExitShort"] else rsiLong
             
             // list of closing prices
             let cPrices = 
                 [| for p in prices -> p.Item5 |]
+            // list of typical prices (used for RSI)
+            let tPrices =
+                [| for i in prices -> (i.Item3 + i.Item4 + i.Item5)/3m |]
             
             // Additional market data
             // weights
@@ -133,34 +157,51 @@ namespace Algorithm
                 if (market.Value.Item2.Length <> cPrices.Length || market.Value.Item1 = 0m) then
                     ignore(markets.Remove(market.Key))
 
-            let avgPrices : decimal array = Array.zeroCreate cPrices.Length
+            let avgPrices = new Collections.Generic.List<Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>>()
             // initially all weight is on current symbol
             let mutable thisW = 1m
             for market in markets do
                 // subtract weight of all other symbols from current one
                 thisW <- thisW - market.Value.Item1
-            for i in 0 .. cPrices.Length-1 do
+            for i in 0 .. prices.Count-1 do
                 // weighted average: begin with this instrument
-                let mutable wAvg = thisW * cPrices.[i]
+                let mutable wAvgO = thisW * prices.[i].Item2
+                let mutable wAvgH = thisW * prices.[i].Item3
+                let mutable wAvgL = thisW * prices.[i].Item4
+                let mutable wAvgC = thisW * prices.[i].Item5
+                let mutable wAvgVol = (int64)(thisW * (decimal)prices.[i].Item6)
                 for market in markets do
                     // weighted average = ... + weight * close
-                    wAvg <- wAvg + market.Value.Item1 * market.Value.Item2.[i].Item5
-                avgPrices.[i] <- wAvg
+                    wAvgO <- wAvgO + market.Value.Item1 * market.Value.Item2.[i].Item2
+                    wAvgH <- wAvgH + market.Value.Item1 * market.Value.Item2.[i].Item3
+                    wAvgL <- wAvgL + market.Value.Item1 * market.Value.Item2.[i].Item4
+                    wAvgC <- wAvgC + market.Value.Item1 * market.Value.Item2.[i].Item5
+                    wAvgVol <- wAvgVol + (int64)(market.Value.Item1 * (decimal)market.Value.Item2.[i].Item6)
+                avgPrices.[i] <- new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(prices.[i].Item1, wAvgO, wAvgH, wAvgL, wAvgC, wAvgVol)
+                // add average closing price to chart1
+                chart1.["AVG;#0000FF"].Add(wAvgC)
 
-            // Chart Lines
-            chart2.Add("AVG;#0000FF", new System.Collections.Generic.List<decimal>())
-            chart2.Add("RSI;#FF0000", new System.Collections.Generic.List<decimal>())
-            chart2.Add("RSI_long;#00FF00", new System.Collections.Generic.List<decimal>())
-            chart2.Add("RSI_short;#00FF00", new System.Collections.Generic.List<decimal>())
+            // list of typical average prices (used for RSI)
+            let tAvgPrices =
+                [| for i in avgPrices -> (i.Item3 + i.Item4 + i.Item5)/3m |]
 
-            // calculate RSI
-            let rsi = rsi (rsiN, avgPrices)
+            // calculate RSI on weighted average prices
+            let rsiAvg = rsi (rsiAvgN, tAvgPrices)
             // smooth RSI
-            let rsiEma = ema (rsiEmaN, Array.toList rsi)
-            for i in 0..rsiEma.Length-1 do chart2.["RSI;#FF0000"].Add(rsiEma.[i])
+            let rsiAvgEma = ema (rsiAvgEmaN, Array.toList rsiAvg)
+            // add to chart: rsi on average prices, threshholds
+            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_AVG;#FF0000"].Add(rsiAvgEma.[i])
+            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_long;#0000FF"].Add(rsiLong)
+            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_short;#0000FF"].Add(rsiShort)
+
+            // calculate individual RSI from this price data (the traded instrument)
+            let rsiThis = rsi (rsiThisN, tPrices)
+            let rsiThisEma = ema (rsiThisEmaN, Array.toList rsiThis)
+            // add to chart: individual rsi
+            for i in 0..rsiThisEma.Length-1 do chart2.["RSI_THIS;#FF00FF"].Add(rsiThisEma.[i])
 
             // first index with all data
-            let firstI = ([ rsiN; rsiEmaN ] |> List.max) - 1
+            let firstI = ([ rsiAvgN; rsiAvgEmaN; rsiThisN; rsiThisEmaN ] |> List.max) - 1
             let mutable missingData = firstI+1
 
             // clear list of all signals before calculation (necessary for real time testing/trading!)
@@ -189,9 +230,11 @@ namespace Algorithm
                      *)
                     let mutable rsiSig = 0
 
-                    if (rsiEma.[i] >= rsiLong && rsiEma.[i-1] < rsiLong) then
+                    // long
+                    if (rsiAvgEma.[i] >= rsiLong && rsiAvgEma.[i-1] < rsiLong) then
                         rsiSig <- quantity
-                    else if (rsiEma.[i] <= rsiShort && rsiEma.[i-1] > rsiShort) then
+                    // short
+                    else if (rsiAvgEma.[i] <= rsiShort && rsiAvgEma.[i-1] > rsiShort) then
                         rsiSig <- -1 * quantity
 
                     (*
@@ -210,8 +253,14 @@ namespace Algorithm
                     let mutable exit = 4
 
                     (*
-                     * TODO: exit strategy
+                     * // exit decision based on individual rsiEma
                      *)
+                    // exit long if individual signal would short (rsiEma below exitLong threshold)
+                    if (signals.[i] > 0 && rsiThisEma.[i] <= rsiExitLong && rsiThisEma.[i-1] > rsiExitLong) then
+                        exit <- 0
+                    // exit short if individual signal would go long (rsiEma above exitShort threshold)
+                    else if (signals.[i] < 0 && rsiThisEma.[i] >= rsiExitShort && rsiThisEma.[i-1] < rsiExitShort) then
+                        rsiSig <- -1 * quantity
 
                     (*
                      * // close position / liquidate part
