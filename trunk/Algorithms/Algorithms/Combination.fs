@@ -9,8 +9,8 @@ rsiThisEmaN,0,0,2
 rsiLong,80,80,10
 rsiShort,20,20,10
 rsiExitLong,0,0,1
-risExitShort,0,0,1
-ymW,40,40,10
+rsiExitShort,0,0,1
+ymW,0.4,0.4,0.1
 
  *)
 
@@ -24,7 +24,7 @@ namespace Algorithm
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         let readSymbol (sym:string)=
-            let prices = CSVReader.read("D:/noctua/trunk/Input_Data/" + sym + ".csv");
+            let prices = CSVReader.read("U:/Dropbox/AquilaExchange/10MinBars/" + sym + ".csv");
             prices.ToArray()
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,18 +89,18 @@ namespace Algorithm
                               parameters:System.Collections.Generic.Dictionary<string, decimal>
                               )=
 
-            // time zone of the server country
-            let timeZone = -5
-            // how many futures are traded
-            let quantity = 1
-
-            // entry signal based on RSI-EMA system on weighted average of market data
-            let rsiAvgN = 18
-            let rsiAvgEmaN = 5
-            let rsiLong = 80m
-            let rsiShort = 20m
-            let rsiExitLong = 20m
-            let rsiExitShort = 80m
+//            // time zone of the server country
+//            let timeZone = -5
+//            // how many futures are traded
+//            let quantity = 1
+//
+//            // entry signal based on RSI-EMA system on weighted average of market data
+//            let rsiAvgN = 18
+//            let rsiAvgEmaN = 5
+//            let rsiLong = 80m
+//            let rsiShort = 20m
+//            let rsiExitLong = 20m
+//            let rsiExitShort = 80m
 
             // Chart Lines
             chart1.Add("AVG;#0000FF", new System.Collections.Generic.List<decimal>())
@@ -153,9 +153,13 @@ namespace Algorithm
             if (parameters.ContainsKey("ymW")) then
                 markets.Add("ym", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["ymW"], readSymbol("YM")))
             
-            for market in markets do
-                if (market.Value.Item2.Length <> cPrices.Length || market.Value.Item1 = 0m) then
-                    ignore(markets.Remove(market.Key))
+            let mutable removableKeys = new Collections.Generic.List<string>()
+            for key in markets.Keys do
+                if (markets.[key].Item2.Length <> cPrices.Length || markets.[key].Item1 = 0m) then
+                    removableKeys.Add(key)
+
+            for key in removableKeys do
+                markets.Remove(key)
 
             let avgPrices = new Collections.Generic.List<Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>>()
             // initially all weight is on current symbol
@@ -177,7 +181,7 @@ namespace Algorithm
                     wAvgL <- wAvgL + market.Value.Item1 * market.Value.Item2.[i].Item4
                     wAvgC <- wAvgC + market.Value.Item1 * market.Value.Item2.[i].Item5
                     wAvgVol <- wAvgVol + (int64)(market.Value.Item1 * (decimal)market.Value.Item2.[i].Item6)
-                avgPrices.[i] <- new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(prices.[i].Item1, wAvgO, wAvgH, wAvgL, wAvgC, wAvgVol)
+                avgPrices.Add(new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(prices.[i].Item1, wAvgO, wAvgH, wAvgL, wAvgC, wAvgVol))
                 // add average closing price to chart1
                 chart1.["AVG;#0000FF"].Add(wAvgC)
 
@@ -191,8 +195,8 @@ namespace Algorithm
             let rsiAvgEma = ema (rsiAvgEmaN, Array.toList rsiAvg)
             // add to chart: rsi on average prices, threshholds
             for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_AVG;#FF0000"].Add(rsiAvgEma.[i])
-            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_long;#0000FF"].Add(rsiLong)
-            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_short;#0000FF"].Add(rsiShort)
+            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_long;#00FF00"].Add(rsiLong)
+            for i in 0..rsiAvgEma.Length-1 do chart2.["RSI_short;#00FF00"].Add(rsiShort)
 
             // calculate individual RSI from this price data (the traded instrument)
             let rsiThis = rsi (rsiThisN, tPrices)
@@ -274,18 +278,18 @@ namespace Algorithm
 
                     // Trading Times ignoring short pauses
                     // Monday to Friday: 0:00 - 22:10
-                    if (match prices.[i].Item1.DayOfWeek with 
-                        | System.DayOfWeek.Monday | System.DayOfWeek.Tuesday | System.DayOfWeek.Wednesday | System.DayOfWeek.Thursday | System.DayOfWeek.Friday
-                            -> true
-                        | _ -> false) then
-                           if (prices.[i].Item1.Hour > 22 - 1 + timeZone || prices.[i].Item1.Hour < 8 - 1 + timeZone || (prices.[i].Item1.Hour = 22 - 1 + timeZone && prices.[i].Item1.Minute > 10)) then
-                                signals.[i] <- 0
-                    // Saturday, Sunday (no trading)
-                    else
-                        signals.[i] <- 0
-                    // currently the only supported time zones are -7 to +2 (trading MO - FR)
-                    // other settings will produce 0 signals
-                    if (timeZone > 2 || timeZone < -7) then
-                        signals.[i] <- 0
+//                    if (match prices.[i].Item1.DayOfWeek with 
+//                        | System.DayOfWeek.Monday | System.DayOfWeek.Tuesday | System.DayOfWeek.Wednesday | System.DayOfWeek.Thursday | System.DayOfWeek.Friday
+//                            -> true
+//                        | _ -> false) then
+//                           if (prices.[i].Item1.Hour > 22 - 1 + timeZone || prices.[i].Item1.Hour < 8 - 1 + timeZone || (prices.[i].Item1.Hour = 22 - 1 + timeZone && prices.[i].Item1.Minute > 10)) then
+//                                signals.[i] <- 0
+//                    // Saturday, Sunday (no trading)
+//                    else
+//                        signals.[i] <- 0
+//                    // currently the only supported time zones are -7 to +2 (trading MO - FR)
+//                    // other settings will produce 0 signals
+//                    if (timeZone > 2 || timeZone < -7) then
+//                        signals.[i] <- 0
             
             signals
