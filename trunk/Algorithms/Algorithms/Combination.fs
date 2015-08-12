@@ -12,6 +12,18 @@ rsiExitLong,0,0,1
 rsiExitShort,0,0,1
 ymW,0.4,0.4,0.1
 
+timeZone,1,1,1
+quantity,1,1,1
+rsiAvgN,18,18,2
+rsiAvgEmaN,5,5,2
+rsiThisN,0,0,2
+rsiThisEmaN,0,0,2
+rsiLong,80,80,10
+rsiShort,20,20,10
+rsiExitLong,0,0,1
+rsiExitShort,0,0,1
+ymW,0.5,0.5,0.1
+
  *)
 
 namespace Algorithm
@@ -23,9 +35,71 @@ namespace Algorithm
         /////////   GENERIC FUNCTIONS
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        let debug str=
+            System.Diagnostics.Debug.WriteLine str 
+
         let readSymbol (sym:string)=
             let prices = CSVReader.read("U:/Dropbox/AquilaExchange/10MinBars/" + sym + ".csv");
+            debug ("reading: " + sym)
             prices.ToArray()
+
+        let readSymbolRel (sym:string, initO:decimal)=
+            let prices = readSymbol(sym)
+            let relPrices = Array.zeroCreate prices.Length
+            debug (((prices.[0].Item3 - prices.[0].Item2)/prices.[0].Item2).ToString())
+            Array.set relPrices 0 ( new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(
+                // DateTime
+                prices.[0].Item1,
+                // First Open
+                initO,
+                // First High
+                initO + initO*((prices.[0].Item3 - prices.[0].Item2)/prices.[0].Item2),
+                // First Low
+                initO + initO*((prices.[0].Item4 - prices.[0].Item2)/prices.[0].Item2),
+                // First Close
+                initO + initO*((prices.[0].Item5 - prices.[0].Item2)/prices.[0].Item2),
+                // Volume
+                prices.[0].Item6
+            ) )
+            for i = 1 to prices.Length-1 do
+                Array.set relPrices i ( new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(
+                    prices.[i].Item1,
+                    relPrices.[i-1].Item2 + relPrices.[i-1].Item2*((prices.[i].Item2 - prices.[i-1].Item2)/prices.[i-1].Item2),
+                    relPrices.[i-1].Item3 + relPrices.[i-1].Item3*((prices.[i].Item3 - prices.[i-1].Item3)/prices.[i-1].Item3),
+                    relPrices.[i-1].Item4 + relPrices.[i-1].Item4*((prices.[i].Item4 - prices.[i-1].Item4)/prices.[i-1].Item4),
+                    relPrices.[i-1].Item5 + relPrices.[i-1].Item5*((prices.[i].Item5 - prices.[i-1].Item5)/prices.[i-1].Item5),
+                    prices.[i].Item6
+                ) )
+            relPrices
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////   STATS FUNCTIONS
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        let sqr x = x * x
+        
+        let stdDev nums =
+            let mean = nums |> Array.average
+            let variance = nums |> Array.averageBy (fun x -> sqr(x - mean))
+            decimal (sqrt(double variance))
+        
+        let volatility (intervalsPA:int) (prices:decimal[])=
+            let change : decimal array = Array.zeroCreate ((Array.length prices)-1)
+            prices
+            |> Array.iteri (fun i p -> 
+                match i with
+                | _ when i > 0 -> change.[i-1] <- decimal (log( double p / double prices.[i-1] ))
+                | _            -> ignore i)
+            // annualised: scales in proportion to sqrt of time (e.g. for volatility 1.1% * sqrt(252) for daily bars)
+            (stdDev change) * decimal (sqrt (double intervalsPA))
+
+        // moving volatility: takes windows of price data and computes volatility
+        let mVolatility (n:int, intervalsPA:int, prices:decimal[])= 
+            prices
+            |> Seq.windowed n
+            |> Seq.map (volatility intervalsPA)
+            |> Seq.toArray
+            |> Array.append (Array.zeroCreate (n-1))
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////   TREND FOLLOWER (e.g. averages)
@@ -104,6 +178,7 @@ namespace Algorithm
 
             // Chart Lines
             chart1.Add("AVG;#0000FF", new System.Collections.Generic.List<decimal>())
+            chart1.Add("Low;#0000FF", new System.Collections.Generic.List<decimal>())
             chart2.Add("RSI_AVG;#FF0000", new System.Collections.Generic.List<decimal>())
             chart2.Add("RSI_THIS;#FF00FF", new System.Collections.Generic.List<decimal>())
             chart2.Add("RSI_long;#00FF00", new System.Collections.Generic.List<decimal>())
@@ -142,31 +217,38 @@ namespace Algorithm
             let markets = new System.Collections.Generic.Dictionary<string, System.Tuple<decimal, System.Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>[]> >()
             
             // test!
-            //markets.Add("ym", (50, readSymbol("YM")))
+            //markets.Add("ym", (50, readSymbolRel("YM")))
 
             //markets.Add("test", new Tuple<decimal, Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(40m, [|new Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>(System.DateTime.Now, 1m,1m,1m,1m,100L)|]))
-
             if (parameters.ContainsKey("nqW")) then
-                markets.Add("nq", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["nqW"], readSymbol("NQ")))
+                markets.Add("nq", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["nqW"], readSymbolRel("NQ", prices.[0].Item2)))
             if (parameters.ContainsKey("esW")) then
-                markets.Add("es", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["esW"], readSymbol("ES")))
+                markets.Add("es", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["esW"], readSymbolRel("ES", prices.[0].Item2)))
             if (parameters.ContainsKey("ymW")) then
-                markets.Add("ym", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["ymW"], readSymbol("YM")))
+                debug "adding ym"
+                markets.Add("ym", new Tuple<decimal,Tuple<System.DateTime,decimal,decimal,decimal,decimal,int64>[]>(parameters.["ymW"], readSymbolRel("YM", prices.[0].Item2)))
+                debug ("first market count: " + markets.Count.ToString())
             
             let mutable removableKeys = new Collections.Generic.List<string>()
             for key in markets.Keys do
                 if (markets.[key].Item2.Length <> cPrices.Length || markets.[key].Item1 = 0m) then
+                    debug ("market length: " + markets.[key].Item2.Length.ToString() + " prices length: " + cPrices.Length.ToString())
                     removableKeys.Add(key)
 
             for key in removableKeys do
                 markets.Remove(key)
 
+            debug ("markets: " + markets.Count.ToString())
+
             let avgPrices = new Collections.Generic.List<Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>>()
             // initially all weight is on current symbol
             let mutable thisW = 1m
             for market in markets do
+//                for i=0 to prices.Count-1 do chart1.["AVG;#0000FF"].Add(market.Value.Item2.[i].Item3)
+//                for i=0 to prices.Count-1 do chart1.["Low;#0000FF"].Add(market.Value.Item2.[i].Item4)
                 // subtract weight of all other symbols from current one
                 thisW <- thisW - market.Value.Item1
+                debug ("weight " + market.Key.ToString() + ": " + thisW.ToString())
             for i in 0 .. prices.Count-1 do
                 // weighted average: begin with this instrument
                 let mutable wAvgO = thisW * prices.[i].Item2
@@ -184,6 +266,7 @@ namespace Algorithm
                 avgPrices.Add(new Tuple<System.DateTime, decimal, decimal, decimal, decimal, int64>(prices.[i].Item1, wAvgO, wAvgH, wAvgL, wAvgC, wAvgVol))
                 // add average closing price to chart1
                 chart1.["AVG;#0000FF"].Add(wAvgC)
+//                chart1.["Low;#0000FF"].Add(markets.["ym"].Item2.[i].Item4)
 
             // list of typical average prices (used for RSI)
             let tAvgPrices =
