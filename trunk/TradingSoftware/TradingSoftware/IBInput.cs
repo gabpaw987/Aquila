@@ -165,6 +165,7 @@ namespace TradingSoftware
                 System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 dtDateTime = dtDateTime.AddSeconds(e.Time).ToLocalTime();
 
+<<<<<<< HEAD
                 bool receivedLessBarsThisTimePeriod = false;
                 if (RealTimeBarList.Count != 0)
                 {
@@ -188,6 +189,9 @@ namespace TradingSoftware
                 {
                     RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
                 }
+=======
+                RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
+>>>>>>> 9808b6b... Updated TS to use volume
                 Tuple<DateTime, decimal, decimal, decimal, decimal, long> b = null;
 
                 if (this.hadFirst)
@@ -207,11 +211,14 @@ namespace TradingSoftware
 
                         this.ListOfBars.Add(b);
                         this.csvWriter.WriteBar(b);
+<<<<<<< HEAD
 
                         if (receivedLessBarsThisTimePeriod)
                         {
                             RealTimeBarList.Add(new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(dtDateTime, e.Open, e.High, e.Low, e.Close, e.Volume));
                         }
+=======
+>>>>>>> 9808b6b... Updated TS to use volume
                     }
                 }
                 else
@@ -252,11 +259,19 @@ namespace TradingSoftware
             {
                 //Saves how many bars were requested in total to the attribute
                 totalHistoricalBars = e.RecordTotal;
+<<<<<<< HEAD
+=======
+                lock (IBID.ConsoleTextLock)
+                {
+                    this.workerViewModel.ConsoleText += this.workerViewModel.EquityAsString + ": Historical-Bar: " + e.Date + ", " + e.Open + ", " + e.High + ", " + e.Low + ", " + e.Close + ", " + e.Volume + "\n";
+                }
+>>>>>>> 9808b6b... Updated TS to use volume
 
                 this.noOfHistoricalBarsReceived++;
                 
                 //parses the received bar to one of my bars
                 Tuple<DateTime, decimal, decimal, decimal, decimal, long> newBar = new Tuple<DateTime, decimal, decimal, decimal, decimal, long>(e.Date, e.Open, e.High, e.Low, e.Close, e.Volume);
+<<<<<<< HEAD
                 if (!this.ListOfBars.Contains(newBar))
                 {
                     lock (IBID.ConsoleTextLock)
@@ -267,6 +282,10 @@ namespace TradingSoftware
                     this.ListOfBars.Add(newBar);
                     this.csvWriter.WriteBar(newBar);
                 }
+=======
+                this.ListOfBars.Add(newBar);
+                this.csvWriter.WriteBar(newBar);
+>>>>>>> 9808b6b... Updated TS to use volume
             }
         }
 

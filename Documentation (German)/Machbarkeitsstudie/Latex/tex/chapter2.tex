@@ -1,0 +1,69 @@
+% Chapter2: Voruntersuchung
+
+\chapter{Voruntersuchung} \label{chapter:voruntersuchung}
+
+\section{IST-Erhebung}
+
+Der Wertpapierhandel erfährt eine zunehmende Professionalisierung, was dazu führt, dass sowohl semiprofessionelle, als auch professionelle Trader in großen Unternehmen mit immer größeren Datenmengen, mehr Informationen und durch schnellere Märkte gleichzeitig mit kürzerer Entscheidungsdauer konfrontiert werden.\\
+Um dem Trend zu programmatischen Trading-Lösungen entgegenzukommen gibt es eine Reihe von Datenanbietern, die Kursdaten in unterschiedlichen Zeitabständen und mit unterschiedlicher Aktualität anbieten. Je aktueller und öfter man die Ticks, also Kursstände zu einem Zeitpunkt bekommt, desto teurer ist die Datenanbindung im Durchschnitt. Einer der führenden Anbieter von Echtzeit-Marktdaten ist eSignal\footnote{http://www.esignal.com/default.aspx?tc=},
+der eine Selektion an Produkten zu verschiedenen Konditionen anbietet.\footnote{Preise s. http://www.esignal.com/esignal/pricing.aspx?tc=}
+Die Version der Software "`eSignal OnDemand"' bietet die Möglichkeit Intraday-Kursdaten zu günstigeren Konditionen 15 Minuten verzögert abzurufen. Für einen Produktivbetrieb ist diese Verzögerung vermutlich zu lange, aber sicherlich hinreichend für den Entwicklungs- und Testbetrieb.\\
+Die Anbindung des Datenproviders kann über \gls{dde} erfolgen.\\
+\\
+Um eine individuelle Trading-Strategie zu verwirklichen werden, oft Online\-broker verwendet,
+über die resultierende Orders direkt mit vergleichsweise niedrigen Spesen abgewickelt werden können
+und algorithmisches Trading überhaupt erst praktisch möglich wird. \gls{ib}\footnote{http://www.interactivebrokers.com/ibg/main.php} ist ein erwähnenswertes Beispiel eines solchen.
+Für \gls{ib} ist bereits ein Test-Account vorhanden, über den Transaktionen virtuell durchgeführt werden können.
+\\
+Im Bereich des algorithmischen Tradings sind bei high-performance Anwendungen C, C++ und deren Derivate sehr beliebt, bei Anwendungen, die nicht innerhalb von Sekundenbruchteilen operieren, wird die .NET Umgebung unter Windows häufig verwendet.\\
+Dazu stehen im Projektteam mehrere Arbeitsplätze mit .NET-Umgebung zur Verfügung.
+
+\section{IST-Zustand}
+
+Wie bereits erwähnt wurde, ist das algorithmische Handeln eine riesige internationale Industrie. Die meisten Banken haben in der Investment-Abteilung Projekte im Bereich der Entwicklung von Algorithmen zum Wertpapierhandel. Gut funktionierende Algorithmen werden in der Regel aber geheim gehalten, um sich nicht in die Karten blicken zu lassen und den institutionellen Gewinn zu optimieren. Sollte die Handelsstrategie publik werden, wäre es leicht sie auszunutzen und in ihr Schwachstellen zu finden.\\
+Große Institutionen wie Banken sind aber längst nicht die einzigen, die solche Programme nutzen und entwickeln. Mit der zur Verfügung stehenden Technologie kann heutzutage jeder mit Programmierkenntnissen und dem nötigen finanzwirtschaftlichen Wissen Trading-Software entwickeln.
+Das führt dazu, dass Fonds und selbst private Investoren diese Schiene des Investment nutzen.\\
+\\
+Neben der proprietären Software gibt es auch einige wenige Anbieter, die teilweise Handelsentscheidungen im Abo verkaufen. Etwa: Managed-Account Lösungen, denen der Zugriff auf das Investment-Portfolio gestattet wird oder \glspl{ide}, die eine Broker-Schnittstelle zur Verfügung stellen und wo der verwendete Algorithmus selbst programmiert werden kann.
+
+\subsection{Metatrader}
+
+Aktuell bietet Metatrader mit der Trading-Plattform Metatrader5 eine Komplettlösung, die primär auf den Handel auf dem \gls{forex} ausgelegt ist, aber auch Futures, Options und Aktien handeln kann. Die Funktionen sind dabei recht umfangreich, es werden alle üblichen Order-Typen unterstützt. Technische Hilfsmittel wie Indikatoren werden außerdem zur Verfügung gestellt.\\
+Das Interface bietet eine simple Möglichkeit zwischen mehreren Accounts zu wechseln und auf diesen mit unterschiedlichen Handelsstragien zu verfahren. Umgekehrt ist es auch sehr einfach mit einem einzigen Account auf verschiedenen Märkten gleichzeitig zu traden.\\
+\\
+Neben manuellem Handel aufgrund von Chart-Analyse und technischen Indikatoren gibt es auch eine Möglichkeit, diesen zu automatisieren und mithilfe von sogenannten \emph{Expert Advisors} Kaufentscheidungen zu generieren. Zusätzlich stellt Metatrader die proprietäre Programmiersprache \emph{MQL5} zur Verfügung, mit der bestehende Bestandteile verändert werden können und neue Expert Advisors programmiert werden können.\footnote{http://www.metaquotes.net/en/metatrader5}\\
+In einem Test von Forextraders schneidet die neue Plattform durchgehend gut ab, wobei besonders die ergänzten Indikatoren gelobt werden. \cite{forextraders-mt5}
+
+\subsection{GodmodeTrader}
+
+Ein Anbieter, der Chart-Analysen und aktuelle spezifische Investmenttipps anbietet ist GodmodeTrader. Es werden sowohl gratis Artikel zur Verfügung gestellt, als auch eine Mitgliedschaft (Gold-Member für \euro{9,90} monatlich) angeboten, die Zugriff auf kostenpflichtige Trading-Services und Expertentipps erlaubt.\\
+Die Gold-Member-Mitgliedschaft beeinhaltet elaborierte Chart-Analysen und \linebreak Empfehlungen zur Durchführung des Risikomanagements. Mit \emph{Pattern Scout} wird ebenfalls eine automatische Überwachung von verschiedenen Kursformationen und -entwicklungen angeboten.\\
+\\
+Im Vergleich zu Metatrader bieten GodmodeTrader theoretisches Wissen und Empfehlungen an; Entscheidungen können in einem Muster-Depot durchgespielt \linebreak werden. Bei Metatrader liegt der Fokus stärker auf dem praktischen Abwickeln von Transaktionen, auch algorithmisch.\\
+
+\subsection{Managed Account}
+
+Ohne auf einen speziellen Managed-Account Anbieter genauer einzugehen, soll die Funktionsweise kurz erklärt werden. Der Kunde hat dabei ein Konto bei einer Bank für das er einem Trader eine Handelserlaubnis erteilt. Dieser kann das Geld weder abheben, noch überweisen, sondern nur Trades durchführen. Dabei sollte das zusätzliche Risiko nicht außer Acht gelassen werden.\\
+Die festgelegt Mindesteinlage auf dem Konto variiert zwischen verschiedenen Anbietern, kann aber von einigen zehntausenden bis in die hunderttausende Euro oder mehr reichen.\\
+Die Honorierung des Account-Managers erflogt dabei fast ausschließlich über eine Gewinnbeteiligung und kann in einem höheren zweistelligen Prozentbereich liegen.
+(vlg. \cite{charttec-managed-accounts})
+
+\section{SOLL-Zustand}
+
+Es soll also einerseits eine Software entwickelt werden, mit der man mit einem Handelsalgorithmus (zB.: \gls{ma}) an der Börse über einen Broker (zB.: \gls{ib}) handeln kann. Andererseits soll eine Website erstellt werden, die es ermöglicht, in das Verhalten der Software einzugreifen und zusätzlich den momentanen Status des Handels abzurufen. Diese beiden Teile müssen also mit verschiedenen Schnittstellen miteinander verbunden werden. \\
+
+
+Auf der Website soll der verwendete Algorithmus durch Charts dargestellt werden, damit ein Benutzer auch sehen kann, wie die Software handelt und entscheidet. Es soll dort immer mindestens einen Account existieren, der die Software steuern kann, man soll auch mehrere Benutzer hinzufügen können, dies wäre dann aber mit zusätzlichen Kosten verbunden. Außerdem soll man News angezeigt bekommen können, die von einem Newsfeed angeboten werden (zB.: RSS). Es wird möglich sein, dass der User Einstellungen von der Software treffen kann und das Investitionskapital einstellen kann. \\
+
+
+Damit die Software erfolgreich und gewinnorientiert funktionieren kann, muss gewährleistet sein das man die momentanen Kursdaten bezieht. Die Kaufentscheidungen sollen mithilfe eines Handelsalgorithmus errechnet werden. Diese Entscheidungen sollen danach ausgegeben und in eine Datenbank gespeichert werden. Natürlich wird dies nur dann ausgeführt, wenn eine Protokollierung erforderlich ist, also bei einer Kauf-/Verkaufsentscheidung. Um auch bei einem Ausfall des Programms die Entscheidungen nicht zu verlieren, wird bei Systemstart eine Logdatei erstellt, in der die Kaufentscheidungen mit Zeit und Datum  mitgeführt werden. \\
+
+
+Um eine Kommunikation zwischen den beiden Teilprodukten zu gewährleisten, wird eine Website-Software-Schnittstelle implementiert, mit der es möglich sein wird, eine direkte Verbindung zu erstellen. Mit dieser Schnittstelle kann der Benutzer der Website einfach das Handeln der Software unterbinden oder wieder starten, eine Aktie seiner Wahl zum Handeln auswählen und auch die Art des Kaufentscheidungsmodus verändern. Dieser Modus wird zwei Möglichkeiten anbieten, entweder wird automatisch gehandelt und der User wird über dieses Handeln zwar informiert, kann aber nicht widersprechen, oder der User wird bei jeder Kauf-/Verkaufsentscheidung benachrichtigt und trifft dann die Entscheidung selbst. Mit dieser Schnittstelle soll es zusätzlich ermöglicht werden, die Laufzeitparameter der Software im zeitgleichen Betrieb zu verändern und anzuwenden. \\
+
+
+Es wird außerdem eine Datenbankverbindung zwischen der Software und der Website existieren, um die berechneten Daten der Software an die Website in regelmäßigen Abständen zu übertragen. 
+
+\subsection{Weiterbildung der Projektteammitglieder}
+
+Im Laufe des Projekts wird die Teamfähigkeit und die soziale Kompetenz aller Projektteammitglieder gestärkt. Außerdem wird ihnen das Konzept der Börse und die damit verbundenen Algorithmen näher gebracht. Weiters erhalten die Mitglieder des Projekts neue Erkenntnisse in dem Bereich der Software-/Websiteprogrammierung, vor allem wenn diese parallel arbeiten sollen.

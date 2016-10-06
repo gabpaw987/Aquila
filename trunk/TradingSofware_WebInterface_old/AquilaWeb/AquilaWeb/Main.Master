@@ -1,0 +1,49 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="AquilaWeb.Main" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link href="Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <asp:ContentPlaceHolder ID="head" runat="server" />
+</head>
+<body>
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+            <Scripts>
+                <asp:ScriptReference Path="~/Scripts/DataTables-1.9.4/media/js/jquery.js" />
+                <asp:ScriptReference Path="~/Scripts/DataTables-1.9.4/media/js/jquery.dataTables.js" />
+                <asp:ScriptReference Path="~/Scripts/jquery-ui-1.10.0.min.js" />
+                <asp:ScriptReference Path="~/Scripts/search.js" />
+            </Scripts>
+        </asp:ScriptManager>
+        <div id="wrapper">
+            <div id="header">
+                <div id="header_top">
+                    <asp:LoginStatus ID="LoginStatus1" runat="server" LogoutText="Logout" />
+                </div>
+                <div id="header_main">
+                    <asp:ContentPlaceHolder ID="header" runat="server" />
+                </div>
+                <div id="menu">
+                    <ul class="nav">
+                        <li id="nav_i1" runat="server"><asp:HyperLink runat="server" Text="Portfolio" NavigateUrl="~/MemberPages/Portfolio.aspx" /></li>
+                        <li id="nav_i2" runat="server"><asp:HyperLink runat="server" Text="Performance" NavigateUrl="~/MemberPages/Performance.aspx" /></li>
+                        <li id="nav_i3" runat="server"><asp:HyperLink runat="server" Text="Settings" NavigateUrl="~/MemberPages/Settings.aspx" /></li>
+                    </ul>
+                    <div id="menu_search">
+                        <asp:TextBox ID="search" runat="server" name="search" autocomplete="off" />
+                        <ul id="search_results" class="nav"></ul>
+                    </div>
+                </div>
+                <asp:Panel runat="server" ID="usr_msg" />
+            </div>
+            <div id="content">
+                <asp:ContentPlaceHolder ID="content" runat="server" />
+            </div>
+        </div>
+    </form>
+</body>
+</html>

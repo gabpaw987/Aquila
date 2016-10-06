@@ -1,0 +1,35 @@
+% !TeX root = ../Aquila_Pflichtenheft.tex
+
+% Chapter3
+\chapter{Produktumgebung} \label{chapter:Produktumgebung}
+
+\section{Software}
+\label{software}
+
+Um das Ausführen der Software zu gewährleisten, ist es nötig einen Webservice anbieten zu können. Weil das Teilprodukt, die Website, hauptsächlich mit ASP.NET geschrieben ist, muss einer der folgenden Webserver lauffähig installiert sein:
+\begin{itemize}
+	\item \textbf{IIS} (Internet Information Services)
+	\item \textbf{Apache-Webserver} (mit "`mod\_aspdotnet"' und "`mod\_mono"') 
+	\item \textbf{XSP-Webserver}
+	\item \textbf{Cassini-Webserver}
+\end{itemize}
+Im Falle, dass ein Linuxserver für die Website benutzt werden soll, wird ein Apache oder der XSP-Webserver empfohlen, damit es zu keinen schwerwiegenden Problemen kommt.
+\\
+Es wird angeboten, Website und Software auf unterschiedlichen Computern zu installieren und dort zu benutzen.
+Für das reibungslose Integrieren der Software wird benötigt:
+\begin{itemize}
+	\item ein Datenbankserver zum Interagieren mit der Website (Postgresql)
+	\item ein installierter und funktionierender \textbf{\gls{ib}-Client}
+	\item ein Client von e-Signal
+	\item die aktuellste Version des \textbf{.NET-Frameworks}
+\end{itemize}
+
+\section{Hardware}
+\label{hardware}
+
+Im Falle \textbf{eines} Servers benötigt der Rechner auf jeden Fall 4 GB Arbeitsspeicher, zirka 100GB freien Speicher und zumindest einen Dual-Core Prozessor.\\
+Allerdings liegen diese Werte bereits unter dem heutigen Standard für normale Server. Wenn man die mindeste Konfiguration wählt, wird empfohlen, keine weiteren Servertätigkeiten über dieses Gerät zu vollziehen. Es ist außerdem eine Internetanbindung erforderlich, sowie ausreichend viel Speicherplatz auf der/den Festplatte/n.
+
+\section{Orgware}
+\label{orgware}
+Der Server, auf dem die Software und die Website verwendet werden, muss mit dem Internet verbunden sein, damit er sich mit \gls{ib} und e-Signal verbinden kann. Dazu wird zuzüglich ein Account dieser beiden Anbieter benötigt.

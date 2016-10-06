@@ -1,0 +1,104 @@
+\chapter{Technische Machbarkeit}\label{chapter:technische_machbarkeit}
+
+\section{Programmiersprachen}
+
+Die Tradingsoftware kann man in jeder erdenklichen Programmiersprache schreiben Allerdings ist es wichtig daran zu denken, dass das Programm effizient arbeitet, da es hardwarenah rechnen soll. Zugleich ist zu berücksichtigen, dass das Projektteam mit manchen Programmiersprachen keinerlei Erfahrung hat.\\
+Die allgemeine Funktionalität muss das Einlesen von Echtzeitdaten der Börse und das Berechnen der Kaufentscheidung beinhalten. Für das Team kommen daher 3 Möglichkeiten in Frage: Eine Lösung in reinem C++, welches sehr hardwarenahe arbeitet, eine Mischung aus F\# und C\#, mit der eine parallelisierte Berechnung möglich wäre, und eine reine F\#-Lösung. \\
+Bei der Kombination agiert C\# als Handlungs- und Steuerkern, als auch zur Kommunikation mit der Website und dem News-Feed und F\# als funktionale Programmiersprache, als Rechenkern und "`Mastermind"' der Applikation, welche die Entscheidungen trifft. Hierbei wird einerseits eine enorm hohe Arbeitsgeschwindigkeit ermöglicht, da die beiden Sprachen relativ hardwarenah agieren, andererseits besteht der nicht zu unterschätzende Vorteil bzw. die Möglichkeit, den Rechenkern auf ein externes System outzusourcen, welches zum Beispiel enorme Rechenkapazitäten aufweisen könnte und somit viel komplexere und effizientere Algorithmen in annehmbarer Zeit durchrechnen und abhängig davon mehr gewinnbringende Entscheidungen treffen könnte. Dabei sollte es auch bei späteren Erweiterungen des Programms zu keinem signifikanten Geschwindigkeitsabfall kommen.
+
+
+\begin{center}
+
+\begin{tabular}{ | c | p{2.6cm} | p{1.5cm} | p{0.5cm} |p{0.5cm}|p{0.5cm}|p{0.5cm}|p{0.7cm}|p{0.7cm}|}
+\hline 
+\multicolumn{2}{|p{1.5cm}|}{ }  & Ge\-wicht\-ung & \multicolumn{2}{p{1.5cm}|}{\textbf{C++ R*G}} & \multicolumn{2}{p{1.5cm}|}{\textbf{F\# R*G}} & \multicolumn{2}{|p{1.5cm}|}{\textbf{C\#F\# R*G}}\\ \hline
+\multirow{6}{*}{Einfachheit} & Aufwand Coding & 10\% & 3 & 30 & 2 & 20 & 1 & 10 \\ \cline{2-9}
+& Bedienung/ Wartung & 6\% &3&9&2&6&1&3\\ \cline{2-9}
+& Update &3\%&3&9&2&6&1&3\\ \cline{2-9}
+& Integration &5\%&3&15&2&10&1&5\\  \cline{2-9}
+& Kenntnisse &6\%&3&18&2&12&1&6\\ \cline{2-9}
+& \textbf{Gesamt}&30\%&3&81&2&54&1&27\\ \hline
+\multirow{5}{*}{Leistung}& Über\-tragungs-zeit &6\%&1&6&3&18&2&12\\ \cline{2-9}
+& Absturz\-sicherheit &5\%&1&5&2&10&3&15\\ \cline{2-9}
+& Ressourcen-verbrauch &3\%&1&3&3&9&2&6\\ \cline{2-9}
+& Datenumfang &1\%&1&1&3&3&2&2\\ \cline{2-9}
+& \textbf{Gesamt} &15\%&1&15&3&40&2&35\\ \hline
+\multirow{5}{*}{Kosten}& Lizenzen &10\%&1&10&1&10&1&10\\ \cline{2-9}
+& Support &5\%&3&15&1&5&2&10\\ \cline{2-9}
+& Betriebs-kosten &5\%&2&10&3&15&1&5\\ \cline{2-9}
+& Dokumen\-tation &5\%&1&5&3&15&2&10\\ \cline{2-9}
+& \textbf{Gesamt} &15\%&2&40&3&45&1&35\\ \hline
+\multirow{4}{*}{Dokumentation}& Verfügbarkeit &10\%&2&20&3&30&1&10\\ \cline{2-9}
+& Voll\-ständigkeit &10\%&3&30&2&20&1&10\\ \cline{2-9}
+& Qualität &10\%&2&20&3&30&1&10\\ \cline{2-9}
+& \textbf{Gesamt} &30\%&3&80&3&80&1&30\\ \hline
+\end{tabular}
+
+\end{center} 
+
+\begin{center}
+
+\begin{tabular}{|l|r|p{0.8cm}|p{0.8cm}|p{0.8cm}|p{0.8cm}|p{0.8cm}|p{0.8cm}|} \hline
+Kapitel&Gewichtung&\multicolumn{2}{p{1.8cm}|}{\textbf{C++}}&\multicolumn{2}{p{1.8cm}|}{\textbf{F\#}}&\multicolumn{2}{p{1.8cm}|}{\textbf{C\#/F\#}}\\ \hline
+Einfachheit&30\%&3&81&2&54&1&27 \\ \hline
+Leistung&15\%&1&15&3&40&2&35 \\ \hline
+Kosten&15\%&2&40&2&45&1&35 \\ \hline
+Dokumentation&30\%&3&80&3&80&1&30 \\ \hline
+\end{tabular}
+
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|} \hline
+Gesamtbewertung&&&\\ \hline
+Endreihung &2&3&1\\ \hline
+\end{tabular}
+\end{center}
+
+Aus der Nutzwertanalyse kann man entnehmen, dass die C\#/F\# Kombination als die favorisierte Möglichkeit hervorgeht, weitere Vorteile, die sich aus der Wahl dieser Mischung ergeben, sind: gute Kenntnisse der Programmiersprachen, hilfreiche Community und die Einfachheit sowie die Erweiterbarkeit. Bei dieser Lösung wird die Steuereinheit vom C\# Teil des Programms übernommen und die Rechenaufgaben werden vom F\# Teil bearbeitet. Außerdem ist das .net-Framework sehr beliebt, deswegen kann man damit rechnen, dass bei einem Problem genügend Helfer gefunden werden können.
+
+\section{Websprachen}
+
+Bei der Wahl der Technologie zur Umsetzung der Web-Controlling-Oberfläche muss auf einige Kriterien geachtet werden, um zu einer Entscheidung zu kommen.
+Die Sprache muss es ermöglichen, eventuell durch API-Zugriff, hinreichend komplexe Charts zu generieren, um alle gewünschten Indikatoren und Preisentwicklungen nahe der gewünschten Form darzustellen.
+Außerdem muss ein Zugriff auf eine mit der Software gemeinen Datenbank möglich sein, um Kurswerte und eventuell andere berechneten Daten zur Darstellung abzufragen.\\
+	Zur Durchführung der Webfunktionalität kommen folgende Sprachen in die engere Auswahl.
+
+\begin{itemize}
+	\item PHP
+	\item ASP.NET
+	\item Java Servlet mit JSP
+\end{itemize}
+
+Der augenscheinliche Vorteil von PHP ist die bereits gesammelte Erfahrung des Projektteams mit dieser Sprache. Zusätzlich sind die Chartingfunktionen beispielsweise durch die pChart Bibliothek bereitgestellt. \footnote{url{http://www.pchart.net/}} pChart bietet verschiedene Varianten zur Darstellung an. Unter anderem Line-Charts, Candle-Charts und Indikatoren.\\
+\\
+ASP.NET bietet den Vorteil einer komplett homogenen Integration der Website mit der Software, da sowohl ASP.NET, als auch C\# die Windows .NET-Library benutzt. Zur Kommunikation kann \gls{wcf}, eine Sammlung von Kommunikationswerkzeugen zwischen verteilten Systemen innerhalb von .NET. Außerdem ist, angenommen man bleibt in der Windows-Welt, sowohl die Implementierung, als auch die Separation of Concerns (SoC) einfacher umzusetzen. Mit Hilfe von \gls{wcf} kann der Aufruf von entfernten Methoden sogar über JavaScript geregelt werden, um eine noch stärkere logische Trennung zwischen Software- und Websitefunktionalität zu schaffen.\\
+	Die Chartingfunktionen können seit .NET-Version 3.5 direkt mit dem inkludierten Framework "`Chart Controls for .NET"' und dem ASP-Chart-Tag umgesetzt werden. Das Framework unterstützt unter anderem auch "`Advanced Financial Charts"'.\footnote{url{http://www.microsoft.com/en-us/download/details.aspx?id=11001\#overview}}\\
+\\
+Die Variante mit Java Servlets und JSP ergab sich in der Nachforschung als ungünstig, da zur homogenen Umsetzung die Software mit Java implementiert werden müsste, was u.a. aus Performancegründen ausgeschlossen wurde. Ohne die Logikklassen in Java zu programmieren, ergibt sich aus diesem Ansatz kein Vorteil.\\
+\\
+Das wahrscheinlich wichtigste Kriterium zur Wahl der Sprache ist die Kommunikation zwischen der C\# Software und der Website. Für eine genauere Beschreibung der Datenschnittstellen siehe \ref{section:datenschnittstellen}.
+
+\section{Datenschnittstellen} \label{section:datenschnittstellen}
+
+Grundsätzlich soll es zwei große Datenschnittstellen geben. Die eine befindet sich zwischen der Software und der Website und ist hauptsächlich für die Bereitstellung der Controlling-Funktionen notwendig. Die andere besteht eigentlich wieder aus zwei einzelnen Schnittstellen, zur Kommunikation jeweils der Website und der Software mit der Datenbank.
+
+\subsection{Schnittstellen zwischen Software und Website}
+
+Diese ist die kompliziertere Schnittstelle, da an sie hohe Anforderungen gestellt werden. Sie soll hoch leistungsfähig und gleichzeitig einfach zu implementieren sein. Für diese Art von Schnittstellen kommen grundsätzlich einige Varianten in Frage. Es wird nun versucht, jede dieser Varianten inklusive ihrer Vor- und Nachteile zu erläutern und anschließend eine Conclusio zu treffen, welche die Sprache ergeben soll, die sich am Besten eignet.\\
+\\
+Die erste Möglichkeit wäre CGI. Damit können von der Website aus, lokale Zugriffe, über das Ausführen von Commandline-Befehlen, abgesetzt werden. Dies wäre grundsätzlich kein schlechter Ansatz, das größte Problem hierbei ist leider nur, dass man die Website und die Software auf dem gleichen physikalischen Server laufen lassen muss. Außerdem kann es dabei zu Problemen mit den Zugriffsrechten kommen. Zusätzlich entstehen Unsicherheiten, da ein Hacker beispielsweise nur die Website knacken muss und damit auf den gesamten Server zugreifen kann.\\
+\\
+Die zweite Realisierungsmöglichkeit wäre über Streams, die an Sockets angehängt werden. Dabei müssen sich allerdings ebenfalls der Webserver und der Server mit der Software im selben Netzwerk befinden. Dies kann zwar über neue Mechanismen umgangen werden, wird aber noch nicht als schöner Stil angesehen und ist damit für unseren Verwendungszweck eher ungeeignet.\\
+\\
+Eine dritte Möglichkeit wäre es, diese Schnittstelle ebenfalls über eine Datenbank zu realisieren. Dabei müsste die Website die Controlling-Parameter auf der Website abspeichern und die Software fragt z.B. einmal in der Sekunde nach, ob schon neue Controlling-Parameter vorliegen. Dies wäre an sich keine so schlechte Möglichkeit, da für die Übermittlung der Kursdaten ja bereits sowieso eine Datenbank vorliegt und man diese einfach erweitern könnte. Allerdings entspricht die Performance dieser Lösung nicht ganz unseren Vorstellungen, da die Software wie gesagt immer nachfragen müsste, ob Änderungen vorliegen. Dadurch wird einerseits die Dauer verlängert, bis die Controlling-Operation durchgeführt wird und andererseits entsteht ein nicht zu vernachlässigender Aufwand durch die regelmäßigen Anfragen an die Datenbank.\\
+\\
+Eine Realisierung dieser Schnittstelle wäre auch über einfache Web\-services möglich. Dies würde, genauso wie die Realisierung über eine Datenbank, eine Kommunikation über das Internet ermöglichen. Allerdings sind einfache Web\-services aufwändig zu implementieren. Für die Windows-Umgebung, auf die das Projektteam abzielt, gibt es allerdings eine einfach Möglichkeit zur Implementierung von solchen Websites.\\
+\\
+Diese heißt \gls{wcf}. Es handelt sich dabei um ein sehr mächtiges Framework von Microsoft, dass z.B. Webservices angenehm implementieren lässt. Es hat eine Unzahl an Funktionen, ermöglicht eine Kommunikation über das Internet und ist zudem extrem leistungsfähig und vergleichsweise simpel in der Implementierung. Außerdem ist es von Microsoft und kann somit perfekt sowohl in unsere C\#/F\#-Umgebung als auch in unsere ASP.NET-Webumgebung integriert werden. Aufgrund all dieser Vorteile ergibt sich also die Realisierung der direkten Schnittstelle zwischen Website und Software mittels \gls{wcf} als die favorisierte Möglichkeit.
+
+\subsection{Schnittstelle der Software und der Website zur Datenbank}
+
+Dass diese Schnittstelle in einer einfachen Form realisiert werden kann, ist eigentlich klar, da es auch wenig sinnvolle Alternativen dafür gibt. Worin man allerdings unterscheiden kann, ist im gewählten \gls{dbms}. Es liegt hierbei eigentlich nur die Wahl zwischen MySQL und PostgreSQL vor, da das Projektteam nur in diesen beiden Erfahrung hat und es auch keine anderen preislich und leistungsmäßig ansprechenden Alternativen gibt.
+
+Zwischen MySQL und PostgreSQL entscheiden eigentlich hauptsächlich die Lizenzen. MySQL kostet bei kommerzieller Nutzung Geld. Wohingegen PostgreSQL Open-source ist und auch bei kommerzieller Nutzung kostenfrei bleibt. Aufgrund des stark beschränkten Kapitals entscheidet das Projektteam also hier klar für PostgreSQL. Außerdem besitzt das Projektteam, wie bereits erwähnt, schon Erfahrung im Umgang mit PostgreSQL und somit wird ein Erlernen eines neuen SQL-Dialekts auch nicht benötigt.
