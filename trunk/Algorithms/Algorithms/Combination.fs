@@ -39,7 +39,7 @@ namespace Algorithm
             System.Diagnostics.Debug.WriteLine str 
 
         let readSymbol (sym:string)=
-            let prices = CSVReader.read("U:/Dropbox/AquilaExchange/10MinBars/" + sym + ".csv");
+            let prices = CSVReader.read("C:/Users/Gabriel/Dropbox/AquilaExchange/10MinBars/" + sym + ".csv");
             debug ("reading: " + sym)
             prices.ToArray()
 

@@ -48,6 +48,8 @@
     <Compile Include="Futures_adaptive.fs" />
     <Compile Include="Vol.fs" />
     <Compile Include="Futures_exit_adaptingBorder.fs" />
+    <Compile Include="CSVReader.fs" />
+    <Compile Include="Combination.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
